@@ -1,0 +1,74 @@
+{
+  "title": "Nuestros Servicios",
+  "subtitle": "Tratamientos especializados para tu bienestar",
+  "categories": {
+    "all": "Todos",
+    "facial": "Faciales",
+    "corporal": "Corporales",
+    "paquete": "Paquetes"
+  },
+  "filters": {
+    "search": "Buscar servicios...",
+    "category": "Categoría",
+    "withPromo": "Con promoción",
+    "activeOnly": "Solo activos",
+    "sortBy": "Ordenar por",
+    "sortByName": "Nombre",
+    "sortByPrice": "Precio",
+    "sortByDuration": "Duración"
+  },
+  "card": {
+    "from": "Desde",
+    "session": "sesión",
+    "sessions": "sesiones",
+    "duration": "Duración",
+    "minutes": "min",
+    "bookNow": "Reservar",
+    "viewDetails": "Ver Detalles",
+    "promo": "PROMO",
+    "twoForOne": "2x1",
+    "discount": "{{percent}}% OFF",
+    "brand": "Marca"
+  },
+  "details": {
+    "title": "Detalles del Servicio",
+    "description": "Descripción",
+    "benefits": "Beneficios",
+    "contraindications": "Contraindicaciones",
+    "recommendedFrequency": "Frecuencia Recomendada",
+    "productsUsed": "Productos Utilizados",
+    "price": "Precio",
+    "normalPrice": "Precio Normal",
+    "promoPrice": "Precio Promocional",
+    "sessions": "Sesiones",
+    "duration": "Duración",
+    "category": "Categoría",
+    "bookThisService": "Reservar este Servicio",
+    "backToServices": "Volver a Servicios"
+  },
+  "empty": {
+    "title": "No hay servicios disponibles",
+    "description": "No se encontraron servicios con los filtros seleccionados",
+    "action": "Limpiar Filtros"
+  },
+  "stats": {
+    "total": "Total de Servicios",
+    "active": "Activos",
+    "withPromo": "Con Promoción",
+    "facials": "Faciales",
+    "corporals": "Corporales",
+    "packages": "Paquetes"
+  },
+  "promotions": {
+    "validUntil": "Válido hasta",
+    "limitedTime": "Oferta por tiempo limitado",
+    "newService": "Nuevo",
+    "popular": "Popular",
+    "recommended": "Recomendado"
+  },
+  "categoryDescriptions": {
+    "facial": "Tratamientos especializados para el cuidado y rejuvenecimiento facial",
+    "corporal": "Terapias corporales para reducción, tonificación y relajación",
+    "paquete": "Combos especiales con múltiples tratamientos"
+  }
+}

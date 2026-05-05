@@ -1,0 +1,26 @@
+# Robots.txt - SUNANDA Spa
+# https://www.robotstxt.org/robotstxt.html
+
+# Permitir todos los bots a las páginas públicas
+User-agent: *
+Allow: /
+Allow: /services
+Allow: /booking
+
+# Bloquear rutas del admin (protegidas con login)
+Disallow: /dashboard
+Disallow: /clients
+Disallow: /appointments
+Disallow: /admin/*
+Disallow: /login
+
+# Archivos y carpetas técnicas
+Disallow: /*.json
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://sunanda-spa.vercel.app/sitemap.xml
+
+# Nota: Cuando se tenga dominio personalizado, actualizar el Sitemap URL
+# Ejemplo: Sitemap: https://www.sunanda-spa.com/sitemap.xml
+

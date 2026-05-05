@@ -1,0 +1,74 @@
+{
+  "title": "Our Services",
+  "subtitle": "Specialized treatments for your wellness",
+  "categories": {
+    "all": "All",
+    "facial": "Facials",
+    "corporal": "Body",
+    "paquete": "Packages"
+  },
+  "filters": {
+    "search": "Search services...",
+    "category": "Category",
+    "withPromo": "On promotion",
+    "activeOnly": "Active only",
+    "sortBy": "Sort by",
+    "sortByName": "Name",
+    "sortByPrice": "Price",
+    "sortByDuration": "Duration"
+  },
+  "card": {
+    "from": "From",
+    "session": "session",
+    "sessions": "sessions",
+    "duration": "Duration",
+    "minutes": "min",
+    "bookNow": "Book Now",
+    "viewDetails": "View Details",
+    "promo": "PROMO",
+    "twoForOne": "2 FOR 1",
+    "discount": "{{percent}}% OFF",
+    "brand": "Brand"
+  },
+  "details": {
+    "title": "Service Details",
+    "description": "Description",
+    "benefits": "Benefits",
+    "contraindications": "Contraindications",
+    "recommendedFrequency": "Recommended Frequency",
+    "productsUsed": "Products Used",
+    "price": "Price",
+    "normalPrice": "Regular Price",
+    "promoPrice": "Promotional Price",
+    "sessions": "Sessions",
+    "duration": "Duration",
+    "category": "Category",
+    "bookThisService": "Book this Service",
+    "backToServices": "Back to Services"
+  },
+  "empty": {
+    "title": "No services available",
+    "description": "No services found with the selected filters",
+    "action": "Clear Filters"
+  },
+  "stats": {
+    "total": "Total Services",
+    "active": "Active",
+    "withPromo": "On Promotion",
+    "facials": "Facials",
+    "corporals": "Body Treatments",
+    "packages": "Packages"
+  },
+  "promotions": {
+    "validUntil": "Valid until",
+    "limitedTime": "Limited time offer",
+    "newService": "New",
+    "popular": "Popular",
+    "recommended": "Recommended"
+  },
+  "categoryDescriptions": {
+    "facial": "Specialized treatments for facial care and rejuvenation",
+    "corporal": "Body therapies for reduction, toning and relaxation",
+    "paquete": "Special combos with multiple treatments"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "required": "Este campo es requerido",
+  "email": {
+    "required": "El email es requerido",
+    "invalid": "Email inválido",
+    "format": "Formato de email inválido"
+  },
+  "phone": {
+    "required": "El teléfono es requerido",
+    "invalid": "Teléfono inválido",
+    "format": "Formato: +506 8888-8888"
+  },
+  "name": {
+    "required": "El nombre es requerido",
+    "min": "El nombre debe tener al menos {{min}} caracteres",
+    "max": "El nombre no puede exceder {{max}} caracteres"
+  },
+  "date": {
+    "required": "La fecha es requerida",
+    "invalid": "Fecha inválida",
+    "past": "La fecha no puede estar en el pasado",
+    "future": "La fecha debe ser futura",
+    "minAdvance": "Debes reservar con al menos {{hours}} horas de anticipación"
+  },
+  "time": {
+    "required": "La hora es requerida",
+    "invalid": "Hora inválida",
+    "format": "Formato: HH:MM",
+    "outsideHours": "Fuera del horario de atención (9:00 AM - 9:00 PM)"
+  },
+  "service": {
+    "required": "Debes seleccionar un servicio",
+    "notFound": "Servicio no encontrado",
+    "inactive": "Este servicio no está disponible actualmente"
+  },
+  "notes": {
+    "max": "Las notas no pueden exceder {{max}} caracteres"
+  },
+  "generic": {
+    "min": "Debe tener al menos {{min}} caracteres",
+    "max": "No puede exceder {{max}} caracteres",
+    "minValue": "El valor mínimo es {{min}}",
+    "maxValue": "El valor máximo es {{max}}",
+    "positive": "Debe ser un número positivo",
+    "integer": "Debe ser un número entero",
+    "url": "URL inválida",
+    "pattern": "Formato inválido"
+  }
+}

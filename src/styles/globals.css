@@ -1,0 +1,207 @@
+/* Fuentes */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Colores principales */
+    --color-gold: 212 175 55;
+    --color-dark: 0 0 0;
+    --color-white: 255 255 255;
+    
+    /* Fondos */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+    
+    /* Bordes */
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    
+    /* Radius */
+    --radius: 0.5rem;
+  }
+  
+  .dark {
+    --background: 0 0% 5%;
+    --foreground: 0 0% 98%;
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+  }
+  
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  /* Botones con efecto dorado */
+  .btn-primary {
+    @apply bg-gold-500 text-white hover:bg-gold-600 transition-all duration-300 shadow-gold-md hover:shadow-gold-lg;
+  }
+  
+  .btn-secondary {
+    @apply bg-dark-900 text-white hover:bg-dark-800 transition-all duration-300;
+  }
+  
+  .btn-outline {
+    @apply border-2 border-gold-500 text-gold-600 dark:text-gold-400 hover:bg-gold-50 dark:hover:bg-gold-900/10 transition-all duration-300;
+  }
+  
+  /* Cards con diseño elegante */
+  .card {
+    @apply bg-white dark:bg-dark-800 rounded-lg shadow-md p-6 transition-all duration-300 hover:shadow-lg;
+  }
+  
+  .card-gold {
+    @apply bg-white dark:bg-dark-800 rounded-lg shadow-gold-md p-6 transition-all duration-300 hover:shadow-gold-lg border border-gold-200 dark:border-gold-800;
+  }
+  
+  /* Inputs elegantes */
+  .input-elegant {
+    @apply w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-dark-600 bg-white dark:bg-dark-700 text-dark-900 dark:text-white focus:border-gold-500 focus:ring-2 focus:ring-gold-200 dark:focus:ring-gold-900/30 transition-all duration-300 outline-none;
+  }
+  
+  /* Gradientes dorados */
+  .gradient-gold {
+    @apply bg-gradient-to-r from-gold-400 via-gold-500 to-gold-600;
+  }
+  
+  .gradient-dark {
+    @apply bg-gradient-to-r from-dark-800 via-dark-900 to-black;
+  }
+  
+  /* Efectos de shimmer */
+  .shimmer {
+    @apply relative overflow-hidden;
+  }
+  
+  .shimmer::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent;
+    animation: shimmer 2s infinite;
+  }
+  
+  /* Scrollbar personalizado */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-gray-100 dark:bg-dark-700 rounded-full;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-gold-500 rounded-full;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-gold-600;
+  }
+}
+
+@layer utilities {
+  /* Utilidades personalizadas */
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .glass-effect {
+    @apply backdrop-blur-md bg-white/80 dark:bg-dark-900/80;
+  }
+  
+  .gold-glow {
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+  }
+  
+  .dark-glow {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Animaciones personalizadas */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Estilos específicos para Landing Page */
+@layer components {
+  .landing-page {
+    @apply relative overflow-x-hidden;
+  }
+  
+  /* Smooth scroll para anclas */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Hero video overlay */
+  .hero-video-wrapper {
+    @apply absolute inset-0 z-0;
+  }
+  
+  .hero-video {
+    @apply absolute inset-0 w-full h-full object-cover;
+  }
+  
+  .hero-video-overlay {
+    @apply absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/70;
+  }
+}
+
+/* Animaciones adicionales para landing */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(212, 175, 55, 0.6);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Safe area para dispositivos con notch (iPhone X+) */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-area-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Ocultar scrollbar pero mantener funcionalidad */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}

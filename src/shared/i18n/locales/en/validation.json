@@ -1,0 +1,49 @@
+{
+  "required": "This field is required",
+  "email": {
+    "required": "Email is required",
+    "invalid": "Invalid email",
+    "format": "Invalid email format"
+  },
+  "phone": {
+    "required": "Phone is required",
+    "invalid": "Invalid phone",
+    "format": "Format: +506 8888-8888"
+  },
+  "name": {
+    "required": "Name is required",
+    "min": "Name must be at least {{min}} characters",
+    "max": "Name cannot exceed {{max}} characters"
+  },
+  "date": {
+    "required": "Date is required",
+    "invalid": "Invalid date",
+    "past": "Date cannot be in the past",
+    "future": "Date must be in the future",
+    "minAdvance": "You must book at least {{hours}} hours in advance"
+  },
+  "time": {
+    "required": "Time is required",
+    "invalid": "Invalid time",
+    "format": "Format: HH:MM",
+    "outsideHours": "Outside business hours (9:00 AM - 9:00 PM)"
+  },
+  "service": {
+    "required": "You must select a service",
+    "notFound": "Service not found",
+    "inactive": "This service is currently unavailable"
+  },
+  "notes": {
+    "max": "Notes cannot exceed {{max}} characters"
+  },
+  "generic": {
+    "min": "Must be at least {{min}} characters",
+    "max": "Cannot exceed {{max}} characters",
+    "minValue": "Minimum value is {{min}}",
+    "maxValue": "Maximum value is {{max}}",
+    "positive": "Must be a positive number",
+    "integer": "Must be an integer",
+    "url": "Invalid URL",
+    "pattern": "Invalid format"
+  }
+}

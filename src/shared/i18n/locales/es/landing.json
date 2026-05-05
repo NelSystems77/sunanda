@@ -1,0 +1,122 @@
+{
+  "hero": {
+    "title": "Cuidado Profesional para tu piel y tu cuerpo",
+    "subtitle": "Descubre una experiencia única de bienestar y belleza con nuestros tratamientos especializados",
+    "cta": "Reservar Cita",
+    "ctaSecondary": "Ver Servicios",
+    "trustBadge": "Productos de Alta Calidad",
+    "brandPartner": "Germaine de Capuccini"
+  },
+  "features": {
+    "title": "¿Por qué elegirnos?",
+    "professional": {
+      "title": "Profesionales Certificados",
+      "description": "Equipo de esteticistas altamente capacitados y certificados"
+    },
+    "quality": {
+      "title": "Productos Premium",
+      "description": "Utilizamos la reconocida marca Germaine de Capuccini"
+    },
+    "hygiene": {
+      "title": "Máxima Higiene",
+      "description": "Protocolos de limpieza y desinfección en cada tratamiento"
+    },
+    "personalized": {
+      "title": "Atención Personalizada",
+      "description": "Cada tratamiento adaptado a tus necesidades específicas"
+    }
+  },
+  "services": {
+    "title": "Ofertas Especiales",
+    "subtitle": "Aprovecha nuestras promociones de apertura",
+    "viewAll": "Ver Todos los Servicios",
+    "from": "Desde",
+    "session": "sesión",
+    "sessions": "sesiones",
+    "duration": "Duración",
+    "minutes": "minutos",
+    "promo": "PROMOCIÓN",
+    "opening": "APERTURA",
+    "twoForOne": "2x1",
+    "bookService": "Reservar"
+  },
+  "testimonials": {
+    "title": "Lo que dicen nuestros clientes",
+    "subtitle": "Experiencias reales de personas que han confiado en nosotros",
+    "testimonial1": {
+      "name": "María Rodríguez",
+      "text": "La limpieza facial profunda superó todas mis expectativas. Mi piel nunca se había sentido tan suave y radiante. El personal es extremadamente profesional y el ambiente es muy relajante.",
+      "service": "Limpieza Facial Profunda"
+    },
+    "testimonial2": {
+      "name": "Marco Jiménez",
+      "text": "El tratamiento de hidrolipoclasia es increíble. Noté resultados desde la primera sesión. Totalmente recomendado, excelente relación calidad-precio con la promoción de apertura.",
+      "service": "Hidrolipoclasia"
+    },
+    "testimonial3": {
+      "name": "Juan Mora",
+      "text": "Personal altamente profesional y productos de primera calidad. Me encanta que utilizan Germaine de Capuccini. El ambiente es muy limpio y acogedor.",
+      "service": "Tratamiento Corporal"
+    },
+    "testimonial4": {
+      "name": "Andrea Vargas",
+      "text": "Mi piel nunca se había sentido tan bien. Los tratamientos son personalizados y realmente efectivos. Sin duda volveré y lo recomendaré a todas mis amigas.",
+      "service": "Tratamiento Facial Personalizado"
+    }
+  },
+  "gallery": {
+    "title": "Nuestras Instalaciones",
+    "subtitle": "Un espacio diseñado para tu bienestar y relajación",
+    "viewMore": "Ver Más Fotos",
+    "altFacial": "Sala de tratamientos faciales",
+    "altCorporal": "Sala de tratamientos corporales",
+    "altProducts": "Productos Germaine de Capuccini",
+    "altAmbience": "Ambiente relajante",
+    "altReception": "Área de recepción",
+    "altTreatment": "Tratamiento en proceso"
+  },
+  "contact": {
+    "title": "Visítanos",
+    "subtitle": "Estamos aquí para atenderte",
+    "openingHours": "Horario de Atención",
+    "getDirections": "Cómo Llegar",
+    "sendWhatsApp": "Enviar WhatsApp",
+    "callUs": "Llamar Ahora",
+    "emailUs": "Enviar Email",
+    "findOnFacebook": "Encuéntranos en Facebook",
+    "schedule": {
+      "weekdays": "Lunes a Domingo",
+      "hours": "9:00 AM - 9:00 PM"
+    },
+    "address": {
+      "line1": "San José, Guadalupe",
+      "line2": "Costa Rica"
+    }
+  },
+  "cta": {
+    "title": "¿Listo para transformar tu piel?",
+    "subtitle": "Reserva tu cita hoy y comienza tu viaje hacia el bienestar",
+    "button": "Reservar Ahora",
+    "or": "o",
+    "whatsapp": "Escríbenos por WhatsApp"
+  },
+  "faq": {
+    "title": "Preguntas Frecuentes",
+    "q1": {
+      "question": "¿Cuánto tiempo dura cada sesión?",
+      "answer": "Los tratamientos faciales duran aproximadamente 60 minutos, mientras que los corporales pueden extenderse hasta 90 minutos."
+    },
+    "q2": {
+      "question": "¿Necesito hacer una cita previa?",
+      "answer": "Sí, recomendamos agendar con anticipación para garantizar tu horario preferido."
+    },
+    "q3": {
+      "question": "¿Qué productos utilizan?",
+      "answer": "Utilizamos exclusivamente productos de la reconocida marca Germaine de Capuccini, líder en cosmética profesional."
+    },
+    "q4": {
+      "question": "¿Tienen promociones vigentes?",
+      "answer": "Sí, actualmente tenemos promoción 2x1 en limpieza facial profunda y precio especial de apertura en hidrolipoclasia."
+    }
+  }
+}

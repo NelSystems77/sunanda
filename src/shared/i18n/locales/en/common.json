@@ -1,0 +1,130 @@
+{
+  "app": {
+    "name": "SUNANDA Aesthetics & Spa",
+    "shortName": "SUNANDA Spa",
+    "tagline": "Professional Care for your skin and body"
+  },
+  "navigation": {
+    "home": "Home",
+    "services": "Services",
+    "about": "About Us",
+    "contact": "Contact",
+    "bookNow": "Book Now",
+    "dashboard": "Dashboard",
+    "login": "Login",
+    "logout": "Logout"
+  },
+  "common": {
+    "welcome": "Welcome",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "search": "Search",
+    "filter": "Filter",
+    "reset": "Reset",
+    "submit": "Submit",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "close": "Close",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
+    "all": "All",
+    "none": "None",
+    "select": "Select",
+    "selected": "Selected",
+    "showMore": "Show more",
+    "showLess": "Show less"
+  },
+  "time": {
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "yesterday": "Yesterday",
+    "thisWeek": "This week",
+    "thisMonth": "This month",
+    "am": "AM",
+    "pm": "PM",
+    "hours": "hours",
+    "minutes": "minutes",
+    "days": {
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday"
+    },
+    "months": {
+      "january": "January",
+      "february": "February",
+      "march": "March",
+      "april": "April",
+      "may": "May",
+      "june": "June",
+      "july": "July",
+      "august": "August",
+      "september": "September",
+      "october": "October",
+      "november": "November",
+      "december": "December"
+    }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "phone": "Phone",
+    "whatsapp": "WhatsApp",
+    "email": "Email",
+    "address": "Address",
+    "schedule": "Schedule",
+    "scheduleText": "Monday - Sunday, 9:00 AM - 9:00 PM",
+    "location": "San José, Guadalupe",
+    "followUs": "Follow Us",
+    "sendMessage": "Send Message",
+    "getDirections": "Get Directions"
+  },
+  "footer": {
+    "description": "Your beauty and wellness destination in Costa Rica",
+    "quickLinks": "Quick Links",
+    "socialMedia": "Social Media",
+    "copyright": "© {{year}} SUNANDA Spa. All rights reserved.",
+    "madeWith": "Made with",
+    "in": "in",
+    "location": "Costa Rica"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "network": "Connection error. Check your internet.",
+    "notFound": "We couldn't find what you're looking for.",
+    "unauthorized": "You don't have permission to perform this action.",
+    "validation": "Please fix the form errors.",
+    "required": "This field is required.",
+    "invalidEmail": "Invalid email.",
+    "invalidPhone": "Invalid phone number.",
+    "minLength": "Must be at least {{min}} characters.",
+    "maxLength": "Cannot exceed {{max}} characters.",
+    "tryAgain": "Try again"
+  },
+  "success": {
+    "saved": "Saved successfully",
+    "deleted": "Deleted successfully",
+    "updated": "Updated successfully",
+    "sent": "Sent successfully"
+  },
+  "currency": {
+    "crc": "₡",
+    "usd": "$",
+    "approximately": "~"
+  },
+  "language": {
+    "es": "Español",
+    "en": "English",
+    "changeLanguage": "Change language"
+  }
+}

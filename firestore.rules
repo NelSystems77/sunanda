@@ -1,0 +1,97 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ============================================
+    // HELPER FUNCTIONS
+    // ============================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['SUPER_ADMIN', 'ADMIN'];
+    }
+    
+    function isSuperAdmin() {
+      return isAuthenticated() && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'SUPER_ADMIN';
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isActive() {
+      return isAuthenticated() && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isActive == true;
+    }
+    
+    // ============================================
+    // USERS
+    // ============================================
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isAdmin();
+      allow update: if isAdmin() || 
+                      (isOwner(userId) && 
+                       !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'isActive']));
+      allow delete: if isSuperAdmin();
+    }
+    
+    // ============================================
+    // CLIENTS
+    // ============================================
+    match /clients/{clientId} {
+      allow read: if isAuthenticated() && isActive();
+      allow write: if isAdmin() && isActive();
+    }
+    
+    // ============================================
+    // APPOINTMENTS
+    // ============================================
+    match /appointments/{appointmentId} {
+      allow read: if isAuthenticated() && isActive();
+      allow create: if isAuthenticated() && isActive();
+      allow update: if isAuthenticated() && isActive();
+      allow delete: if isAdmin() && isActive();
+    }
+    
+    // ============================================
+    // SERVICES
+    // ============================================
+    match /services/{serviceId} {
+      allow read: if true; // Público
+      allow write: if isAdmin() && isActive();
+    }
+    
+    // ============================================
+    // BOOKING REQUESTS
+    // ============================================
+    match /bookingRequests/{requestId} {
+      allow read: if isAuthenticated() && isActive();
+      allow create: if true; // Público
+      allow update, delete: if isAdmin() && isActive();
+    }
+    
+    // ============================================
+    // MEDICAL RECORDS
+    // ============================================
+    match /medicalRecords/{recordId} {
+      allow read: if isAuthenticated() && isActive();
+      allow create: if isAuthenticated() && isActive();
+      allow update: if isAuthenticated() && isActive();
+      allow delete: if isAdmin() && isActive();
+    }
+    
+    // ============================================
+    // PAYMENTS
+    // ============================================
+    match /payments/{paymentId} {
+      allow read: if isAuthenticated() && isActive();
+      allow write: if isAdmin() && isActive();
+    }
+  }
+}

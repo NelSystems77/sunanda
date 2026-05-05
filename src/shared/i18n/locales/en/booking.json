@@ -1,0 +1,95 @@
+{
+  "title": "Request Appointment",
+  "subtitle": "Complete the form and we'll contact you to confirm your appointment",
+  "steps": {
+    "selectService": "Select Service",
+    "personalInfo": "Personal Information",
+    "dateTime": "Date & Time",
+    "confirmation": "Confirmation"
+  },
+  "form": {
+    "selectService": "Select a service",
+    "serviceSelected": "Selected service",
+    "changeService": "Change service",
+    "personalInfo": {
+      "title": "Your Information",
+      "name": "Full name",
+      "namePlaceholder": "E.g: Maria Rodriguez",
+      "email": "Email address",
+      "emailPlaceholder": "your@email.com",
+      "phone": "Phone / WhatsApp",
+      "phonePlaceholder": "+506 8888-8888",
+      "preferredLanguage": "Preferred language",
+      "notes": "Additional notes (optional)",
+      "notesPlaceholder": "Tell us if you have any special condition, allergy or preference..."
+    },
+    "dateTime": {
+      "title": "Desired Date & Time",
+      "date": "Date",
+      "time": "Time",
+      "selectDate": "Select a date",
+      "selectTime": "Select a time",
+      "available": "Available",
+      "notAvailable": "Not available",
+      "preferredTime": "Preferred time (approximate)",
+      "flexible": "I'm flexible with the schedule",
+      "morning": "Morning (9:00 AM - 12:00 PM)",
+      "afternoon": "Afternoon (12:00 PM - 6:00 PM)",
+      "evening": "Evening (6:00 PM - 9:00 PM)"
+    },
+    "summary": {
+      "title": "Request Summary",
+      "service": "Service",
+      "date": "Requested date",
+      "time": "Preferred time",
+      "duration": "Estimated duration",
+      "price": "Price",
+      "contactInfo": "Contact information",
+      "notes": "Notes",
+      "noNotes": "No additional notes"
+    }
+  },
+  "buttons": {
+    "back": "Back",
+    "continue": "Continue",
+    "submit": "Submit Request",
+    "cancel": "Cancel"
+  },
+  "messages": {
+    "success": {
+      "title": "Request Sent!",
+      "description": "We have received your appointment request. We'll contact you soon to confirm availability.",
+      "whatsapp": "You can also message us on WhatsApp",
+      "backToHome": "Back to Home"
+    },
+    "error": {
+      "title": "Submission Error",
+      "description": "We couldn't process your request. Please try again or contact us via WhatsApp.",
+      "retry": "Try Again"
+    },
+    "loading": "Sending your request...",
+    "validation": {
+      "nameRequired": "Name is required",
+      "nameMin": "Name must be at least 3 characters",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Invalid email",
+      "phoneRequired": "Phone is required",
+      "phoneInvalid": "Invalid phone (format: +506 8888-8888)",
+      "serviceRequired": "You must select a service",
+      "dateRequired": "You must select a date",
+      "dateInvalid": "Date must be in the future"
+    }
+  },
+  "info": {
+    "confirmationNote": "This is an appointment request. We'll contact you to confirm availability.",
+    "responseTime": "Response time: 1-2 hours (business hours)",
+    "whatsappFaster": "Need immediate response? Message us on WhatsApp",
+    "privacy": "Your data is secure and will not be shared with third parties"
+  },
+  "status": {
+    "pending": "Pending confirmation",
+    "confirmed": "Confirmed",
+    "rejected": "Not available",
+    "cancelled": "Cancelled"
+  }
+}

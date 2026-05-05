@@ -1,0 +1,95 @@
+{
+  "title": "Solicitar Cita",
+  "subtitle": "Completa el formulario y nos pondremos en contacto contigo para confirmar tu cita",
+  "steps": {
+    "selectService": "Seleccionar Servicio",
+    "personalInfo": "Información Personal",
+    "dateTime": "Fecha y Hora",
+    "confirmation": "Confirmación"
+  },
+  "form": {
+    "selectService": "Selecciona un servicio",
+    "serviceSelected": "Servicio seleccionado",
+    "changeService": "Cambiar servicio",
+    "personalInfo": {
+      "title": "Tus Datos",
+      "name": "Nombre completo",
+      "namePlaceholder": "Ej: María Rodríguez",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "tu@email.com",
+      "phone": "Teléfono / WhatsApp",
+      "phonePlaceholder": "+506 8888-8888",
+      "preferredLanguage": "Idioma de preferencia",
+      "notes": "Notas adicionales (opcional)",
+      "notesPlaceholder": "Cuéntanos si tienes alguna condición especial, alergia o preferencia..."
+    },
+    "dateTime": {
+      "title": "Fecha y Hora Deseada",
+      "date": "Fecha",
+      "time": "Hora",
+      "selectDate": "Selecciona una fecha",
+      "selectTime": "Selecciona una hora",
+      "available": "Disponible",
+      "notAvailable": "No disponible",
+      "preferredTime": "Hora preferida (aproximada)",
+      "flexible": "Soy flexible con el horario",
+      "morning": "Mañana (9:00 AM - 12:00 PM)",
+      "afternoon": "Tarde (12:00 PM - 6:00 PM)",
+      "evening": "Noche (6:00 PM - 9:00 PM)"
+    },
+    "summary": {
+      "title": "Resumen de tu Solicitud",
+      "service": "Servicio",
+      "date": "Fecha solicitada",
+      "time": "Hora preferida",
+      "duration": "Duración estimada",
+      "price": "Precio",
+      "contactInfo": "Información de contacto",
+      "notes": "Notas",
+      "noNotes": "Sin notas adicionales"
+    }
+  },
+  "buttons": {
+    "back": "Atrás",
+    "continue": "Continuar",
+    "submit": "Enviar Solicitud",
+    "cancel": "Cancelar"
+  },
+  "messages": {
+    "success": {
+      "title": "¡Solicitud Enviada!",
+      "description": "Hemos recibido tu solicitud de cita. Nos pondremos en contacto contigo pronto para confirmar la disponibilidad.",
+      "whatsapp": "También puedes escribirnos por WhatsApp",
+      "backToHome": "Volver al Inicio"
+    },
+    "error": {
+      "title": "Error al Enviar",
+      "description": "No pudimos procesar tu solicitud. Por favor intenta nuevamente o contáctanos por WhatsApp.",
+      "retry": "Intentar Nuevamente"
+    },
+    "loading": "Enviando tu solicitud...",
+    "validation": {
+      "nameRequired": "El nombre es requerido",
+      "nameMin": "El nombre debe tener al menos 3 caracteres",
+      "emailRequired": "El email es requerido",
+      "emailInvalid": "Email inválido",
+      "phoneRequired": "El teléfono es requerido",
+      "phoneInvalid": "Teléfono inválido (formato: +506 8888-8888)",
+      "serviceRequired": "Debes seleccionar un servicio",
+      "dateRequired": "Debes seleccionar una fecha",
+      "dateInvalid": "La fecha debe ser posterior a hoy"
+    }
+  },
+  "info": {
+    "confirmationNote": "Esta es una solicitud de cita. Nos pondremos en contacto contigo para confirmar la disponibilidad.",
+    "responseTime": "Tiempo de respuesta: 1-2 horas (horario laboral)",
+    "whatsappFaster": "¿Necesitas respuesta inmediata? Escríbenos por WhatsApp",
+    "privacy": "Tus datos están seguros y no serán compartidos con terceros"
+  },
+  "status": {
+    "pending": "Pendiente de confirmación",
+    "confirmed": "Confirmada",
+    "rejected": "No disponible",
+    "cancelled": "Cancelada"
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "hero": {
+    "title": "Professional Care for your skin and body",
+    "subtitle": "Discover a unique wellness and beauty experience with our specialized treatments",
+    "cta": "Book Appointment",
+    "ctaSecondary": "View Services",
+    "trustBadge": "High Quality Products",
+    "brandPartner": "Germaine de Capuccini"
+  },
+  "features": {
+    "title": "Why choose us?",
+    "professional": {
+      "title": "Certified Professionals",
+      "description": "Team of highly trained and certified estheticians"
+    },
+    "quality": {
+      "title": "Premium Products",
+      "description": "We use the renowned Germaine de Capuccini brand"
+    },
+    "hygiene": {
+      "title": "Maximum Hygiene",
+      "description": "Cleaning and disinfection protocols for each treatment"
+    },
+    "personalized": {
+      "title": "Personalized Attention",
+      "description": "Each treatment adapted to your specific needs"
+    }
+  },
+  "services": {
+    "title": "Special Offers",
+    "subtitle": "Take advantage of our opening promotions",
+    "viewAll": "View All Services",
+    "from": "From",
+    "session": "session",
+    "sessions": "sessions",
+    "duration": "Duration",
+    "minutes": "minutes",
+    "promo": "PROMOTION",
+    "opening": "OPENING",
+    "twoForOne": "2 FOR 1",
+    "bookService": "Book Now"
+  },
+  "testimonials": {
+    "title": "What our clients say",
+    "subtitle": "Real experiences from people who have trusted us",
+    "testimonial1": {
+      "name": "María Rodríguez",
+      "text": "The deep facial cleansing exceeded all my expectations. My skin has never felt so soft and radiant. The staff is extremely professional and the atmosphere is very relaxing.",
+      "service": "Deep Facial Cleansing"
+    },
+    "testimonial2": {
+      "name": "Marco Jiménez",
+      "text": "The hydrolipoclasia treatment is amazing. I noticed results from the first session. Totally recommended, excellent value for money with the opening promotion.",
+      "service": "Hydrolipoclasia"
+    },
+    "testimonial3": {
+      "name": "Juan Mora",
+      "text": "Highly professional staff and top-quality products. I love that they use Germaine de Capuccini. The environment is very clean and welcoming.",
+      "service": "Body Treatment"
+    },
+    "testimonial4": {
+      "name": "Andrea Vargas",
+      "text": "My skin has never felt this good. The treatments are personalized and truly effective. I will definitely return and recommend it to all my friends.",
+      "service": "Personalized Facial Treatment"
+    }
+  },
+  "gallery": {
+    "title": "Our Facilities",
+    "subtitle": "A space designed for your wellness and relaxation",
+    "viewMore": "View More Photos",
+    "altFacial": "Facial treatment room",
+    "altCorporal": "Body treatment room",
+    "altProducts": "Germaine de Capuccini products",
+    "altAmbience": "Relaxing atmosphere",
+    "altReception": "Reception area",
+    "altTreatment": "Treatment in progress"
+  },
+  "contact": {
+    "title": "Visit Us",
+    "subtitle": "We are here to serve you",
+    "openingHours": "Opening Hours",
+    "getDirections": "Get Directions",
+    "sendWhatsApp": "Send WhatsApp",
+    "callUs": "Call Now",
+    "emailUs": "Send Email",
+    "findOnFacebook": "Find us on Facebook",
+    "schedule": {
+      "weekdays": "Monday to Sunday",
+      "hours": "9:00 AM - 9:00 PM"
+    },
+    "address": {
+      "line1": "San José, Guadalupe",
+      "line2": "Costa Rica"
+    }
+  },
+  "cta": {
+    "title": "Ready to transform your skin?",
+    "subtitle": "Book your appointment today and start your wellness journey",
+    "button": "Book Now",
+    "or": "or",
+    "whatsapp": "Message us on WhatsApp"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "q1": {
+      "question": "How long does each session last?",
+      "answer": "Facial treatments last approximately 60 minutes, while body treatments can extend up to 90 minutes."
+    },
+    "q2": {
+      "question": "Do I need to make an appointment?",
+      "answer": "Yes, we recommend scheduling in advance to guarantee your preferred time slot."
+    },
+    "q3": {
+      "question": "What products do you use?",
+      "answer": "We exclusively use products from the renowned Germaine de Capuccini brand, a leader in professional cosmetics."
+    },
+    "q4": {
+      "question": "Do you have current promotions?",
+      "answer": "Yes, we currently have a 2 for 1 promotion on deep facial cleansing and special opening price on hydrolipoclasia."
+    }
+  }
+}
