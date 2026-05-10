@@ -6,7 +6,7 @@
  */
 
 import { Link } from 'react-router-dom';
-import { Calendar, MessageCircle, Sparkles } from 'lucide-react';
+import { Calendar, MessageCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const WA = import.meta.env.VITE_WHATSAPP_NUMBER ?? '50688083390';
@@ -22,9 +22,13 @@ export function InvestmentInfo() {
           transition={{ duration: 0.6 }}
           className="relative bg-gradient-to-br from-dark-800 via-dark-800 to-gold-900/20 border border-gold-500/30 rounded-2xl p-8 md:p-10 text-center shadow-xl"
         >
-          {/* Ícono decorativo */}
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gold-500/15 border border-gold-500/30 mb-6">
-            <Sparkles className="h-7 w-7 text-gold-400" />
+          {/* Logo SUNANDA decorativo */}
+          <div className="inline-flex items-center justify-center mb-6">
+            <img
+              src="/icons/icon-192.png"
+              alt="SUNANDA Logo"
+              className="w-16 h-16 object-contain rounded-full border-2 border-gold-500/40 shadow-lg shadow-gold-500/20"
+            />
           </div>
 
           {/* Texto principal */}
