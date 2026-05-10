@@ -19,19 +19,18 @@ interface PublicServiceCardProps {
 export function PublicServiceCard({ service }: PublicServiceCardProps) {
   const { t } = useTranslation(['services', 'common']);
 
-  // Calcular precio con promoción si aplica
-  const finalPrice = service.hasPromotion && service.promotionType === 'percentage' && service.promotionValue
-    ? service.priceCRC - (service.priceCRC * service.promotionValue / 100)
-    : service.priceCRC;
-
-  const finalPriceUSD = Math.round(finalPrice / 510);
+  // Calcular precio con promoción si aplica — mantenido para uso futuro
+  // const finalPrice = service.hasPromotion && service.promotionType === 'percentage' && service.promotionValue
+  //   ? service.priceCRC - (service.priceCRC * service.promotionValue / 100)
+  //   : service.priceCRC;
+  // const finalPriceUSD = Math.round(finalPrice / 510);
 
   return (
     <div className="group relative bg-dark-800 border border-dark-700 rounded-xl overflow-hidden hover:border-primary-500/30 transition-all duration-300">
       {/* Badge de promoción */}
       {service.hasPromotion && (
         <div className="absolute top-4 right-4 z-10">
-          <Badge variant="error" className="animate-pulse">
+          <Badge variant="danger" className="animate-pulse">
             {service.promotionType === '2x1' && t('services:card.twoForOne')}
             {service.promotionType === 'percentage' && t('services:card.discount', { percent: service.promotionValue })}
             {service.promotionType === 'fixed' && t('services:card.promo')}
@@ -108,8 +107,8 @@ export function PublicServiceCard({ service }: PublicServiceCardProps) {
           </div>
         </div>
 
-        {/* Precio */}
-        <div className="border-t border-dark-700 pt-4 mb-4">
+        {/* Precio — oculto temporalmente; la inversión se define tras diagnóstico biométrico */}
+        {/* <div className="border-t border-dark-700 pt-4 mb-4">
           {service.hasPromotion && service.promotionType === 'percentage' ? (
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -132,7 +131,7 @@ export function PublicServiceCard({ service }: PublicServiceCardProps) {
           <div className="text-sm text-dark-400 mt-1">
             {t('common:currency.approximately')} {t('common:currency.usd')}{service.hasPromotion ? finalPriceUSD : service.priceUSD} USD
           </div>
-        </div>
+        </div> */}
 
         {/* CTA */}
         <Link to={`/booking?service=${service.id}`}>
