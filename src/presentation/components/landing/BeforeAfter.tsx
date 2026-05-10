@@ -194,28 +194,26 @@ export function BeforeAfter() {
           </div>
 
           {/* Detalles WowShape */}
-          {c.price && (
+          {c.highlights && (
             <div className="mt-6 bg-dark-800 border border-dark-700 rounded-2xl p-5">
               <div className="flex flex-col sm:flex-row items-center gap-5">
-                {/* Sesiones + precio */}
-                <div className="flex items-center gap-6 flex-shrink-0">
-                  <div className="text-center">
-                    <p className="text-3xl font-bold text-gold-400">{c.sessions}</p>
-                    <p className="text-xs text-dark-400 mt-0.5">sesiones</p>
-                  </div>
-                  <div className="w-px h-10 bg-dark-700" />
-                  <div className="text-center">
-                    <p className="text-2xl font-bold text-white">{c.price}</p>
-                    <p className="text-xs text-dark-400 mt-0.5">paquete completo</p>
-                  </div>
-                </div>
-
-                {/* Separador */}
-                <div className="hidden sm:block w-px self-stretch bg-dark-700" />
+                {/* Sesiones */}
+                {c.sessions && (
+                  <>
+                    <div className="flex items-center gap-6 flex-shrink-0">
+                      <div className="text-center">
+                        <p className="text-3xl font-bold text-gold-400">{c.sessions}</p>
+                        <p className="text-xs text-dark-400 mt-0.5">sesiones</p>
+                      </div>
+                    </div>
+                    {/* Separador */}
+                    <div className="hidden sm:block w-px self-stretch bg-dark-700" />
+                  </>
+                )}
 
                 {/* Highlights */}
                 <div className="flex flex-wrap justify-center sm:justify-start gap-2 flex-1">
-                  {c.highlights?.map((h, i) => (
+                  {c.highlights.map((h, i) => (
                     <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gold-900/30 border border-gold-700/40 rounded-full text-xs text-gold-300 font-medium">
                       <CheckCircle2 className="w-3.5 h-3.5 text-gold-400" />
                       {h}

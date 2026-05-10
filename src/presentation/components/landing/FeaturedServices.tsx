@@ -95,7 +95,7 @@ export function FeaturedServices() {
               <div className={`relative bg-gradient-to-br ${service.gradient} border border-primary-500/20 rounded-2xl p-8 hover:border-primary-500/40 transition-all duration-300 overflow-hidden`}>
                 {/* Badge de promoción */}
                 <div className="absolute top-4 right-4">
-                  <Badge variant="error" className="animate-pulse">
+                  <Badge variant="danger" className="animate-pulse">
                     {service.promo.badge}
                   </Badge>
                 </div>
@@ -115,21 +115,6 @@ export function FeaturedServices() {
 
                 {/* Info del servicio */}
                 <div className="space-y-3 mb-6">
-                  {/* Precio */}
-                  <div className="flex items-center justify-between">
-                    <span className="text-dark-400 text-sm">
-                      {t('landing:services.from')}
-                    </span>
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-primary-400">
-                        {t('common:currency.crc')}{service.priceCRC.toLocaleString()}
-                      </div>
-                      <div className="text-sm text-dark-400">
-                        {t('common:currency.approximately')} {t('common:currency.usd')}{service.priceUSD} USD
-                      </div>
-                    </div>
-                  </div>
-
                   {/* Duración */}
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex items-center gap-2 text-dark-300">

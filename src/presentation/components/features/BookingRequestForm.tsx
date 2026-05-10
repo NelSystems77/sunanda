@@ -16,7 +16,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { format, addDays } from 'date-fns';
-import { Calendar, User, Clock, CheckCircle2, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Clock, CheckCircle2, ArrowLeft, ArrowRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Service } from '@/core/domain/interfaces/Service';
 import { serviceRepository } from '@/core/infrastructure/repositories/ServiceRepository';
@@ -24,7 +24,6 @@ import { bookingRequestRepository } from '@/core/infrastructure/repositories/Boo
 import { CreateBookingRequestDTO } from '@/core/domain/interfaces/BookingRequest';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
-import { Select } from '../ui/Select';
 import { Textarea } from '../ui/Textarea';
 import { Spinner } from '../ui/Spinner';
 
@@ -220,9 +219,6 @@ export function BookingRequestForm() {
                         <span className="flex items-center gap-1">
                           <Clock className="h-4 w-4" />
                           {service.duration} min
-                        </span>
-                        <span className="text-primary-400 font-bold">
-                          ₡{service.priceCRC.toLocaleString()}
                         </span>
                       </div>
                     </div>

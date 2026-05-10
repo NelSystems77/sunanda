@@ -179,12 +179,9 @@ export function TreatmentDetailsModal({ preselectedId, onClose }: Props) {
                     <span className="text-xs text-gold-400 font-semibold uppercase tracking-wide">{selected.category}</span>
                     <h3 className="text-2xl font-bold text-white mt-1">{selected.name}</h3>
                   </div>
-                  <div className="text-right">
-                    <p className="text-2xl font-bold text-gold-400">{selected.price}</p>
-                    <div className="flex items-center gap-1 justify-end mt-1">
-                      <Clock className="w-3.5 h-3.5 text-dark-400" />
-                      <span className="text-sm text-dark-400">{selected.duration}</span>
-                    </div>
+                  <div className="flex items-center gap-1 text-dark-400">
+                    <Clock className="w-3.5 h-3.5" />
+                    <span className="text-sm">{selected.duration}</span>
                   </div>
                 </div>
 
@@ -294,7 +291,6 @@ export function TreatmentDetails() {
                     <span className="text-xs text-gold-400 font-semibold uppercase tracking-wide">{t.category}</span>
                     <h3 className="text-lg font-bold text-white mt-1">{t.name}</h3>
                   </div>
-                  <span className="text-gold-400 font-bold text-lg">{t.price}</span>
                 </div>
                 <p className="text-sm text-dark-400 mb-4 line-clamp-2">{t.description}</p>
                 <div className="flex items-center justify-between">
