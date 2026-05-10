@@ -37,3 +37,4 @@ export { FAQSection } from './FAQSection';
 export { NewsletterSignup } from './NewsletterSignup';
 export { LiveChat } from './LiveChat';
 export { CookieConsent } from './CookieConsent';
+export { InvestmentInfo } from './InvestmentInfo';

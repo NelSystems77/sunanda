@@ -22,6 +22,7 @@ import { TreatmentDetails } from './TreatmentDetails';
 import { BeforeAfter } from './BeforeAfter';
 import { TestimonialsCarousel } from './TestimonialsCarousel';
 import { BookingCTA } from './BookingCTA';
+import { InvestmentInfo } from './InvestmentInfo';
 import { BlogPreview } from './BlogPreview';
 import { FAQSection } from './FAQSection';
 import { NewsletterSignup } from './NewsletterSignup';
@@ -73,6 +74,9 @@ export const LandingPage = () => {
 
         {/* Sección 6: Servicios Completos */}
         <ServicesSection />
+
+        {/* Inversión personalizada y cuota de reserva */}
+        <InvestmentInfo />
 
         {/* Sección 7: Producto Destacado */}
         <ProductSpotlight />
