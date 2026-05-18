@@ -10,7 +10,7 @@ const STATS = [
 
 const BADGES = [
   { text: 'Germaine de Capuccini', sub: 'Distribuidora oficial' },
-  { text: 'CCSS', sub: 'Registro profesional' },
+  { text: 'Colegio de Enfermeras', sub: 'Colegiada' },
   { text: 'IFPA', sub: 'Certificación internacional' },
   { text: 'Cruelty Free', sub: 'Productos éticos' },
 ];

@@ -18,7 +18,7 @@ const TESTIMONIALS: Testimonial[] = [
     service: 'Tratamiento Facial Timexpert',
     rating: 5,
     text: 'Increíble experiencia. Mi piel luce renovada y el servicio fue impecable. La Lic. Grettel es una profesional excepcional.',
-    date: 'Marzo 2026',
+    date: 'Diciembre 2025',
   },
   {
     id: '2',
@@ -26,7 +26,7 @@ const TESTIMONIALS: Testimonial[] = [
     service: 'Masaje Relajante',
     rating: 5,
     text: 'El mejor spa de San José. Ambiente tranquilo, productos de primera calidad y una atención personalizada que no encuentras en ningún otro lugar.',
-    date: 'Febrero 2026',
+    date: 'Octubre 2025',
   },
   {
     id: '3',
@@ -34,7 +34,7 @@ const TESTIMONIALS: Testimonial[] = [
     service: 'Limpieza Profunda',
     rating: 5,
     text: 'Profesionalismo y calidez humana. Los resultados son visibles desde la primera sesión. Ya agendé mi próxima cita.',
-    date: 'Enero 2026',
+    date: 'Agosto 2025',
   },
   {
     id: '4',
@@ -42,7 +42,7 @@ const TESTIMONIALS: Testimonial[] = [
     service: 'Hydracure Facial',
     rating: 5,
     text: 'Me encanta la atención personalizada. Grettel estudia tu piel y recomienda exactamente lo que necesitas. 100% recomendado.',
-    date: 'Diciembre 2025',
+    date: 'Julio 2025',
   },
 ];
 
