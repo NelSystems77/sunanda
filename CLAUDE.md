@@ -266,6 +266,16 @@ El prefijo generado en notas tiene el formato: `Nombre: X | Tel: Y | Emergencia:
 - `serviceId`: requerido
 - `date`, `startTime`, `endTime`: requeridos
 
+Todos los campos del schema tienen `defaultValues` explícitos en `useForm` (`clientId: ''`, `estheticianId: ''`, `serviceId: ''`). Sin esto los valores son `undefined` y la validación de Zod falla silenciosamente al enviar.
+
+### Manejo de errores en submit
+
+`handleSubmit(onSubmit, onValidationError)` — el segundo argumento es el `onError` callback:
+
+- **Si la validación falla** (campo requerido vacío, hora inválida, etc.): muestra toast `"Por favor completa todos los campos requeridos"`. Sin este callback el usuario no recibe ningún feedback.
+- **Si `createAppointment` devuelve `null`** (sin lanzar excepción): muestra toast `"No se pudo crear la cita"`.
+- **Si lanza una excepción inesperada**: muestra toast genérico de error.
+
 ### Selector de horario
 
 El selector de hora **siempre es visible** (no está gateado por selección de esteticista):
