@@ -238,6 +238,27 @@ await deleteApp(secondaryApp); // limpiar siempre en finally
 
 ---
 
+## Formulario de Citas (AppointmentForm)
+
+`src/presentation/components/features/AppointmentForm.tsx`
+
+### Selector de horario
+
+El selector de hora **siempre es visible** (no está gateado por selección de esteticista):
+
+- **Sin esteticista seleccionada:** se generan todos los slots del día (09:00–21:00, paso de 30 min) con `available: true` usando la función local `generateAllTimeSlots()`. El usuario puede elegir hora libremente.
+- **Con esteticista seleccionada:** se carga disponibilidad real via `fetchAvailableSlots()` — los slots ocupados por esa esteticista se marcan como no disponibles.
+
+La duración por defecto es **90 minutos** (duración real de los tratamientos). Cambiar a otro valor solo si el servicio seleccionado tiene duración diferente.
+
+### Lógica de slots
+
+- `SPA_SCHEDULE` (en `AvailabilityService.ts`): horario 09:00–21:00, paso entre slots 30 min
+- `displaySlots` (useMemo): decide qué lista mostrar en `TimeSlotSelector`
+- El botón "Crear Cita" permanece deshabilitado hasta que se seleccione un slot
+
+---
+
 ## Esteticistas del equipo
 
 Los selectores de esteticista en el dashboard usan IDs fijos (`esthetician-1`, `esthetician-2`, `esthetician-3`) como valores en Firestore. Los nombres visibles se configuran en:
