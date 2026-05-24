@@ -7,7 +7,7 @@ import { TimeSlotSelector } from './TimeSlotSelector';
 import { TimeSlot, SPA_SCHEDULE } from '../../../core/infrastructure/services/AvailabilityService';
 import { useAppointments } from '../../hooks/useAppointments';
 import { useServices } from '../../hooks/useServices';
-import { X, Calendar, User, Scissors, Clock, FileText } from 'lucide-react';
+import { X, Calendar, User, Scissors, Clock, FileText, Phone } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../hooks/useAuth';
@@ -66,6 +66,8 @@ export function AppointmentForm({
   const [otherServiceDescription, setOtherServiceDescription] = useState('');
   const [clientName, setClientName] = useState('');
   const [clientPhone, setClientPhone] = useState('');
+  const [emergencyContactName, setEmergencyContactName] = useState('');
+  const [emergencyContactPhone, setEmergencyContactPhone] = useState('');
 
   const {
     register,
@@ -117,10 +119,12 @@ export function AppointmentForm({
     try {
       setSubmitting(true);
 
-      // Construir prefijo con datos del cliente
+      // Construir prefijo con datos del cliente y contacto de emergencia
       const clientPrefix = [
         clientName && `Nombre: ${clientName}`,
-        clientPhone && `Tel: ${clientPhone}`
+        clientPhone && `Tel: ${clientPhone}`,
+        emergencyContactName && `Emergencia: ${emergencyContactName}`,
+        emergencyContactPhone && `Tel Emergencia: ${emergencyContactPhone}`
       ].filter(Boolean).join(' | ');
 
       let finalNotes = data.notes || '';
@@ -227,6 +231,40 @@ export function AppointmentForm({
                   type="tel"
                   value={clientPhone}
                   onChange={(e) => setClientPhone(e.target.value)}
+                  placeholder="Ej: 8888-8888"
+                  className="w-full px-4 py-2 bg-dark-900 border border-dark-700 text-white rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent placeholder-dark-400"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Emergency Contact */}
+          <div className="space-y-4 p-4 bg-dark-900/50 border border-dark-700 rounded-lg">
+            <h4 className="text-sm font-semibold text-white flex items-center gap-2">
+              <Phone className="w-4 h-4 text-gold-400" />
+              Contacto de Emergencia
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-white mb-2">
+                  Nombre
+                </label>
+                <input
+                  type="text"
+                  value={emergencyContactName}
+                  onChange={(e) => setEmergencyContactName(e.target.value)}
+                  placeholder="Ej: Juan González"
+                  className="w-full px-4 py-2 bg-dark-900 border border-dark-700 text-white rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent placeholder-dark-400"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-white mb-2">
+                  Teléfono
+                </label>
+                <input
+                  type="tel"
+                  value={emergencyContactPhone}
+                  onChange={(e) => setEmergencyContactPhone(e.target.value)}
                   placeholder="Ej: 8888-8888"
                   className="w-full px-4 py-2 bg-dark-900 border border-dark-700 text-white rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent placeholder-dark-400"
                 />
