@@ -268,6 +268,22 @@ await deleteApp(secondaryApp); // limpiar siempre en finally
 
 ## Firebase Storage — Reglas y estructura de archivos
 
+### Gotcha: `user.id` vs `user.uid` en componentes
+
+El tipo `User` del dominio (`src/core/domain/interfaces/User.ts`) usa **`id`**, no `uid`. Usar `user?.uid` siempre devuelve `undefined` y rompe cualquier guard de autenticación silenciosamente.
+
+```typescript
+// ✅ Correcto
+if (!user?.id) { toast.error('Usuario no autenticado'); return; }
+
+// ❌ Incorrecto — uid no existe en User del dominio, siempre undefined
+if (!user?.uid) { toast.error('Usuario no autenticado'); return; }
+```
+
+> Historial: este bug bloqueaba la subida de fotos en `MedicalRecordModal` para todos los usuarios. El error "Usuario no autenticado" venía del guard en el componente, no de Firebase Storage.
+
+
+
 Archivo: `storage.rules` (raíz del proyecto). Referenciado en `firebase.json` → `"storage": { "rules": "storage.rules" }`.
 
 > **Nota histórica:** el archivo no existía hasta la sesión 2026-05-24. Sin reglas publicadas, Firebase Storage deniega toda escritura con un error de permisos que el SDK reporta como "usuario no autenticado". Si vuelve a aparecer ese error, lo primero es verificar que las reglas estén desplegadas: `firebase deploy --only storage`.
