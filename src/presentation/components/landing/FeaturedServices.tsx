@@ -250,7 +250,7 @@ export function FeaturedServices() {
                 {/* Info sesión + precio */}
                 <div className="flex items-center gap-4 py-3 border-t border-amber-700/30">
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-amber-400">15</p>
+                    <p className="text-2xl font-bold text-amber-400">90</p>
                     <p className="text-xs text-dark-400">minutos</p>
                   </div>
                   <div className="w-px h-10 bg-amber-700/30" />
@@ -357,7 +357,7 @@ export function FeaturedServices() {
                 {/* Info sesión + precio */}
                 <div className="flex items-center gap-4 py-3 border-t border-sky-700/30">
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-sky-400">15</p>
+                    <p className="text-2xl font-bold text-sky-400">90</p>
                     <p className="text-xs text-dark-400">minutos</p>
                   </div>
                   <div className="w-px h-10 bg-sky-700/30" />
@@ -470,7 +470,7 @@ export function FeaturedServices() {
                 {/* Info sesión + precio */}
                 <div className="flex items-center gap-4 py-3 border-t border-emerald-700/30">
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-emerald-400">30</p>
+                    <p className="text-2xl font-bold text-emerald-400">90</p>
                     <p className="text-xs text-dark-400">minutos</p>
                   </div>
                   <div className="w-px h-10 bg-emerald-700/30" />
