@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { Modal } from '../ui/Modal';
 import { Button } from '../ui/Button';
 import { useMedicalRecords } from '../../hooks/useMedicalRecords';
@@ -350,6 +350,16 @@ export function MedicalRecordModal({ clientId, clientName, onClose }: MedicalRec
     );
   };
 
+  const completedSteps = useMemo(() => {
+    if (!record) return 0;
+    return [
+      !!record.anamnesis,
+      !!(record.consentimiento?.firmaUrl || record.consentimiento?.procedimiento),
+      !!(record.sesiones?.length),
+    ].filter(Boolean).length;
+  }, [record]);
+  const progress = Math.round((completedSteps / 3) * 100);
+
   if (loading) {
     return (
       <Modal isOpen={true} onClose={onClose} size={isMobile ? 'full' : 'xl'}>
@@ -407,12 +417,21 @@ export function MedicalRecordModal({ clientId, clientName, onClose }: MedicalRec
             </div>
 
             {!isMobile && (
-              <button
-                onClick={onClose}
-                className="text-dark-400 hover:text-white transition-colors p-1"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => generateMedicalRecordPDF(record)}
+                  className="text-dark-400 hover:text-gold-400 transition-colors p-1"
+                  title="Descargar PDF completo"
+                >
+                  <FileText className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={onClose}
+                  className="text-dark-400 hover:text-white transition-colors p-1"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             )}
           </div>
         )}
@@ -480,30 +499,35 @@ export function MedicalRecordModal({ clientId, clientName, onClose }: MedicalRec
             ))}
           </div>
 
-          {/* Botón X siempre visible en mobile */}
+          {/* Botones PDF + X siempre visibles en mobile */}
           {isMobile && (
-            <button
-              onClick={onClose}
-              className="flex-shrink-0 p-2 text-dark-400 hover:text-white transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
+            <div className="flex items-center gap-0.5 flex-shrink-0">
+              <button
+                onClick={() => generateMedicalRecordPDF(record)}
+                className="p-2 text-dark-400 hover:text-gold-400 transition-colors"
+                title="PDF"
+              >
+                <FileText className="w-5 h-5" />
+              </button>
+              <button
+                onClick={onClose}
+                className="p-2 text-dark-400 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
           )}
         </div>
 
-        {/* PDF BUTTON - Sticky en mobile */}
-        {!isMobile && (
-          <div className="mt-4">
-            <Button
-              variant="outline"
-              onClick={() => generateMedicalRecordPDF(record)}
-              className="w-full"
-            >
-              <FileText className="w-4 h-4 mr-2" />
-              PDF Completo
-            </Button>
+        {/* Barra de progreso */}
+        <div className={cn('mt-2', isMobile && 'mt-1')}>
+          <div className="h-0.5 bg-dark-700 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gold-500 rounded-full transition-all duration-700"
+              style={{ width: `${progress}%` }}
+            />
           </div>
-        )}
+        </div>
       </div>
 
       {/* CONTENIDO */}
@@ -511,7 +535,7 @@ export function MedicalRecordModal({ clientId, clientName, onClose }: MedicalRec
         ref={panelRef}
         className={cn(
           'overflow-y-auto',
-          isMobile ? 'px-4 pt-4 pb-24' : 'p-6 pt-4',
+          isMobile ? 'px-4 pt-4 pb-8' : 'p-6 pt-4',
           isMobile && (headerCollapsed ? 'h-[calc(100vh-80px)]' : 'h-[calc(100vh-180px)]')
         )}
       >
@@ -1535,19 +1559,6 @@ export function MedicalRecordModal({ clientId, clientName, onClose }: MedicalRec
         )}
       </div>
 
-      {/* PDF BUTTON - Fixed bottom en mobile */}
-      {isMobile && (
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-dark-900 border-t border-dark-700 z-20">
-          <Button
-            variant="outline"
-            onClick={() => generateMedicalRecordPDF(record)}
-            className="w-full h-12 text-base"
-          >
-            <FileText className="w-5 h-5 mr-2" />
-            Descargar PDF Completo
-          </Button>
-        </div>
-      )}
     </Modal>
   );
 }

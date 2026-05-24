@@ -342,3 +342,37 @@ Usar **`lg:grid-cols-2`** (1024px), nunca `md:grid-cols-2` (768px). En tablets d
 ### Imágenes nuevas: siempre hacer git add explícito
 
 Al agregar archivos a `public/assets/images/landing/`, ejecutar `git add <archivo>` de forma explícita antes del commit. Los archivos de imagen en `public/` no se auto-detectan como cambios de código y es fácil omitirlos. Si una imagen funciona localmente pero no en Vercel, lo primero a verificar es `git ls-files public/assets/images/landing/`.
+
+---
+
+## Expediente Médico — MedicalRecordModal
+
+`src/presentation/components/features/MedicalRecordModal.tsx`
+
+### Navegación por tabs
+
+4 tabs: **Anamnesis** → **Consentimiento** → **Atención** → **Historial**. El flujo es secuencial (los botones "Continuar a X" avanzan automáticamente al guardar), pero el usuario puede saltar libremente entre tabs en cualquier momento.
+
+### Barra de progreso
+
+Línea gold fina (`h-0.5`) bajo los tabs, en el header sticky. Calcula 3 pasos:
+1. `record.anamnesis` existe → paso 1 completo
+2. `record.consentimiento?.firmaUrl || record.consentimiento?.procedimiento` → paso 2 completo
+3. `record.sesiones?.length > 0` → paso 3 completo
+
+Transición suave `duration-700`. No muestra texto de porcentaje para no ocupar espacio en el header sticky.
+
+### Botón PDF
+
+Ícono ghost (`FileText`) en la esquina del header — no ocupa fila propia:
+- **Desktop:** junto al botón X en la fila del título (`hover:text-gold-400`)
+- **Mobile:** antes del X en la fila de tabs (siempre visible, incluso con header colapsado)
+
+No hay botón PDF fijo en el footer de mobile. `generateMedicalRecordPDF(record)` es el handler en ambos casos.
+
+### Comportamiento mobile
+
+- Header se colapsa al hacer scroll > 50px (solo desaparece la fila del título, los tabs + íconos PDF/X siempre visibles)
+- Secciones de Anamnesis en acordeón (`CollapsibleSection`) — 8 secciones colapsables
+- Contenido con `pb-8` (sin footer fijo que requiera padding extra)
+- Altura del contenido: `h-[calc(100vh-80px)]` colapsado / `h-[calc(100vh-180px)]` expandido
