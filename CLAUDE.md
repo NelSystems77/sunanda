@@ -349,30 +349,39 @@ Al agregar archivos a `public/assets/images/landing/`, ejecutar `git add <archiv
 
 `src/presentation/components/features/MedicalRecordModal.tsx`
 
-### Navegación por tabs
+### Layout: sidebar en desktop, tabs en mobile
 
-4 tabs: **Anamnesis** → **Consentimiento** → **Atención** → **Historial**. El flujo es secuencial (los botones "Continuar a X" avanzan automáticamente al guardar), pero el usuario puede saltar libremente entre tabs en cualquier momento.
+El modal usa un contenedor `flex` con dos variantes:
+- **Desktop (`!isMobile`):** `h-[min(85vh,720px)]` — sidebar fija a la izquierda (`w-52`), contenido scrollable a la derecha (`flex-1 overflow-y-auto`)
+- **Mobile (`isMobile`):** `flex-col h-full` — barra de tabs compacta sticky arriba, contenido scrollable abajo
 
-### Barra de progreso
+No hay header flotante en desktop — la navegación está integrada en el sidebar y nunca "cruza" el formulario.
 
-Línea gold fina (`h-0.5`) bajo los tabs, en el header sticky. Calcula 3 pasos:
-1. `record.anamnesis` existe → paso 1 completo
-2. `record.consentimiento?.firmaUrl || record.consentimiento?.procedimiento` → paso 2 completo
-3. `record.sesiones?.length > 0` → paso 3 completo
+### Sidebar (desktop)
 
-Transición suave `duration-700`. No muestra texto de porcentaje para no ocupar espacio en el header sticky.
+Ubicación: `<aside className="w-52 flex-shrink-0 bg-dark-800 border-r border-dark-700 flex flex-col">`:
+
+- **Encabezado:** label "EXPEDIENTE" pequeño, nombre del cliente (`{clientName}`) en bold, ID de cédula (`{clientId}`) en gris abajo
+- **Nav:** 4 botones de step con badge numérico (1–4) que se convierte en `✓` dorado cuando el paso está completo
+- **Footer del sidebar:** barra de progreso `h-1` + texto "X/3 completados" + botones PDF y Cerrar
+
+### Progreso — lógica de pasos
+
+Función `isStepComplete(tabId)`:
+1. `anamnesis` → `!!record.anamnesis`
+2. `consentimiento` → `!!(record.consentimiento?.firmaUrl || record.consentimiento?.procedimiento)`
+3. `atencion` / `historial` → `!!(record.sesiones?.length)`
+
+### Mobile
+
+Barra de tabs sticky compacta (sin colapso dinámico — se eliminó `headerCollapsed`). Íconos PDF + X siempre visibles a la derecha de los tabs. Barra de progreso gold (`h-0.5`) bajo los tabs.
 
 ### Botón PDF
 
-Ícono ghost (`FileText`) en la esquina del header — no ocupa fila propia:
-- **Desktop:** junto al botón X en la fila del título (`hover:text-gold-400`)
-- **Mobile:** antes del X en la fila de tabs (siempre visible, incluso con header colapsado)
+Siempre llama `generateMedicalRecordPDF(record)`:
+- Desktop: botón pequeño en el footer del sidebar
+- Mobile: ícono `FileText` en la barra de tabs
 
-No hay botón PDF fijo en el footer de mobile. `generateMedicalRecordPDF(record)` es el handler en ambos casos.
+### Navegación por pasos
 
-### Comportamiento mobile
-
-- Header se colapsa al hacer scroll > 50px (solo desaparece la fila del título, los tabs + íconos PDF/X siempre visibles)
-- Secciones de Anamnesis en acordeón (`CollapsibleSection`) — 8 secciones colapsables
-- Contenido con `pb-8` (sin footer fijo que requiera padding extra)
-- Altura del contenido: `h-[calc(100vh-80px)]` colapsado / `h-[calc(100vh-180px)]` expandido
+4 pasos: **Anamnesis** → **Consentimiento** → **Atención** → **Historial**. Los botones "Continuar a X" avanzan automáticamente al guardar. El usuario puede saltar libremente entre pasos en cualquier momento.

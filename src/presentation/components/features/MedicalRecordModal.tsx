@@ -108,8 +108,6 @@ export function MedicalRecordModal({ clientId, clientName, onClose }: MedicalRec
   const [busquedaDiag, setBusquedaDiag] = useState('');
   const [sugerenciasDiag, setSugerenciasDiag] = useState<string[]>([]);
 
-  const [headerCollapsed, setHeaderCollapsed] = useState(false);
-
   // ← NUEVO: Toggle de sección en mobile
   const toggleSection = (section: string) => {
     setExpandedSections(prev => ({
@@ -123,22 +121,12 @@ export function MedicalRecordModal({ clientId, clientName, onClose }: MedicalRec
     loadRecord();
   }, [clientId]);
 
-  // Scroll al cambiar tab
+  // Scroll al tope al cambiar tab
   useEffect(() => {
     if (panelRef.current) {
       panelRef.current.scrollTo({ top: 0, behavior: 'smooth' });
     }
-    setHeaderCollapsed(false);
   }, [activeTab]);
-
-  // Colapsar header al hacer scroll en mobile
-  useEffect(() => {
-    const panel = panelRef.current;
-    if (!panel || !isMobile) return;
-    const onScroll = () => setHeaderCollapsed(panel.scrollTop > 50);
-    panel.addEventListener('scroll', onScroll, { passive: true });
-    return () => panel.removeEventListener('scroll', onScroll);
-  }, [isMobile]);
 
   const loadRecord = async () => {
     try {
@@ -350,6 +338,20 @@ export function MedicalRecordModal({ clientId, clientName, onClose }: MedicalRec
     );
   };
 
+  const TABS = [
+    { id: 'anamnesis',      label: 'Anamnesis',      description: 'Historia clínica',  icon: '📋' },
+    { id: 'consentimiento', label: 'Consentimiento', description: 'Autorización',       icon: '✍️' },
+    { id: 'atencion',       label: 'Atención',        description: 'Registro sesión',   icon: '🩺' },
+    { id: 'historial',      label: 'Historial',       description: 'Sesiones previas',  icon: '📚' },
+  ];
+
+  const isStepComplete = (tabId: string) => {
+    if (!record) return false;
+    if (tabId === 'anamnesis') return !!record.anamnesis;
+    if (tabId === 'consentimiento') return !!(record.consentimiento?.firmaUrl || record.consentimiento?.procedimiento);
+    return !!(record.sesiones?.length);
+  };
+
   const completedSteps = useMemo(() => {
     if (!record) return 0;
     return [
@@ -381,164 +383,142 @@ export function MedicalRecordModal({ clientId, clientName, onClose }: MedicalRec
   }
 
   return (
-    <Modal 
+    <Modal
       isOpen={true}
-      onClose={onClose} 
+      onClose={onClose}
       size={isMobile ? 'full' : 'xl'}
-      className={cn(
-        // Mobile: Full screen sin padding
-        isMobile && 'p-0 m-0 max-h-screen',
-        // Desktop: normal
-        !isMobile && ''
-      )}
+      className={isMobile ? 'p-0 m-0 max-h-screen' : ''}
     >
-      {/* HEADER MOBILE STICKY */}
-      <div className={cn(
-        'sticky top-0 z-20 bg-dark-900 border-b border-dark-700 transition-all duration-200',
-        isMobile && (headerCollapsed ? 'px-4 py-2' : 'px-4 py-3'),
-        !isMobile && 'p-6'
-      )}>
-        {/* Fila título - se oculta al hacer scroll en mobile */}
-        {(!isMobile || !headerCollapsed) && (
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className={cn(
-                'font-bold text-white',
-                isMobile ? 'text-lg' : 'text-2xl'
-              )}>
-                Expediente - {record.id.slice(0, 8)}
-              </h2>
-              <p className={cn(
-                'text-dark-400',
-                isMobile ? 'text-sm' : 'text-base'
-              )}>
-                {clientName}
-              </p>
-            </div>
+      <div className={cn('flex', isMobile ? 'flex-col h-full' : 'h-[min(85vh,720px)]')}>
 
-            {!isMobile && (
-              <div className="flex items-center gap-1">
+        {/* NAVEGACIÓN */}
+        {isMobile ? (
+          /* Mobile: barra de tabs compacta sticky */
+          <div className="sticky top-0 z-20 bg-dark-900 border-b border-dark-700 px-4 py-2 flex-shrink-0">
+            <div className="flex items-center gap-2">
+              <div className="flex gap-1 flex-1 overflow-x-auto pb-1 scrollbar-hide">
+                {TABS.map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id as Tab)}
+                    className={cn(
+                      'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap min-w-[90px]',
+                      activeTab === tab.id
+                        ? 'bg-gold-500 text-dark-900'
+                        : 'text-dark-300 hover:text-white hover:bg-dark-800'
+                    )}
+                  >
+                    <span>{tab.icon}</span>
+                    <span className="font-semibold">{tab.label}</span>
+                  </button>
+                ))}
+              </div>
+              <div className="flex items-center gap-0.5 flex-shrink-0">
                 <button
                   onClick={() => generateMedicalRecordPDF(record)}
-                  className="text-dark-400 hover:text-gold-400 transition-colors p-1"
-                  title="Descargar PDF completo"
+                  className="p-2 text-dark-400 hover:text-gold-400 transition-colors"
+                  title="PDF"
                 >
                   <FileText className="w-5 h-5" />
                 </button>
                 <button
                   onClick={onClose}
-                  className="text-dark-400 hover:text-white transition-colors p-1"
+                  className="p-2 text-dark-400 hover:text-white transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
-            )}
-          </div>
-        )}
-
-        {/* TABS + botón X cuando está colapsado en mobile */}
-        <div className={cn(
-          'flex items-center gap-2',
-          !isMobile && 'mt-4 border-b border-dark-700',
-          isMobile && !headerCollapsed && 'mt-4',
-        )}>
-          <div className={cn(
-            'flex gap-2 flex-1',
-            isMobile ? 'overflow-x-auto pb-1 scrollbar-hide' : ''
-          )}>
-            {[
-              {
-                id: 'anamnesis',
-                label: 'Anamnesis',
-                description: 'Historia clínica',
-                icon: '📋',
-              },
-              {
-                id: 'consentimiento',
-                label: 'Consentimiento',
-                description: 'Autorización',
-                icon: '✍️',
-              },
-              {
-                id: 'atencion',
-                label: 'Atención',
-                description: 'Registro sesión',
-                icon: '🩺',
-              },
-              {
-                id: 'historial',
-                label: 'Historial',
-                description: 'Sesiones previas',
-                icon: '📚',
-              },
-            ].map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as Tab)}
-                className={cn(
-                  'flex items-center gap-2 px-3 py-2 rounded-lg font-medium transition-all whitespace-nowrap',
-                  isMobile ? (headerCollapsed ? 'text-xs' : 'text-xs min-w-[110px]') : 'text-sm',
-                  activeTab === tab.id
-                    ? 'bg-gold-500 text-dark-900 shadow-lg'
-                    : 'text-dark-300 hover:text-white hover:bg-dark-800'
-                )}
-              >
-                <span className="text-lg flex-shrink-0">{tab.icon}</span>
-                <div className="flex flex-col items-start">
-                  <span className="font-semibold leading-tight">{tab.label}</span>
-                  {!isMobile && (
-                    <span className={cn(
-                      'text-[10px] leading-tight',
-                      activeTab === tab.id ? 'text-dark-700' : 'text-dark-500'
-                    )}>
-                      {tab.description}
-                    </span>
-                  )}
-                </div>
-              </button>
-            ))}
-          </div>
-
-          {/* Botones PDF + X siempre visibles en mobile */}
-          {isMobile && (
-            <div className="flex items-center gap-0.5 flex-shrink-0">
-              <button
-                onClick={() => generateMedicalRecordPDF(record)}
-                className="p-2 text-dark-400 hover:text-gold-400 transition-colors"
-                title="PDF"
-              >
-                <FileText className="w-5 h-5" />
-              </button>
-              <button
-                onClick={onClose}
-                className="p-2 text-dark-400 hover:text-white transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
             </div>
-          )}
-        </div>
-
-        {/* Barra de progreso */}
-        <div className={cn('mt-2', isMobile && 'mt-1')}>
-          <div className="h-0.5 bg-dark-700 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-gold-500 rounded-full transition-all duration-700"
-              style={{ width: `${progress}%` }}
-            />
+            <div className="mt-1 h-0.5 bg-dark-700 rounded-full overflow-hidden">
+              <div className="h-full bg-gold-500 rounded-full transition-all duration-700" style={{ width: `${progress}%` }} />
+            </div>
           </div>
-        </div>
-      </div>
-
-      {/* CONTENIDO */}
-      <div 
-        ref={panelRef}
-        className={cn(
-          'overflow-y-auto',
-          isMobile ? 'px-4 pt-4 pb-8' : 'p-6 pt-4',
-          isMobile && (headerCollapsed ? 'h-[calc(100vh-80px)]' : 'h-[calc(100vh-180px)]')
+        ) : (
+          /* Desktop: sidebar izquierdo integrado */
+          <aside className="w-52 flex-shrink-0 bg-dark-800 border-r border-dark-700 flex flex-col">
+            <div className="p-5 pb-4 border-b border-dark-700">
+              <p className="text-xs text-dark-500 uppercase tracking-wide mb-1">Expediente</p>
+              <h2 className="font-bold text-white text-base leading-snug">{clientName}</h2>
+              <p className="text-dark-500 text-xs mt-0.5">ID: {clientId}</p>
+            </div>
+            <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+              {TABS.map((tab, index) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as Tab)}
+                  className={cn(
+                    'w-full flex items-center gap-3 px-3 py-3 rounded-lg text-left transition-all group border',
+                    activeTab === tab.id
+                      ? 'bg-gold-500/10 border-gold-500/30'
+                      : 'border-transparent hover:bg-dark-700'
+                  )}
+                >
+                  <div className={cn(
+                    'w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 transition-all',
+                    isStepComplete(tab.id) && activeTab === tab.id
+                      ? 'bg-gold-500 text-dark-900'
+                      : isStepComplete(tab.id)
+                        ? 'bg-gold-500/20 text-gold-400 border border-gold-500/40'
+                        : activeTab === tab.id
+                          ? 'bg-dark-700 text-gold-400 border border-gold-500/50'
+                          : 'bg-dark-700 text-dark-500'
+                  )}>
+                    {isStepComplete(tab.id) ? '✓' : (index + 1)}
+                  </div>
+                  <div>
+                    <div className={cn(
+                      'text-sm font-semibold leading-tight',
+                      activeTab === tab.id ? 'text-white' : 'text-dark-300 group-hover:text-white'
+                    )}>
+                      {tab.label}
+                    </div>
+                    <div className="text-xs text-dark-500 mt-0.5">{tab.description}</div>
+                  </div>
+                </button>
+              ))}
+            </nav>
+            <div className="p-4 border-t border-dark-700 space-y-3">
+              <div>
+                <div className="flex justify-between text-xs mb-1.5">
+                  <span className="text-dark-500">{completedSteps}/3 completados</span>
+                  <span className="text-gold-400 font-medium">{progress}%</span>
+                </div>
+                <div className="h-1 bg-dark-700 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gold-500 rounded-full transition-all duration-700"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => generateMedicalRecordPDF(record)}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs text-dark-400 hover:text-gold-400 border border-dark-700 hover:border-gold-500/30 rounded-lg transition-all"
+                  title="Descargar PDF"
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                  PDF
+                </button>
+                <button
+                  onClick={onClose}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs text-dark-400 hover:text-white border border-dark-700 hover:border-dark-500 rounded-lg transition-all"
+                >
+                  <X className="w-3.5 h-3.5" />
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          </aside>
         )}
-      >
+
+        {/* CONTENIDO */}
+        <div
+          ref={panelRef}
+          className={cn(
+            'overflow-y-auto flex-1',
+            isMobile ? 'px-4 pt-4 pb-8' : 'p-6 pt-4'
+          )}
+        >
         {/* ANAMNESIS */}
         {activeTab === 'anamnesis' && (
           <div className="space-y-4">
@@ -1557,8 +1537,8 @@ export function MedicalRecordModal({ clientId, clientName, onClose }: MedicalRec
             )}
           </div>
         )}
+        </div>
       </div>
-
     </Modal>
   );
 }
