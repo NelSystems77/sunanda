@@ -91,77 +91,75 @@ export function FeaturedServices() {
 
             <div className="relative z-10 grid md:grid-cols-2 gap-0">
               {/* Imagen */}
-              <div className="relative h-72 md:h-auto min-h-[380px] overflow-hidden">
+              <div className="relative min-h-[260px] md:min-h-[400px] bg-gradient-to-br from-rose-800 to-pink-900 overflow-hidden">
                 <img
                   src="/assets/images/landing/limpieza-facial.JPG"
                   alt="Limpieza Facial Profunda"
-                  className="h-full w-full object-cover hover:scale-105 transition-transform duration-700"
-                  onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                  className="absolute inset-0 w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-dark-900/60 via-transparent to-transparent" />
-                <div className="absolute bottom-4 left-4 z-20 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-xl shadow-lg">
-                  <p className="text-base font-black text-rose-600">3 sesiones</p>
+                <div className="absolute inset-0 bg-gradient-to-t from-dark-900/50 via-transparent to-transparent" />
+                <div className="absolute bottom-4 left-4 z-20 bg-white/95 backdrop-blur-sm px-3 py-2 rounded-xl shadow-lg">
+                  <p className="text-sm font-black text-rose-600">3 sesiones</p>
                   <p className="text-xs text-gray-500 font-medium">90 min c/u</p>
                 </div>
               </div>
 
               {/* Contenido */}
-              <div className="p-8 md:p-10 flex flex-col justify-center gap-5">
+              <div className="p-5 sm:p-8 md:p-10 flex flex-col justify-center gap-4">
                 <div>
-                  <p className="text-xs font-bold tracking-widest uppercase text-rose-400 mb-2">
+                  <p className="text-[10px] sm:text-xs font-bold tracking-widest uppercase text-rose-400 mb-2">
                     FACIAL · PROTOCOLO COMPLETO 10 PASOS
                   </p>
-                  <h3 className="text-2xl md:text-3xl font-bold text-white leading-tight mb-3">
-                    Limpieza Facial<br />
-                    <span className="text-rose-400">Profunda</span>
+                  <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-white leading-tight mb-2">
+                    Limpieza Facial <span className="text-rose-400">Profunda</span>
                   </h3>
-                  <p className="text-dark-300 text-sm leading-relaxed">
-                    Protocolo profesional de 10 pasos con aparatología, activos y mascarilla adaptados a tu tipo de piel. <strong className="text-rose-300">3 sesiones completas</strong> de 90 minutos a un precio único que no se repetirá.
+                  <p className="text-dark-300 text-xs sm:text-sm leading-relaxed">
+                    Protocolo de 10 pasos con aparatología, activos y mascarilla adaptados a tu piel. <strong className="text-rose-300">3 sesiones × 90 min</strong> a precio único de apertura.
                   </p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
                   {['Desmaquillado', 'Exfoliación', 'Aparatología', 'Activos a medida', 'Mascarilla', 'Bloqueador solar'].map((item) => (
                     <div key={item} className="flex items-center gap-1.5 text-xs text-rose-200">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
+                      <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-rose-400 flex-shrink-0" />
                       {item}
                     </div>
                   ))}
                 </div>
 
                 {/* Bloque precio */}
-                <div className="bg-rose-950/70 border border-rose-500/40 rounded-2xl p-5">
-                  <div className="flex items-start justify-between gap-4 mb-3">
+                <div className="bg-rose-950/70 border border-rose-500/40 rounded-2xl p-4 sm:p-5">
+                  <div className="flex items-center justify-between gap-2 mb-3">
                     <div>
-                      <p className="text-xs text-dark-400 mb-1">Precio normal (3 sesiones)</p>
-                      <p className="text-xl font-bold text-dark-400 line-through decoration-rose-400">₡60.000</p>
-                      <p className="text-[10px] text-dark-500 mt-0.5">3 × ₡20.000</p>
+                      <p className="text-[10px] text-dark-400 mb-0.5">Precio normal</p>
+                      <p className="text-base sm:text-lg font-bold text-dark-400 line-through decoration-rose-400">₡60.000</p>
+                      <p className="text-[10px] text-dark-500">3 × ₡20.000</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[11px] text-rose-300 font-bold mb-1 tracking-wide">PRECIO DE APERTURA</p>
-                      <p className="text-4xl font-black text-white leading-none">₡35.000</p>
-                      <p className="text-xs text-rose-400 mt-1">pack 3 sesiones</p>
+                      <p className="text-[10px] sm:text-[11px] text-rose-300 font-bold tracking-wide">PRECIO APERTURA</p>
+                      <p className="text-3xl sm:text-4xl font-black text-white leading-none">₡35.000</p>
+                      <p className="text-[10px] sm:text-xs text-rose-400 mt-0.5">pack 3 sesiones</p>
                     </div>
                   </div>
                   <div className="bg-rose-500/20 border border-rose-500/50 rounded-xl px-3 py-2 flex items-center gap-2">
-                    <Zap className="w-3.5 h-3.5 text-rose-300 flex-shrink-0" />
-                    <p className="text-xs text-rose-200 font-bold">Ahorrás ₡25.000 · Solo mientras dure la apertura</p>
+                    <Zap className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-rose-300 flex-shrink-0" />
+                    <p className="text-[11px] sm:text-xs text-rose-200 font-bold">Ahorrás ₡25.000 · Solo mientras dure la apertura</p>
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                   <a
                     href="https://wa.me/50688083390?text=Hola!%20Me%20interesa%20la%20promo%20de%20apertura%20de%20Limpieza%20Facial%20Profunda%3A%203%20sesiones%20por%20%E2%82%A135.000.%20%C2%BFPodr%C3%ADan%20darme%20m%C3%A1s%20informaci%C3%B3n%3F"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-bold rounded-xl transition-all shadow-lg shadow-rose-500/20 hover:shadow-rose-500/40 hover:-translate-y-0.5"
+                    className="flex-1 flex items-center justify-center gap-2 py-3 sm:py-3.5 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-bold rounded-xl transition-all shadow-lg shadow-rose-500/20 hover:shadow-rose-500/40 hover:-translate-y-0.5 text-sm sm:text-base"
                   >
                     <MessageCircle className="w-4 h-4" />
                     Quiero esta promo
                   </a>
                   <Link
                     to="/booking"
-                    className="flex-1 flex items-center justify-center gap-2 py-3.5 border border-rose-500/40 hover:border-rose-500 hover:bg-rose-500/10 text-rose-300 font-semibold rounded-xl transition-all"
+                    className="flex-1 flex items-center justify-center gap-2 py-3 sm:py-3.5 border border-rose-500/40 hover:border-rose-500 hover:bg-rose-500/10 text-rose-300 font-semibold rounded-xl transition-all text-sm sm:text-base"
                   >
                     <ArrowRight className="w-4 h-4" />
                     Agendar cita
@@ -199,77 +197,75 @@ export function FeaturedServices() {
 
             <div className="relative z-10 grid md:grid-cols-2 gap-0">
               {/* Imagen — derecha en desktop */}
-              <div className="relative h-72 md:h-auto min-h-[380px] overflow-hidden md:order-2">
+              <div className="relative min-h-[260px] md:min-h-[400px] bg-gradient-to-br from-violet-800 to-purple-900 overflow-hidden md:order-2">
                 <img
                   src="/assets/images/landing/hidrolipoclasia.JPG"
                   alt="Hidrolipoclasia"
-                  className="h-full w-full object-cover hover:scale-105 transition-transform duration-700"
-                  onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                  className="absolute inset-0 w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-dark-900/60 via-transparent to-transparent" />
-                <div className="absolute bottom-4 right-4 z-20 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-xl shadow-lg">
-                  <p className="text-base font-black text-violet-600">4 sesiones</p>
+                <div className="absolute inset-0 bg-gradient-to-t from-dark-900/50 via-transparent to-transparent" />
+                <div className="absolute bottom-4 right-4 z-20 bg-white/95 backdrop-blur-sm px-3 py-2 rounded-xl shadow-lg">
+                  <p className="text-sm font-black text-violet-600">4 sesiones</p>
                   <p className="text-xs text-gray-500 font-medium">90 min c/u</p>
                 </div>
               </div>
 
               {/* Contenido — izquierda en desktop */}
-              <div className="p-8 md:p-10 flex flex-col justify-center gap-5 md:order-1">
+              <div className="p-5 sm:p-8 md:p-10 flex flex-col justify-center gap-4 md:order-1">
                 <div>
-                  <p className="text-xs font-bold tracking-widest uppercase text-violet-400 mb-2">
+                  <p className="text-[10px] sm:text-xs font-bold tracking-widest uppercase text-violet-400 mb-2">
                     CORPORAL · REDUCCIÓN DE MEDIDAS
                   </p>
-                  <h3 className="text-2xl md:text-3xl font-bold text-white leading-tight mb-3">
-                    Hidrolipoclasia<br />
-                    <span className="text-violet-400">Tratamiento Corporal</span>
+                  <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-white leading-tight mb-2">
+                    Hidrolipoclasia <span className="text-violet-400">Tratamiento Corporal</span>
                   </h3>
-                  <p className="text-dark-300 text-sm leading-relaxed">
-                    Tratamiento avanzado no invasivo para la reducción de medidas y contorno corporal. <strong className="text-violet-300">4 sesiones completas</strong> de 90 minutos a un precio de apertura que no se repetirá.
+                  <p className="text-dark-300 text-xs sm:text-sm leading-relaxed">
+                    Tratamiento avanzado no invasivo para reducción de medidas y contorno corporal. <strong className="text-violet-300">4 sesiones × 90 min</strong> a precio único de apertura.
                   </p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
                   {['Cavitación', 'Exfoliación', 'Activos', 'Masaje reductor', 'Envoltura', 'Sellante'].map((item) => (
                     <div key={item} className="flex items-center gap-1.5 text-xs text-violet-200">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-violet-400 flex-shrink-0" />
+                      <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-violet-400 flex-shrink-0" />
                       {item}
                     </div>
                   ))}
                 </div>
 
                 {/* Bloque precio */}
-                <div className="bg-violet-950/70 border border-violet-500/40 rounded-2xl p-5">
-                  <div className="flex items-start justify-between gap-4 mb-3">
+                <div className="bg-violet-950/70 border border-violet-500/40 rounded-2xl p-4 sm:p-5">
+                  <div className="flex items-center justify-between gap-2 mb-3">
                     <div>
-                      <p className="text-xs text-dark-400 mb-1">Precio normal (pack 4 sesiones)</p>
-                      <p className="text-xl font-bold text-dark-400 line-through decoration-violet-400">₡170.000</p>
-                      <p className="text-[10px] text-dark-500 mt-0.5">4 sesiones · 90 min c/u</p>
+                      <p className="text-[10px] text-dark-400 mb-0.5">Precio normal</p>
+                      <p className="text-base sm:text-lg font-bold text-dark-400 line-through decoration-violet-400">₡170.000</p>
+                      <p className="text-[10px] text-dark-500">pack 4 sesiones</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[11px] text-violet-300 font-bold mb-1 tracking-wide">PRECIO DE APERTURA</p>
-                      <p className="text-4xl font-black text-white leading-none">₡130.000</p>
-                      <p className="text-xs text-violet-400 mt-1">pack 4 sesiones</p>
+                      <p className="text-[10px] sm:text-[11px] text-violet-300 font-bold tracking-wide">PRECIO APERTURA</p>
+                      <p className="text-3xl sm:text-4xl font-black text-white leading-none">₡130.000</p>
+                      <p className="text-[10px] sm:text-xs text-violet-400 mt-0.5">pack 4 sesiones</p>
                     </div>
                   </div>
                   <div className="bg-violet-500/20 border border-violet-500/50 rounded-xl px-3 py-2 flex items-center gap-2">
-                    <Zap className="w-3.5 h-3.5 text-violet-300 flex-shrink-0" />
-                    <p className="text-xs text-violet-200 font-bold">Ahorrás ₡40.000 · Solo mientras dure la apertura</p>
+                    <Zap className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-violet-300 flex-shrink-0" />
+                    <p className="text-[11px] sm:text-xs text-violet-200 font-bold">Ahorrás ₡40.000 · Solo mientras dure la apertura</p>
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                   <a
                     href="https://wa.me/50688083390?text=Hola!%20Me%20interesa%20la%20promo%20de%20apertura%20de%20Hidrolipoclasia%3A%204%20sesiones%20por%20%E2%82%A1130.000.%20%C2%BFPodr%C3%ADan%20darme%20m%C3%A1s%20informaci%C3%B3n%3F"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-gradient-to-r from-violet-500 to-purple-500 hover:from-violet-600 hover:to-purple-600 text-white font-bold rounded-xl transition-all shadow-lg shadow-violet-500/20 hover:shadow-violet-500/40 hover:-translate-y-0.5"
+                    className="flex-1 flex items-center justify-center gap-2 py-3 sm:py-3.5 bg-gradient-to-r from-violet-500 to-purple-500 hover:from-violet-600 hover:to-purple-600 text-white font-bold rounded-xl transition-all shadow-lg shadow-violet-500/20 hover:shadow-violet-500/40 hover:-translate-y-0.5 text-sm sm:text-base"
                   >
                     <MessageCircle className="w-4 h-4" />
                     Quiero esta promo
                   </a>
                   <Link
                     to="/booking"
-                    className="flex-1 flex items-center justify-center gap-2 py-3.5 border border-violet-500/40 hover:border-violet-500 hover:bg-violet-500/10 text-violet-300 font-semibold rounded-xl transition-all"
+                    className="flex-1 flex items-center justify-center gap-2 py-3 sm:py-3.5 border border-violet-500/40 hover:border-violet-500 hover:bg-violet-500/10 text-violet-300 font-semibold rounded-xl transition-all text-sm sm:text-base"
                   >
                     <ArrowRight className="w-4 h-4" />
                     Agendar cita
