@@ -150,7 +150,7 @@ Ubicadas en `public/assets/images/landing/`:
 | CHAT-02 | Completado | Dashboard avanzado con recharts (gráficos, widgets, top clientes) |
 | CHAT-03 | Completado | Fotos en expedientes, PaymentForm con SINPE Móvil, botón Cobrar |
 | CHAT-04 | Completado | QR SINPE Móvil con deep link `sinpemovil://`, env var `VITE_SINPE_PHONE` |
-| CHAT-05 | Parcial | Recordatorios manuales por WhatsApp funcionando; automáticos (Twilio + SendGrid + Cloud Functions) pendiente (Pro) |
+| CHAT-05 | Completado | Recordatorios manuales WhatsApp + notificaciones push FCM (Windows y móvil) con Cloud Functions desplegadas |
 | CHAT-06 | Completado | 12 nuevos componentes landing, SEO, TestimonialsCarousel, BeforeAfter |
 | CHAT-07 | Pendiente | Reportes y analytics |
 | CHAT-08 | Completado | Inventario completo, ProductSpotlight Germaine de Capuccini |
@@ -160,23 +160,75 @@ Los briefs están en `c:\spa\SUNANDA-BRIEFS-DESARROLLO-FINAL\`.
 
 ---
 
-## Sistema de Recordatorios (sesión 2026-05-24)
+## Sistema de Notificaciones (sesión 2026-05-24)
 
-### Estado actual — recordatorios manuales por WhatsApp
+### Estado actual — push FCM + recordatorios WhatsApp
 
-El panel de recordatorios en `AppointmentsPage` está operativo para envío manual por WhatsApp. La automatización completa (Twilio + SendGrid + Cloud Functions) sigue pendiente como CHAT-05 Pro.
+Dos capas de notificaciones activas:
 
-### Archivos clave
+1. **Push nativas FCM** — admin y esteticistas reciben notificaciones en Windows y celular (aunque el navegador esté cerrado). Usa Firebase Cloud Messaging + Cloud Functions desplegadas en `us-central1`.
+2. **Recordatorios manuales WhatsApp** — el admin envía recordatorios al cliente desde el modal en `AppointmentsPage`.
+
+### Archivos clave — notificaciones push
+
+| Archivo | Rol |
+|---|---|
+| `src/core/infrastructure/services/FCMNotificationService.ts` | Gestión de permisos, tokens y mensajes en primer plano |
+| `src/presentation/hooks/useAdminNotifications.ts` | Hook: escucha mensajes FCM en primer plano, muestra toasts |
+| `src/presentation/components/pwa/NotificationPermission.tsx` | Banner dorado post-login (4s delay) para pedir permiso |
+| `src/presentation/components/pwa/AdminNotificationsProvider.tsx` | Provider en `App.tsx` que activa el hook y el banner |
+| `public/firebase-messaging-sw.js` | Service Worker FCM — **auto-generado** por plugin Vite en cada build |
+| `functions/src/index.ts` | 3 Cloud Functions (triggers y cron) |
+
+### Cloud Functions desplegadas
+
+| Función | Tipo | Trigger |
+|---|---|---|
+| `onAppointmentCreated` | Firestore trigger | Nueva cita → push inmediato a todos los devices registrados |
+| `onAppointmentCancelled` | Firestore trigger | Estado cambia a `cancelled` → push de cancelación |
+| `checkAppointmentReminders` | Cron `0 * * * *` (cada hora, CR timezone) | Busca citas a ~24h y ~1h, envía push si aún no enviado |
+
+### Tokens FCM en Firestore
+
+Los tokens se guardan en `users/{userId}.fcmTokens: string[]`. El servicio usa `arrayUnion` al registrar y `arrayRemove` al desloguear. Las Cloud Functions leen todos los tokens de usuarios con `role in ['ADMIN', 'SUPER_ADMIN', 'ESTHETICIAN']` y envían multicast (máx 500 tokens por batch). Los tokens inválidos se limpian automáticamente tras cada envío.
+
+### firebase-messaging-sw.js — generación automática
+
+**NO editar manualmente** — el archivo `public/firebase-messaging-sw.js` lo genera un plugin de Vite en `vite.config.ts` (`generateFCMServiceWorker`) cada vez que se corre `vite build` o `vite dev`. Inyecta el Firebase config desde las variables de entorno. El archivo usa Firebase compat SDK via CDN (`importScripts`) porque los service workers no soportan ES modules en todos los navegadores.
+
+### Env vars requeridas para FCM
+
+```
+VITE_FIREBASE_VAPID_KEY=<VAPID key desde Firebase Console > Cloud Messaging > Web Push certificates>
+```
+
+### Activar notificaciones en un dispositivo nuevo
+
+1. Loguear como admin/esteticista en el dashboard
+2. A los 4 segundos aparece el banner dorado "Activar notificaciones"
+3. Clic "Activar" → aceptar el permiso del navegador
+4. El token FCM queda guardado en Firestore — ese dispositivo recibe push a partir de ese momento
+
+### Campos de Firestore en `appointments`
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| `reminderSent` | `boolean` | `false` por defecto — recordatorio WhatsApp manual al cliente |
+| `reminderSentAt` | `Timestamp` | Timestamp del envío manual WhatsApp |
+| `reminder24hSent` | `boolean` | `true` tras enviar push de recordatorio 24h al staff |
+| `reminder1hSent` | `boolean` | `true` tras enviar push de recordatorio 1h al staff |
+
+### Archivos clave — recordatorios manuales WhatsApp (al cliente)
 
 | Archivo | Rol |
 |---|---|
 | `src/presentation/pages/AppointmentsPage.tsx` | Modal de recordatorios + helpers de WhatsApp |
 | `src/presentation/components/features/ReminderSettings.tsx` | Modal de configuración (UI funcional, persistencia pendiente) |
-| `src/presentation/components/features/ReminderPanel.tsx` | Componente alternativo (importado pero no renderizado — ver nota abajo) |
+| `src/presentation/components/features/ReminderPanel.tsx` | Componente alternativo (tema claro, no integrado — lógica vive en modal inline de AppointmentsPage) |
 | `src/core/infrastructure/repositories/AppointmentRepository.ts` | `markReminderSent(id)` — actualiza `reminderSent: true` en Firestore |
 | `src/core/application/use-cases/appointments/AppointmentUseCases.ts` | `markReminderSent(id)` — proxy al repositorio |
 
-### Flujo de recordatorio manual
+### Flujo de recordatorio manual WhatsApp
 
 1. Al cargar `AppointmentsPage`, se consultan citas de los **próximos 7 días** con `reminderSent: false` y estado `pending` o `confirmed`
 2. El badge del botón "Recordatorios" muestra el conteo real
@@ -185,34 +237,18 @@ El panel de recordatorios en `AppointmentsPage` está operativo para envío manu
 
 ### Parseo de datos del cliente desde `appointment.notes`
 
-El teléfono y nombre del cliente se extraen del campo `notes` con regex:
-
 ```typescript
 const nameMatch = notes.match(/Nombre:\s*([^|]+)/);
 const phoneMatch = notes.match(/Tel:\s*([^|]+)/);
 ```
 
-El formato esperado en `notes` es: `Nombre: X | Tel: Y | Emergencia: Z | Tel Emergencia: W` (generado automáticamente por `AppointmentForm`). Si la cita no tiene teléfono en notas, el botón WhatsApp queda deshabilitado.
+Formato esperado en `notes`: `Nombre: X | Tel: Y | Emergencia: Z | Tel Emergencia: W`
 
-### Campos de Firestore en `appointments`
+### Pendiente
 
-| Campo | Tipo | Descripción |
-|---|---|---|
-| `reminderSent` | `boolean` | `false` por defecto al crear |
-| `reminderSentAt` | `Timestamp` | Se escribe al llamar `markReminderSent()` |
-
-### Nota sobre `ReminderPanel.tsx`
-
-El componente `ReminderPanel` fue creado en una sesión anterior pero usa tema claro (blanco/gris) y no está integrado en `AppointmentsPage`. La lógica de recordatorios vive directamente en el modal inline de `AppointmentsPage` (tema oscuro, consistente con el resto del dashboard). Si se quiere unificar, migrar la lógica al componente y renderizarlo dentro del modal.
-
-### Pendiente para CHAT-05 Pro
-
-- Automatización con Firebase Cloud Scheduler (cron cada hora)
-- Integración Twilio para SMS y WhatsApp Business API
-- Integración SendGrid para emails HTML
-- Colección `reminderLogs` para historial de envíos
-- Colección `reminderConfig` para persistir configuración del panel de settings
 - Stats reales en `ReminderSettings` (actualmente hardcodeadas en 156/142/91%)
+- Persistencia de configuración de recordatorios en colección `reminderConfig`
+- Integración Twilio/SendGrid si se quiere SMS y email al cliente (actualmente solo WhatsApp manual)
 
 ---
 
