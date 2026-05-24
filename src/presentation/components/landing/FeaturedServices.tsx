@@ -10,7 +10,7 @@
 
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { Sparkles, Clock, Tag, ArrowRight, MessageCircle, CheckCircle2, Zap } from 'lucide-react';
+import { Sparkles, ArrowRight, MessageCircle, CheckCircle2, Zap, Flame } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
@@ -18,140 +18,267 @@ import { Badge } from '../ui/Badge';
 export function FeaturedServices() {
   const { t } = useTranslation(['landing', 'common']);
 
-  // Servicios destacados con promociones
-  const featuredServices = [
-    {
-      id: 1,
-      name: 'Limpieza Facial Profunda',
-      nameEN: 'Deep Facial Cleansing',
-      description: 'Protocolo completo con aparatología, activos y mascarilla según tu condición de piel',
-      descriptionEN: 'Full protocol with technology, actives and mask tailored to your skin condition',
-      priceCRC: 20000,
-      priceUSD: 39,
-      duration: 60,
-      sessions: 2,
-      promo: {
-        type: '2x1',
-        badge: t('landing:services.twoForOne'),
-      },
-      emoji: '✨',
-      gradient: 'from-primary-400/20 to-primary-500/20',
-    },
-    {
-      id: 2,
-      name: 'Hidrolipoclasia',
-      nameEN: 'Hydrolipoclasia',
-      description: 'Tratamiento avanzado para reducción de medidas',
-      descriptionEN: 'Advanced treatment for body contouring',
-      priceCRC: 100000,
-      priceUSD: 196,
-      duration: 90,
-      sessions: 2,
-      promo: {
-        type: 'opening',
-        badge: t('landing:services.opening'),
-      },
-      emoji: '💆',
-      gradient: 'from-primary-500/20 to-primary-600/20',
-    },
-  ];
-
-  const currentLang = t('common:language.es') === 'Español' ? 'es' : 'en';
 
   return (
     <section className="py-20 md:py-32 bg-dark-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <Badge variant="primary" className="mb-4">
-              {t('landing:services.promo')}
+            <Badge variant="danger" className="mb-4 animate-pulse">
+              <Flame className="w-3.5 h-3.5 mr-1.5 inline" />
+              OFERTAS ESPECIALES · SOLO POR APERTURA
             </Badge>
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
-              {t('landing:services.title')}
+              Aprovecha Nuestras<br />
+              <span className="text-rose-400">Promos de Apertura</span>
             </h2>
             <p className="text-lg text-dark-300 max-w-2xl mx-auto">
-              {t('landing:services.subtitle')}
+              Precios exclusivos disponibles solo durante nuestra apertura. Espacios limitados — ¡no dejes pasar esta oportunidad!
             </p>
           </motion.div>
         </div>
 
-        {/* Grid de servicios */}
-        <div className="grid md:grid-cols-2 gap-8 mb-12">
-          {featuredServices.map((service, index) => (
-            <motion.div
-              key={service.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="group relative"
-            >
-              <div className={`relative bg-gradient-to-br ${service.gradient} border border-primary-500/20 rounded-2xl p-8 hover:border-primary-500/40 transition-all duration-300 overflow-hidden`}>
-                {/* Badge de promoción */}
-                <div className="absolute top-4 right-4">
-                  <Badge variant="danger" className="animate-pulse">
-                    {service.promo.badge}
-                  </Badge>
+        {/* Banner de urgencia */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.97 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="mb-8"
+        >
+          <div className="relative overflow-hidden rounded-2xl border border-orange-500/50 bg-gradient-to-r from-red-950 via-orange-950 to-red-950 py-3 px-6">
+            <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 via-red-500/5 to-orange-500/10 animate-pulse pointer-events-none" />
+            <div className="relative flex items-center justify-center gap-3 flex-wrap">
+              <Flame className="w-5 h-5 text-orange-400 flex-shrink-0" />
+              <p className="text-sm font-bold tracking-[0.18em] uppercase text-orange-300 text-center">
+                Precios exclusivos de apertura — aprovechá antes de que terminen
+              </p>
+              <Flame className="w-5 h-5 text-orange-400 flex-shrink-0" />
+            </div>
+          </div>
+        </motion.div>
+
+        {/* PROMO 1: Limpieza Facial Profunda */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+          className="mb-8"
+        >
+          <div className="relative rounded-3xl overflow-hidden border-2 border-rose-500/60 bg-gradient-to-br from-rose-950/90 via-dark-900 to-pink-950/70 shadow-2xl shadow-rose-900/30">
+            {/* Ribbon de apertura */}
+            <div className="relative overflow-hidden bg-gradient-to-r from-rose-700 via-pink-500 to-rose-700 py-3 px-6 flex items-center justify-center gap-3">
+              <div className="absolute inset-0 bg-white/10 animate-pulse pointer-events-none" />
+              <Flame className="w-4 h-4 text-white flex-shrink-0" />
+              <span className="text-white font-black text-xs sm:text-sm tracking-[0.2em] uppercase">
+                PRECIO ESPECIAL DE APERTURA — TIEMPO LIMITADO
+              </span>
+              <Flame className="w-4 h-4 text-white flex-shrink-0" />
+            </div>
+
+            {/* Fondo decorativo */}
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-rose-500/10 blur-3xl" />
+              <div className="absolute -bottom-16 -left-16 w-72 h-72 rounded-full bg-pink-500/10 blur-3xl" />
+            </div>
+
+            <div className="relative z-10 grid md:grid-cols-2 gap-0">
+              {/* Imagen */}
+              <div className="relative h-72 md:h-auto min-h-[380px] overflow-hidden">
+                <img
+                  src="/assets/images/landing/limpieza-facial.JPG"
+                  alt="Limpieza Facial Profunda"
+                  className="h-full w-full object-cover hover:scale-105 transition-transform duration-700"
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-dark-900/60 via-transparent to-transparent" />
+                <div className="absolute bottom-4 left-4 z-20 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-xl shadow-lg">
+                  <p className="text-base font-black text-rose-600">3 sesiones</p>
+                  <p className="text-xs text-gray-500 font-medium">90 min c/u</p>
                 </div>
-
-                {/* Emoji grande */}
-                <div className="text-6xl mb-6">{service.emoji}</div>
-
-                {/* Nombre */}
-                <h3 className="text-2xl font-bold text-white mb-2">
-                  {currentLang === 'es' ? service.name : service.nameEN}
-                </h3>
-
-                {/* Descripción */}
-                <p className="text-dark-300 mb-6">
-                  {currentLang === 'es' ? service.description : service.descriptionEN}
-                </p>
-
-                {/* Info del servicio */}
-                <div className="space-y-3 mb-6">
-                  {/* Duración */}
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2 text-dark-300">
-                      <Clock className="h-4 w-4" />
-                      {t('landing:services.duration')}
-                    </div>
-                    <span className="text-white font-medium">
-                      {service.duration} {t('landing:services.minutes')}
-                    </span>
-                  </div>
-
-                  {/* Sesiones */}
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2 text-dark-300">
-                      <Tag className="h-4 w-4" />
-                      {service.sessions > 1 ? t('landing:services.sessions') : t('landing:services.session')}
-                    </div>
-                    <span className="text-white font-medium">
-                      {service.sessions} {service.sessions > 1 ? t('landing:services.sessions') : t('landing:services.session')}
-                    </span>
-                  </div>
-                </div>
-
-                {/* CTA */}
-                <Link to="/booking">
-                  <Button
-                    variant="primary"
-                    className="w-full group-hover:bg-primary-600 transition-colors"
-                  >
-                    {t('landing:services.bookService')}
-                    <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
               </div>
-            </motion.div>
-          ))}
-        </div>
+
+              {/* Contenido */}
+              <div className="p-8 md:p-10 flex flex-col justify-center gap-5">
+                <div>
+                  <p className="text-xs font-bold tracking-widest uppercase text-rose-400 mb-2">
+                    FACIAL · PROTOCOLO COMPLETO 10 PASOS
+                  </p>
+                  <h3 className="text-2xl md:text-3xl font-bold text-white leading-tight mb-3">
+                    Limpieza Facial<br />
+                    <span className="text-rose-400">Profunda</span>
+                  </h3>
+                  <p className="text-dark-300 text-sm leading-relaxed">
+                    Protocolo profesional de 10 pasos con aparatología, activos y mascarilla adaptados a tu tipo de piel. <strong className="text-rose-300">3 sesiones completas</strong> de 90 minutos a un precio único que no se repetirá.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  {['Desmaquillado', 'Exfoliación', 'Aparatología', 'Activos a medida', 'Mascarilla', 'Bloqueador solar'].map((item) => (
+                    <div key={item} className="flex items-center gap-1.5 text-xs text-rose-200">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-rose-400 flex-shrink-0" />
+                      {item}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Bloque precio */}
+                <div className="bg-rose-950/70 border border-rose-500/40 rounded-2xl p-5">
+                  <div className="flex items-start justify-between gap-4 mb-3">
+                    <div>
+                      <p className="text-xs text-dark-400 mb-1">Precio normal (3 sesiones)</p>
+                      <p className="text-xl font-bold text-dark-400 line-through decoration-rose-400">₡60.000</p>
+                      <p className="text-[10px] text-dark-500 mt-0.5">3 × ₡20.000</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[11px] text-rose-300 font-bold mb-1 tracking-wide">PRECIO DE APERTURA</p>
+                      <p className="text-4xl font-black text-white leading-none">₡35.000</p>
+                      <p className="text-xs text-rose-400 mt-1">pack 3 sesiones</p>
+                    </div>
+                  </div>
+                  <div className="bg-rose-500/20 border border-rose-500/50 rounded-xl px-3 py-2 flex items-center gap-2">
+                    <Zap className="w-3.5 h-3.5 text-rose-300 flex-shrink-0" />
+                    <p className="text-xs text-rose-200 font-bold">Ahorrás ₡25.000 · Solo mientras dure la apertura</p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <a
+                    href="https://wa.me/50688083390?text=Hola!%20Me%20interesa%20la%20promo%20de%20apertura%20de%20Limpieza%20Facial%20Profunda%3A%203%20sesiones%20por%20%E2%82%A135.000.%20%C2%BFPodr%C3%ADan%20darme%20m%C3%A1s%20informaci%C3%B3n%3F"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-bold rounded-xl transition-all shadow-lg shadow-rose-500/20 hover:shadow-rose-500/40 hover:-translate-y-0.5"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    Quiero esta promo
+                  </a>
+                  <Link
+                    to="/booking"
+                    className="flex-1 flex items-center justify-center gap-2 py-3.5 border border-rose-500/40 hover:border-rose-500 hover:bg-rose-500/10 text-rose-300 font-semibold rounded-xl transition-all"
+                  >
+                    <ArrowRight className="w-4 h-4" />
+                    Agendar cita
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* PROMO 2: Hidrolipoclasia */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 0.1 }}
+          className="mb-12"
+        >
+          <div className="relative rounded-3xl overflow-hidden border-2 border-violet-500/60 bg-gradient-to-br from-violet-950/90 via-dark-900 to-purple-950/70 shadow-2xl shadow-violet-900/30">
+            {/* Ribbon de apertura */}
+            <div className="relative overflow-hidden bg-gradient-to-r from-violet-700 via-purple-500 to-violet-700 py-3 px-6 flex items-center justify-center gap-3">
+              <div className="absolute inset-0 bg-white/10 animate-pulse pointer-events-none" />
+              <Flame className="w-4 h-4 text-white flex-shrink-0" />
+              <span className="text-white font-black text-xs sm:text-sm tracking-[0.2em] uppercase">
+                PRECIO ESPECIAL DE APERTURA — TIEMPO LIMITADO
+              </span>
+              <Flame className="w-4 h-4 text-white flex-shrink-0" />
+            </div>
+
+            {/* Fondo decorativo */}
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-violet-500/10 blur-3xl" />
+              <div className="absolute -bottom-16 -left-16 w-72 h-72 rounded-full bg-purple-500/10 blur-3xl" />
+            </div>
+
+            <div className="relative z-10 grid md:grid-cols-2 gap-0">
+              {/* Imagen — derecha en desktop */}
+              <div className="relative h-72 md:h-auto min-h-[380px] overflow-hidden md:order-2">
+                <img
+                  src="/assets/images/landing/hidrolipoclasia.JPG"
+                  alt="Hidrolipoclasia"
+                  className="h-full w-full object-cover hover:scale-105 transition-transform duration-700"
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-dark-900/60 via-transparent to-transparent" />
+                <div className="absolute bottom-4 right-4 z-20 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-xl shadow-lg">
+                  <p className="text-base font-black text-violet-600">4 sesiones</p>
+                  <p className="text-xs text-gray-500 font-medium">90 min c/u</p>
+                </div>
+              </div>
+
+              {/* Contenido — izquierda en desktop */}
+              <div className="p-8 md:p-10 flex flex-col justify-center gap-5 md:order-1">
+                <div>
+                  <p className="text-xs font-bold tracking-widest uppercase text-violet-400 mb-2">
+                    CORPORAL · REDUCCIÓN DE MEDIDAS
+                  </p>
+                  <h3 className="text-2xl md:text-3xl font-bold text-white leading-tight mb-3">
+                    Hidrolipoclasia<br />
+                    <span className="text-violet-400">Tratamiento Corporal</span>
+                  </h3>
+                  <p className="text-dark-300 text-sm leading-relaxed">
+                    Tratamiento avanzado no invasivo para la reducción de medidas y contorno corporal. <strong className="text-violet-300">4 sesiones completas</strong> de 90 minutos a un precio de apertura que no se repetirá.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  {['Cavitación', 'Exfoliación', 'Activos', 'Masaje reductor', 'Envoltura', 'Sellante'].map((item) => (
+                    <div key={item} className="flex items-center gap-1.5 text-xs text-violet-200">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-violet-400 flex-shrink-0" />
+                      {item}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Bloque precio */}
+                <div className="bg-violet-950/70 border border-violet-500/40 rounded-2xl p-5">
+                  <div className="flex items-start justify-between gap-4 mb-3">
+                    <div>
+                      <p className="text-xs text-dark-400 mb-1">Precio normal (pack 4 sesiones)</p>
+                      <p className="text-xl font-bold text-dark-400 line-through decoration-violet-400">₡170.000</p>
+                      <p className="text-[10px] text-dark-500 mt-0.5">4 sesiones · 90 min c/u</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[11px] text-violet-300 font-bold mb-1 tracking-wide">PRECIO DE APERTURA</p>
+                      <p className="text-4xl font-black text-white leading-none">₡130.000</p>
+                      <p className="text-xs text-violet-400 mt-1">pack 4 sesiones</p>
+                    </div>
+                  </div>
+                  <div className="bg-violet-500/20 border border-violet-500/50 rounded-xl px-3 py-2 flex items-center gap-2">
+                    <Zap className="w-3.5 h-3.5 text-violet-300 flex-shrink-0" />
+                    <p className="text-xs text-violet-200 font-bold">Ahorrás ₡40.000 · Solo mientras dure la apertura</p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <a
+                    href="https://wa.me/50688083390?text=Hola!%20Me%20interesa%20la%20promo%20de%20apertura%20de%20Hidrolipoclasia%3A%204%20sesiones%20por%20%E2%82%A1130.000.%20%C2%BFPodr%C3%ADan%20darme%20m%C3%A1s%20informaci%C3%B3n%3F"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-gradient-to-r from-violet-500 to-purple-500 hover:from-violet-600 hover:to-purple-600 text-white font-bold rounded-xl transition-all shadow-lg shadow-violet-500/20 hover:shadow-violet-500/40 hover:-translate-y-0.5"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    Quiero esta promo
+                  </a>
+                  <Link
+                    to="/booking"
+                    className="flex-1 flex items-center justify-center gap-2 py-3.5 border border-violet-500/40 hover:border-violet-500 hover:bg-violet-500/10 text-violet-300 font-semibold rounded-xl transition-all"
+                  >
+                    <ArrowRight className="w-4 h-4" />
+                    Agendar cita
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
 
         {/* Divisor: Colección Exclusiva */}
         <motion.div
