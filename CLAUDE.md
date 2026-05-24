@@ -26,7 +26,7 @@ SPA web para **SUNANDA Estética y Spa** (San José, Costa Rica). React + TypeSc
 ## Reglas críticas establecidas
 
 ### Precios NO se muestran públicamente
-Los precios NO deben aparecer en la landing ni en páginas públicas de servicios. Solo se muestran en el panel admin. La excepción son los servicios designados como "super premium" en FeaturedServices (Glow Force). Si el cliente pide agregar precio a un servicio en la landing, confirmar primero.
+Los precios NO deben aparecer en la landing ni en páginas públicas de servicios. Solo se muestran en el panel admin. La excepción son los servicios designados como "super premium" en FeaturedServices (Glow Force, Hydraluronic, Expert Lab Peeling). Si el cliente pide agregar precio a un servicio en la landing, confirmar primero.
 
 ### WhatsApp es el canal de ventas principal
 Todos los CTAs de la landing deben apuntar a WhatsApp (`wa.me/50688083390`) o a `/booking`. No usar formularios de contacto como canal principal.
@@ -49,7 +49,7 @@ Hacer commit + push al finalizar cada cambio. El usuario lo pide explícitamente
 src/presentation/components/landing/
 ├── LandingPage.tsx          — orquestador principal
 ├── HeroLanding.tsx
-├── FeaturedServices.tsx     — servicios destacados + tarjeta Glow Force premium
+├── FeaturedServices.tsx     — servicios destacados + 3 tarjetas super premium (Glow Force, Hydraluronic, Expert Lab Peeling)
 ├── ProductSpotlight.tsx     — productos Germaine de Capuccini (2 tarjetas: Radiance C+ y Hydraluronic)
 ├── TreatmentDetails.tsx     — modal con tabs por tratamiento
 ├── BeforeAfter.tsx          — slider antes/después (WowShape)
@@ -69,6 +69,8 @@ src/presentation/components/landing/
 | Servicio | Precio | Duración | Notas |
 |---|---|---|---|
 | **Glow Force Máscara Iluminadora** | ₡55.000 | 15 min | Germaine de Capuccini · Timexpert Radiance C+ · Super Premium |
+| **Hydraluronic Máscara Extra-Hidratante** | ₡55.000 | 15 min | Germaine de Capuccini · Timexpert Hydraluronic · Super Premium |
+| **Expert Lab Peeling Químico** | ₡55.000 | 30 min | Germaine de Capuccini · Expert Lab · 3 variantes · Super Premium |
 | **Timexpert Lift_IN** | ₡65.000 | 90 min | Tratamiento Signature |
 | **Hydracure Facial** | ₡45.000 | 75 min | |
 | **Limpieza Facial Profunda** | ₡20.000 | 60 min | 10 pasos: protocolo completo con aparatología |
@@ -106,7 +108,8 @@ Ubicadas en `public/assets/images/landing/`:
 | Archivo | Uso |
 |---|---|
 | `timexpert-radiance.jpg` | Glow Force + ProductSpotlight Radiance C+ |
-| `timexpert-hydraluronic.png` | ProductSpotlight Hydraluronic |
+| `timexpert-hydraluronic.png` | Hydraluronic + ProductSpotlight Hydraluronic |
+| `expert-lab-flash-peel.jpg` | Expert Lab Peeling Químico (Flash Peel) |
 | `timexpert-liftin-promo.jpg` | Timexpert Lift_IN |
 | `antes-wowshape.jpg` / `despues-wowshape.jpg` | BeforeAfter WowShape |
 | `germaine-logo.png` | Logo marca |
@@ -141,6 +144,11 @@ Los briefs están en `c:\spa\SUNANDA-BRIEFS-DESARROLLO-FINAL\`.
   - Tarjeta full-width en `FeaturedServices.tsx` con imagen, badge SUPER PREMIUM, precio visible ₡55.000
   - Pestaña nueva en `TreatmentDetails.tsx`
   - Registrado en `SetupPage.tsx` y `crearServicios.ts`
+- **Hydraluronic Máscara Extra-Hidratante** — Segundo super premium integrado (tarjeta sky/azul):
+  - Imagen: `timexpert-hydraluronic.png` · HA triple peso molecular + HLG Patented
+- **Expert Lab Peeling Químico** — Tercer super premium integrado (tarjeta emerald):
+  - 3 variantes: Equilibrante (grasa/acné), Antiedad (colágeno/firmeza), Flash (luminosidad inmediata)
+  - 5% Mandelic Acid + 5% Lactobionic Acid · Imagen: `expert-lab-flash-peel.jpg`
 
 ---
 
