@@ -25,7 +25,7 @@ const CASES: Case[] = [
     afterImg: '/assets/images/landing/despues-wowshape.jpg',
     price: '₡180.000',
     sessions: 5,
-    highlights: ['Reduce volumen', 'Redefine la silueta', 'Mejora piel de naranja'],
+    highlights: ['Aparatología Cavitación', 'Exfoliación', 'Activo', 'Masaje', 'Sellante', 'Envoltura'],
     waMessage: 'Hola!%20Me%20interesa%20el%20Tratamiento%20WowShape%20(5%20sesiones).%20%C2%BFPodr%C3%ADan%20darme%20m%C3%A1s%20informaci%C3%B3n%3F',
   },
   {
