@@ -89,9 +89,9 @@ export function FeaturedServices() {
               <div className="absolute -bottom-16 -left-16 w-72 h-72 rounded-full bg-pink-500/10 blur-3xl" />
             </div>
 
-            <div className="relative z-10 grid md:grid-cols-2 gap-0">
+            <div className="relative z-10 grid lg:grid-cols-2 gap-0">
               {/* Imagen */}
-              <div className="relative min-h-[260px] md:min-h-[400px] bg-gradient-to-br from-rose-800 to-pink-900 overflow-hidden">
+              <div className="relative min-h-[280px] sm:min-h-[340px] lg:min-h-[420px] bg-gradient-to-br from-rose-800 to-pink-900 overflow-hidden">
                 <img
                   src="/assets/images/landing/limpieza-facial.JPG"
                   alt="Limpieza Facial Profunda"
@@ -105,12 +105,12 @@ export function FeaturedServices() {
               </div>
 
               {/* Contenido */}
-              <div className="p-5 sm:p-8 md:p-10 flex flex-col justify-center gap-4">
+              <div className="p-5 sm:p-8 lg:p-10 flex flex-col justify-center gap-4">
                 <div>
                   <p className="text-[10px] sm:text-xs font-bold tracking-widest uppercase text-rose-400 mb-2">
                     FACIAL · PROTOCOLO COMPLETO 10 PASOS
                   </p>
-                  <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-white leading-tight mb-2">
+                  <h3 className="text-2xl sm:text-3xl font-bold text-white leading-tight mb-2">
                     Limpieza Facial <span className="text-rose-400">Profunda</span>
                   </h3>
                   <p className="text-dark-300 text-xs sm:text-sm leading-relaxed">
@@ -195,9 +195,9 @@ export function FeaturedServices() {
               <div className="absolute -bottom-16 -left-16 w-72 h-72 rounded-full bg-purple-500/10 blur-3xl" />
             </div>
 
-            <div className="relative z-10 grid md:grid-cols-2 gap-0">
+            <div className="relative z-10 grid lg:grid-cols-2 gap-0">
               {/* Imagen — derecha en desktop */}
-              <div className="relative min-h-[260px] md:min-h-[400px] bg-gradient-to-br from-violet-800 to-purple-900 overflow-hidden md:order-2">
+              <div className="relative min-h-[280px] sm:min-h-[340px] lg:min-h-[420px] bg-gradient-to-br from-violet-800 to-purple-900 overflow-hidden lg:order-2">
                 <img
                   src="/assets/images/landing/hidrolipoclasia.JPG"
                   alt="Hidrolipoclasia"
@@ -211,12 +211,12 @@ export function FeaturedServices() {
               </div>
 
               {/* Contenido — izquierda en desktop */}
-              <div className="p-5 sm:p-8 md:p-10 flex flex-col justify-center gap-4 md:order-1">
+              <div className="p-5 sm:p-8 lg:p-10 flex flex-col justify-center gap-4 lg:order-1">
                 <div>
                   <p className="text-[10px] sm:text-xs font-bold tracking-widest uppercase text-violet-400 mb-2">
                     CORPORAL · REDUCCIÓN DE MEDIDAS
                   </p>
-                  <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-white leading-tight mb-2">
+                  <h3 className="text-2xl sm:text-3xl font-bold text-white leading-tight mb-2">
                     Hidrolipoclasia <span className="text-violet-400">Tratamiento Corporal</span>
                   </h3>
                   <p className="text-dark-300 text-xs sm:text-sm leading-relaxed">
