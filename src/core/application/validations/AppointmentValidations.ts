@@ -10,8 +10,8 @@ const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
  * Schema para crear cita
  */
 export const createAppointmentSchema = z.object({
-  clientId: z.string().min(1, 'El cliente es requerido'),
-  estheticianId: z.string().min(1, 'La esteticista es requerida'),
+  clientId: z.string().min(1, 'El número de cédula es requerido'),
+  estheticianId: z.string().default(''),
   serviceId: z.string().min(1, 'El servicio es requerido'),
   date: z.date({
     required_error: 'La fecha es requerida',

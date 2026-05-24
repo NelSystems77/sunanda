@@ -64,6 +64,8 @@ export function AppointmentForm({
   const [submitting, setSubmitting] = useState(false);
   const [showOtherService, setShowOtherService] = useState(false);
   const [otherServiceDescription, setOtherServiceDescription] = useState('');
+  const [clientName, setClientName] = useState('');
+  const [clientPhone, setClientPhone] = useState('');
 
   const {
     register,
@@ -114,13 +116,21 @@ export function AppointmentForm({
   const onSubmit = async (data: CreateAppointmentDTO) => {
     try {
       setSubmitting(true);
-      
-      // Si es "Otro servicio", agregar descripción a notas
+
+      // Construir prefijo con datos del cliente
+      const clientPrefix = [
+        clientName && `Nombre: ${clientName}`,
+        clientPhone && `Tel: ${clientPhone}`
+      ].filter(Boolean).join(' | ');
+
       let finalNotes = data.notes || '';
       if (showOtherService && otherServiceDescription) {
         finalNotes = `[Servicio: ${otherServiceDescription}]\n${finalNotes}`;
       }
-      
+      if (clientPrefix) {
+        finalNotes = finalNotes ? `${clientPrefix}\n${finalNotes}` : clientPrefix;
+      }
+
       const appointmentData: CreateAppointmentDTO = {
         ...data,
         date: selectedDate,
@@ -170,65 +180,58 @@ export function AppointmentForm({
 
         {/* Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-6">
-          {/* Client Information - Expandido */}
+          {/* Client Information */}
           <div className="space-y-4 p-4 bg-dark-900/50 border border-dark-700 rounded-lg">
             <h4 className="text-sm font-semibold text-white flex items-center gap-2">
               <User className="w-4 h-4 text-gold-400" />
               Información del Cliente
             </h4>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Client ID (oculto, para búsqueda backend) */}
-              <input
-                {...register('clientId')}
-                type="hidden"
-              />
-              
-              {/* Nombre Completo */}
-              <div className="md:col-span-2">
+              {/* Cédula → clientId */}
+              <div>
                 <label className="block text-sm font-medium text-white mb-2">
-                  Nombre Completo *
+                  Número de Cédula *
                 </label>
                 <input
+                  {...register('clientId')}
                   type="text"
-                  placeholder="Ej: María González Pérez"
+                  placeholder="Ej: 1-0000-0000"
                   className="w-full px-4 py-2 bg-dark-900 border border-dark-700 text-white rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent placeholder-dark-400"
-                  required
                 />
                 {errors.clientId && (
                   <p className="mt-1 text-sm text-red-400">{errors.clientId.message}</p>
                 )}
               </div>
 
-              {/* Teléfono */}
+              {/* Nombre Completo */}
               <div>
                 <label className="block text-sm font-medium text-white mb-2">
-                  Teléfono *
+                  Nombre Completo
                 </label>
                 <input
-                  type="tel"
-                  placeholder="Ej: +506 8888-8888"
+                  type="text"
+                  value={clientName}
+                  onChange={(e) => setClientName(e.target.value)}
+                  placeholder="Ej: María González Pérez"
                   className="w-full px-4 py-2 bg-dark-900 border border-dark-700 text-white rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent placeholder-dark-400"
-                  required
                 />
               </div>
 
-              {/* Contacto de Emergencia */}
-              <div>
+              {/* Teléfono */}
+              <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-white mb-2">
-                  Contacto de Emergencia
+                  Teléfono
                 </label>
                 <input
                   type="tel"
-                  placeholder="Ej: +506 7777-7777"
+                  value={clientPhone}
+                  onChange={(e) => setClientPhone(e.target.value)}
+                  placeholder="Ej: 8888-8888"
                   className="w-full px-4 py-2 bg-dark-900 border border-dark-700 text-white rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent placeholder-dark-400"
                 />
               </div>
             </div>
-
-            <p className="text-xs text-dark-400">
-              💡 Los datos del cliente se guardarán en el sistema para futuras citas
-            </p>
           </div>
 
           {/* Esthetician */}
