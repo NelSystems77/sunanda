@@ -127,8 +127,10 @@ Ubicadas en `public/assets/images/landing/`:
 
 | Archivo | Uso |
 |---|---|
-| `timexpert-radiance.jpg` | Glow Force + ProductSpotlight Radiance C+ |
-| `timexpert-hydraluronic.png` | Hydraluronic + ProductSpotlight Hydraluronic |
+| `085c4b59-3ff1-497d-9722-602c99f96a9d.JPG` | Glow Force (FeaturedServices) — imagen real del producto |
+| `timexpert-radiance.jpg` | ProductSpotlight Radiance C+ (obsoleta para Glow Force) |
+| `56df7558-dc4a-4411-b45b-b95b993a8a01.JPG` | Hydraluronic (FeaturedServices) — imagen real del producto |
+| `timexpert-hydraluronic.png` | ProductSpotlight Hydraluronic (obsoleta para tarjeta super premium) |
 | `expert-lab-flash-peel.jpg` | Expert Lab Peeling Químico (Flash Peel) |
 | `timexpert-liftin-promo.jpg` | Timexpert Lift_IN |
 | `antes-wowshape.jpg` / `despues-wowshape.jpg` | BeforeAfter WowShape |
@@ -162,10 +164,11 @@ Los briefs están en `c:\spa\SUNANDA-BRIEFS-DESARROLLO-FINAL\`.
 - **Limpieza Facial Profunda** — Precio actualizado a ₡20.000, protocolo de 10 pasos completo
 - **Glow Force Máscara Iluminadora** — Nuevo servicio super premium integrado:
   - Tarjeta full-width en `FeaturedServices.tsx` con imagen, badge SUPER PREMIUM, precio visible ₡55.000
+  - Imagen: `085c4b59-3ff1-497d-9722-602c99f96a9d.JPG` (imagen real del producto — máscara naranja Timexpert Radiance C+)
   - Pestaña nueva en `TreatmentDetails.tsx`
   - Registrado en `SetupPage.tsx` y `crearServicios.ts`
 - **Hydraluronic Máscara Extra-Hidratante** — Segundo super premium integrado (tarjeta sky/azul):
-  - Imagen: `timexpert-hydraluronic.png` · HA triple peso molecular + HLG Patented
+  - Imagen: `56df7558-dc4a-4411-b45b-b95b993a8a01.JPG` (imagen real del producto) · HA triple peso molecular + HLG Patented
 - **Expert Lab Peeling Químico** — Tercer super premium integrado (tarjeta emerald):
   - 3 variantes: Equilibrante (grasa/acné), Antiedad (colágeno/firmeza), Flash (luminosidad inmediata)
   - 5% Mandelic Acid + 5% Lactobionic Acid · Imagen: `expert-lab-flash-peel.jpg`
