@@ -242,7 +242,7 @@ export function MedicalRecordModal({ clientId, clientName, onClose }: MedicalRec
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!user?.uid) {
+    if (!user?.id) {
       toast.error('Usuario no autenticado');
       return;
     }
