@@ -195,3 +195,21 @@ Los briefs están en `c:\spa\SUNANDA-BRIEFS-DESARROLLO-FINAL\`.
 - Paleta de colores: `dark-*` para fondos, `gold-*` para acentos premium, `primary-*` para CTAs
 - Todos los textos orientados al mercado costarricense (español)
 - Precios siempre en colones (₡) con punto de miles: `₡55.000`
+
+### Patrón correcto para imágenes full-bleed en grid/flex
+
+En cards de dos columnas (imagen + contenido), usar siempre `absolute inset-0` en el `img`, **no** `h-full w-full` sin posicionamiento absoluto. El contenedor de imagen necesita un color de fondo de fallback:
+
+```tsx
+// ✅ Correcto
+<div className="relative min-h-[260px] md:min-h-[400px] bg-gradient-to-br from-X to-Y overflow-hidden">
+  <img className="absolute inset-0 w-full h-full object-cover" />
+</div>
+
+// ❌ Incorrecto — imagen negra en grid con altura auto
+<div className="relative h-72 md:h-auto min-h-[380px] overflow-hidden">
+  <img className="h-full w-full object-cover" />
+</div>
+```
+
+El error ocurre porque `h-full` en un hijo no-absoluto dentro de un contenedor `h-auto` genera una referencia circular → altura 0.
