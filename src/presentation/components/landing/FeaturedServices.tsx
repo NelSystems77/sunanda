@@ -367,6 +367,119 @@ export function FeaturedServices() {
           </div>
         </motion.div>
 
+        {/* Tarjeta Premium: Expert Lab Peeling */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 0.4 }}
+          className="mb-12"
+        >
+          <div className="relative rounded-3xl overflow-hidden border border-emerald-500/40 bg-gradient-to-br from-emerald-950/80 via-dark-900 to-green-950/60 shadow-2xl shadow-emerald-900/20">
+            {/* Fondo decorativo */}
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-emerald-500/10 blur-3xl" />
+              <div className="absolute -bottom-16 -left-16 w-72 h-72 rounded-full bg-green-500/10 blur-3xl" />
+            </div>
+
+            <div className="relative z-10 grid md:grid-cols-2 gap-0">
+              {/* Columna imagen */}
+              <div className="relative h-64 md:h-auto min-h-[300px] bg-gradient-to-br from-amber-700 to-amber-900 flex items-center justify-center overflow-hidden">
+                <div className="absolute -top-8 -right-8 w-48 h-48 rounded-full bg-white/10" />
+                <div className="absolute -bottom-12 -left-6 w-56 h-56 rounded-full bg-white/10" />
+                <img
+                  src="/assets/images/landing/expert-lab-flash-peel.jpg"
+                  alt="Expert Lab Flash Peel Germaine de Capuccini"
+                  className="relative z-10 h-full w-full object-contain p-8 drop-shadow-2xl"
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                />
+                {/* Badge Expert Lab */}
+                <div className="absolute top-4 left-4 z-20 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-lg shadow-md">
+                  <p className="text-xs font-bold text-gray-900 tracking-widest">EXPERT</p>
+                  <p className="text-[10px] text-gray-500">Lab</p>
+                </div>
+                {/* Badge Premium */}
+                <div className="absolute top-4 right-4 z-20">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-400 text-dark-900 text-xs font-bold rounded-full shadow-lg">
+                    <Zap className="w-3 h-3" />
+                    SUPER PREMIUM
+                  </span>
+                </div>
+              </div>
+
+              {/* Columna contenido */}
+              <div className="p-8 md:p-10 flex flex-col justify-center gap-5">
+                <div>
+                  <p className="text-xs font-bold tracking-widest uppercase text-emerald-400 mb-2">
+                    GERMAINE DE CAPUCCINI · EXPERT LAB
+                  </p>
+                  <h3 className="text-2xl md:text-3xl font-bold text-white leading-tight mb-3">
+                    Peeling Químico<br />
+                    <span className="text-emerald-400">Profesional Expert Lab</span>
+                  </h3>
+                  <p className="text-dark-300 text-sm leading-relaxed">
+                    Peeling de <strong className="text-emerald-400">alta gama</strong> con químicos de uso profesional diseñados para mejorar la calidad y regeneración de la piel. Tres fórmulas especializadas según tu necesidad.
+                  </p>
+                </div>
+
+                {/* 3 variantes */}
+                <div className="space-y-2.5">
+                  {[
+                    { label: 'Equilibrante', desc: 'Pieles grasas o con tendencia al acné · Equilibra sebo · Antiacné' },
+                    { label: 'Antiedad', desc: 'Estimula colágeno · Mejora firmeza y elasticidad · Reduce arrugas' },
+                    { label: 'Flash', desc: 'Luminosidad e hidratación inmediatas · Efecto brillo instantáneo' },
+                  ].map((v) => (
+                    <div key={v.label} className="flex items-start gap-3">
+                      <span className="mt-0.5 px-2 py-0.5 bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[10px] font-bold rounded uppercase flex-shrink-0">
+                        {v.label}
+                      </span>
+                      <p className="text-xs text-dark-400 leading-relaxed">{v.desc}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Info sesión + precio */}
+                <div className="flex items-center gap-4 py-3 border-t border-emerald-700/30">
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-emerald-400">30</p>
+                    <p className="text-xs text-dark-400">minutos</p>
+                  </div>
+                  <div className="w-px h-10 bg-emerald-700/30" />
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-emerald-400">1</p>
+                    <p className="text-xs text-dark-400">sesión</p>
+                  </div>
+                  <div className="w-px h-10 bg-emerald-700/30" />
+                  <div>
+                    <p className="text-2xl font-bold text-white">₡55.000</p>
+                    <p className="text-xs text-dark-400">por sesión</p>
+                  </div>
+                </div>
+
+                {/* CTAs */}
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <a
+                    href="https://wa.me/50688083390?text=Hola!%20Me%20interesa%20el%20Expert%20Lab%20Peeling%20Qu%C3%ADmico%20de%20Germaine%20de%20Capuccini.%20%C2%BFPodr%C3%ADan%20darme%20m%C3%A1s%20informaci%C3%B3n%3F"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-dark-900 font-bold rounded-xl transition-all shadow-lg hover:shadow-emerald-500/25 hover:-translate-y-0.5"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    Consultar por WhatsApp
+                  </a>
+                  <Link
+                    to="/booking"
+                    className="flex-1 flex items-center justify-center gap-2 py-3 border border-emerald-500/40 hover:border-emerald-500 hover:bg-emerald-500/10 text-emerald-300 font-semibold rounded-xl transition-all"
+                  >
+                    <ArrowRight className="w-4 h-4" />
+                    Agendar cita
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
         {/* CTA para ver todos */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

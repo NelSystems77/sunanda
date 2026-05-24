@@ -49,6 +49,19 @@ const serviciosSUNANDA = [
     hasPromotion: false,
   },
   {
+    name: 'Expert Lab Peeling Químico',
+    description: 'Expert Lab · Peeling químico de alta gama, uso estricto profesional. Tres variantes: Equilibrante (pieles grasas/acné), Antiedad (estimula colágeno, reduce arrugas), Flash (luminosidad e hidratación inmediatas). 5% Mandelic Acid + 5% Lactobionic Acid.',
+    category: 'FACIAL',
+    duration: 30,
+    priceCRC: 55000,
+    priceUSD: Math.round(55000 / USD_TO_CRC),
+    isActive: true,
+    imageURL: '/assets/images/landing/expert-lab-flash-peel.jpg',
+    benefits: ['Peeling Equilibrante · pieles grasas o con acné', 'Peeling Antiedad · estimula colágeno y firmeza', 'Peeling Flash · luminosidad e hidratación inmediatas'],
+    productLines: ['Germaine de Capuccini'],
+    hasPromotion: false,
+  },
+  {
     name: 'Limpieza Facial Profunda',
     description: 'Protocolo completo: desmaquillado, exfoliación, tónico, aparatología, activo, masaje, mascarilla, sellante y bloqueador según condición de piel',
     category: 'FACIAL',
@@ -305,16 +318,16 @@ export function SetupPage() {
           <div>
             <h2 className="text-xl font-semibold text-white mb-2">Crear Servicios</h2>
             <p className="text-dark-300 mb-4">
-              Esto creará 15 servicios en Firebase con campos corregidos (priceCRC y priceUSD).
+              Esto creará 18 servicios en Firebase con campos corregidos (priceCRC y priceUSD).
             </p>
           </div>
-          
+
           <Button
             onClick={handleCrearServicios}
             isLoading={loading}
             variant="primary"
           >
-            Crear 15 Servicios en Firebase
+            Crear 18 Servicios en Firebase
           </Button>
 
           {result && (

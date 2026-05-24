@@ -44,6 +44,17 @@ const serviciosSUNANDA = [
     productLines: ['Germaine de Capuccini'],
   },
   {
+    name: 'Expert Lab Peeling Químico',
+    description: 'Expert Lab · Peeling químico de alta gama, uso estricto profesional. Tres variantes: Equilibrante (pieles grasas/acné), Antiedad (estimula colágeno, reduce arrugas), Flash (luminosidad e hidratación inmediatas). 5% Mandelic Acid + 5% Lactobionic Acid.',
+    category: 'FACIAL',
+    duration: 30,
+    price: 55000,
+    isActive: true,
+    imageUrl: '/assets/images/landing/expert-lab-flash-peel.jpg',
+    benefits: ['Peeling Equilibrante · pieles grasas o con acné', 'Peeling Antiedad · estimula colágeno y firmeza', 'Peeling Flash · luminosidad e hidratación inmediatas'],
+    productLines: ['Germaine de Capuccini'],
+  },
+  {
     name: 'Limpieza Facial Profunda',
     description: 'Protocolo completo: desmaquillado, exfoliación, tónico, aparatología, activo, masaje, mascarilla, sellante y bloqueador según condición de piel',
     category: 'FACIAL',

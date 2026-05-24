@@ -169,6 +169,33 @@ const TREATMENTS: Treatment[] = [
     ],
     ideal: 'Pieles deshidratadas y secas. Uso diurno como hidratación extra, nocturno como tratamiento intensivo, u ocasional para alivio inmediato.',
   },
+  {
+    id: 'expert-lab-peeling',
+    name: 'Expert Lab Peeling Químico',
+    category: 'Germaine de Capuccini · Expert Lab',
+    duration: '30 min',
+    price: '₡55,000',
+    rating: 5,
+    description: 'Peeling de alta gama con químicos de uso estricto profesional diseñados para mejorar la calidad y la regeneración de la piel. Tres fórmulas especializadas: Equilibrante para pieles grasas o con acné, Antiedad para estimular colágeno y firmeza, y Flash para luminosidad e hidratación inmediatas.',
+    benefits: [
+      'Peeling Equilibrante · equilibra producción de sebo y propiedades antiacné',
+      'Peeling Antiedad · estimula colágeno, mejora firmeza y reduce arrugas',
+      'Peeling Flash · luminosidad e hidratación inmediatas, efecto brillo instantáneo',
+      '5% Ácido Mandélico + 5% Ácido Lactobiónico',
+      'Mejora la calidad y regeneración de la piel',
+      'Fórmula seleccionada según condición de piel',
+    ],
+    steps: [
+      'Consulta y análisis del tipo y condición de piel',
+      'Limpieza y preparación de la piel',
+      'Selección de variante: Equilibrante / Antiedad / Flash',
+      'Aplicación del peeling químico Expert Lab',
+      'Tiempo de acción controlado con ácidos de alta precisión',
+      'Neutralización y retiro del peeling',
+      'Calmante y sellante post-peeling',
+    ],
+    ideal: 'Equilibrante: pieles grasas o con tendencia al acné. Antiedad: pieles maduras con pérdida de firmeza o arrugas. Flash: pieles apagadas o deshidratadas que buscan luminosidad inmediata.',
+  },
 ];
 
 interface Props {
