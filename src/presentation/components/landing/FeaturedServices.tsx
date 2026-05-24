@@ -203,7 +203,7 @@ export function FeaturedServices() {
                 <div className="absolute -top-8 -right-8 w-64 h-64 rounded-full bg-white/10 blur-2xl" />
                 <div className="absolute -bottom-12 -left-6 w-72 h-72 rounded-full bg-white/10 blur-2xl" />
                 <img
-                  src="/assets/images/landing/timexpert-radiance.jpg"
+                  src="/assets/images/landing/085c4b59-3ff1-497d-9722-602c99f96a9d.JPG"
                   alt="Glow Force Timexpert Radiance C+"
                   className="relative z-10 h-full w-full object-contain p-4 drop-shadow-2xl scale-105 hover:scale-110 transition-transform duration-500"
                   onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
@@ -310,7 +310,7 @@ export function FeaturedServices() {
                 <div className="absolute -top-8 -right-8 w-64 h-64 rounded-full bg-white/10 blur-2xl" />
                 <div className="absolute -bottom-12 -left-6 w-72 h-72 rounded-full bg-white/10 blur-2xl" />
                 <img
-                  src="/assets/images/landing/timexpert-hydraluronic.png"
+                  src="/assets/images/landing/56df7558-dc4a-4411-b45b-b95b993a8a01.JPG"
                   alt="Hydraluronic Timexpert Extra-Hidratante"
                   className="relative z-10 h-full w-full object-contain p-4 drop-shadow-2xl scale-105 hover:scale-110 transition-transform duration-500"
                   onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
