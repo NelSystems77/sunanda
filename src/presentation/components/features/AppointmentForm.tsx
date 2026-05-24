@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CreateAppointmentDTO } from '@/core/domain/interfaces/Appointment';
 import { createAppointmentSchema } from '../../../core/application/validations/AppointmentValidations';
 import { TimeSlotSelector } from './TimeSlotSelector';
+import { TimeSlot, SPA_SCHEDULE } from '../../../core/infrastructure/services/AvailabilityService';
 import { useAppointments } from '../../hooks/useAppointments';
 import { useServices } from '../../hooks/useServices';
 import { X, Calendar, User, Scissors, Clock, FileText } from 'lucide-react';
@@ -18,10 +19,29 @@ interface AppointmentFormProps {
   initialTime?: string;
 }
 
-/**
- * Formulario de cita
- * Permite crear y editar citas con validación
- */
+function generateAllTimeSlots(serviceDuration: number): TimeSlot[] {
+  const slots: TimeSlot[] = [];
+  const [openH, openM] = SPA_SCHEDULE.openTime.split(':').map(Number);
+  const [closeH, closeM] = SPA_SCHEDULE.closeTime.split(':').map(Number);
+  const openMinutes = openH * 60 + openM;
+  const closeMinutes = closeH * 60 + closeM;
+  let current = openMinutes;
+  while (current + serviceDuration <= closeMinutes) {
+    const sH = Math.floor(current / 60);
+    const sM = current % 60;
+    const end = current + serviceDuration;
+    const eH = Math.floor(end / 60);
+    const eM = end % 60;
+    slots.push({
+      startTime: `${String(sH).padStart(2, '0')}:${String(sM).padStart(2, '0')}`,
+      endTime: `${String(eH).padStart(2, '0')}:${String(eM).padStart(2, '0')}`,
+      available: true
+    });
+    current += SPA_SCHEDULE.slotDuration;
+  }
+  return slots;
+}
+
 export function AppointmentForm({
   onClose,
   onSuccess,
@@ -40,7 +60,7 @@ export function AppointmentForm({
   const [selectedDate, setSelectedDate] = useState<Date>(initialDate || new Date());
   const [selectedEsthetician, setSelectedEsthetician] = useState<string>('');
   const [selectedSlot, setSelectedSlot] = useState<string>(initialTime || '');
-  const [serviceDuration, setServiceDuration] = useState<number>(30);
+  const [serviceDuration, setServiceDuration] = useState<number>(90);
   const [submitting, setSubmitting] = useState(false);
   const [showOtherService, setShowOtherService] = useState(false);
   const [otherServiceDescription, setOtherServiceDescription] = useState('');
@@ -77,9 +97,11 @@ export function AppointmentForm({
     }
   }, [selectedDate, selectedEsthetician, serviceDuration]);
 
-  /**
-   * Calcular hora de fin cuando se selecciona slot
-   */
+  const displaySlots = useMemo(() => {
+    if (selectedEsthetician) return availableSlots;
+    return generateAllTimeSlots(serviceDuration);
+  }, [selectedEsthetician, availableSlots, serviceDuration]);
+
   const handleSlotSelect = (startTime: string, endTime: string) => {
     setSelectedSlot(startTime);
     setValue('startTime', startTime);
@@ -248,7 +270,7 @@ export function AppointmentForm({
                 
                 if (value === 'OTHER') {
                   setShowOtherService(true);
-                  setServiceDuration(30); // Default
+                  setServiceDuration(90);
                 } else {
                   setShowOtherService(false);
                   setOtherServiceDescription('');
@@ -329,23 +351,26 @@ export function AppointmentForm({
           </div>
 
           {/* Time Slots */}
-          {selectedEsthetician && (
-            <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-white mb-2">
-                <Clock className="w-4 h-4 text-gold-400" />
-                Horario
-              </label>
-              <TimeSlotSelector
-                slots={availableSlots}
-                selectedSlot={selectedSlot}
-                onSelect={handleSlotSelect}
-                loading={loadingSlots}
-              />
-              {errors.startTime && (
-                <p className="mt-1 text-sm text-red-400">{errors.startTime.message}</p>
-              )}
-            </div>
-          )}
+          <div>
+            <label className="flex items-center gap-2 text-sm font-medium text-white mb-2">
+              <Clock className="w-4 h-4 text-gold-400" />
+              Horario
+            </label>
+            {!selectedEsthetician && (
+              <p className="text-xs text-dark-400 mb-3">
+                Selecciona una esteticista para ver su disponibilidad real
+              </p>
+            )}
+            <TimeSlotSelector
+              slots={displaySlots}
+              selectedSlot={selectedSlot}
+              onSelect={handleSlotSelect}
+              loading={!!selectedEsthetician && loadingSlots}
+            />
+            {errors.startTime && (
+              <p className="mt-1 text-sm text-red-400">{errors.startTime.message}</p>
+            )}
+          </div>
 
           {/* Notes */}
           <div>
