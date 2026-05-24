@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAppointments } from '../hooks/useAppointments';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { PageHeader } from '../components/layout/PageHeader';
@@ -8,18 +8,42 @@ import { CalendarWeekView } from '../components/features/CalendarWeekView';
 import { CalendarMonthView } from '../components/features/CalendarMonthView';
 import { AppointmentForm } from '../components/features/AppointmentForm';
 import { AppointmentFilters } from '../components/features/AppointmentFilters';
-import { ReminderPanel } from '../components/features/ReminderPanel';
 import { ReminderSettings } from '../components/features/ReminderSettings';
 import { OccupancyIndicator } from '../components/features/OccupancyIndicator';
 import { Button } from '../components/ui/Button';
 import { MedicalRecordModal } from '../components/features/MedicalRecordModal';
 import { PaymentForm } from '../components/features/PaymentForm';
-import { ChevronLeft, ChevronRight, Plus, Bell, Calendar as CalendarIcon, CheckCircle, XCircle, Clock, Users, X, User, Send, Settings, DollarSign } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Bell, Calendar as CalendarIcon, CheckCircle, Clock, Users, X, User, Send, Settings, DollarSign, MessageCircle, Phone } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AppointmentUseCases } from '../../core/application/use-cases/appointments/AppointmentUseCases';
+import { AppointmentRepository } from '../../core/infrastructure/repositories/AppointmentRepository';
+import { Appointment } from '../../core/domain/interfaces/Appointment';
 import toast from 'react-hot-toast';
 
 const useCases = new AppointmentUseCases();
+const appointmentRepo = new AppointmentRepository();
+
+const parseClientFromNotes = (notes?: string): { name: string; phone: string } => {
+  if (!notes) return { name: 'Cliente', phone: '' };
+  const nameMatch = notes.match(/Nombre:\s*([^|]+)/);
+  const phoneMatch = notes.match(/Tel:\s*([^|]+)/);
+  return {
+    name: nameMatch ? nameMatch[1].trim() : 'Cliente',
+    phone: phoneMatch ? phoneMatch[1].trim() : '',
+  };
+};
+
+const buildWhatsAppMessage = (appointment: Appointment, clientName: string): string => {
+  const aptDate = new Date(appointment.date);
+  const dateStr = aptDate.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
+  return `¡Hola ${clientName}! 👋\n\nTe recordamos que tienes una cita en *SUNANDA Estética y Spa* el *${dateStr}* a las *${appointment.startTime}*.\n\nSi necesitás hacer algún cambio, escribinos aquí 🙏\n\n_SUNANDA Estética y Spa_ ✨`;
+};
+
+const openWhatsApp = (phone: string, message: string): void => {
+  const clean = phone.replace(/\D/g, '');
+  const full = clean.startsWith('506') ? clean : `506${clean}`;
+  window.open(`https://wa.me/${full}?text=${encodeURIComponent(message)}`, '_blank');
+};
 
 /**
  * Página de Citas/Agenda
@@ -74,6 +98,20 @@ export function AppointmentsPage() {
   const [showReminderSettings, setShowReminderSettings] = useState(false);
   const [paymentAppointmentId, setPaymentAppointmentId] = useState<string | null>(null);
 
+  // Recordatorios próximos (próximos 7 días sin recordatorio enviado)
+  const [upcomingReminders, setUpcomingReminders] = useState<Appointment[]>([]);
+  const [sendingReminderId, setSendingReminderId] = useState<string | null>(null);
+
+  const loadUpcomingReminders = useCallback(async () => {
+    const now = new Date();
+    const in7days = new Date(now);
+    in7days.setDate(in7days.getDate() + 7);
+    const all = await appointmentRepo.getByDateRange(now, in7days);
+    setUpcomingReminders(
+      all.filter(a => !a.reminderSent && (a.status === 'pending' || a.status === 'confirmed'))
+    );
+  }, []);
+
   /**
    * Cargar citas al montar y cuando cambia la fecha o vista
    */
@@ -81,6 +119,30 @@ export function AppointmentsPage() {
     loadAppointments();
     loadOccupancy();
   }, [selectedDate, calendarView]);
+
+  useEffect(() => {
+    loadUpcomingReminders();
+  }, [loadUpcomingReminders]);
+
+  const handleSendWhatsAppReminder = async (appointment: Appointment) => {
+    const { name, phone } = parseClientFromNotes(appointment.notes);
+    if (!phone) {
+      toast.error('No se encontró el teléfono del cliente en las notas de la cita');
+      return;
+    }
+    setSendingReminderId(appointment.id);
+    try {
+      const message = buildWhatsAppMessage(appointment, name);
+      openWhatsApp(phone, message);
+      await useCases.markReminderSent(appointment.id);
+      toast.success(`Recordatorio enviado a ${name} por WhatsApp`);
+      await loadUpcomingReminders();
+    } catch {
+      toast.error('Error al marcar el recordatorio');
+    } finally {
+      setSendingReminderId(null);
+    }
+  };
 
   /**
    * Cargar citas según la vista
@@ -257,9 +319,9 @@ export function AppointmentsPage() {
               >
                 <Bell className="w-4 h-4 mr-2" />
                 Recordatorios
-                {dayStats.pending > 0 && (
+                {upcomingReminders.length > 0 && (
                   <span className="absolute -top-1 -right-1 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-600 rounded-full">
-                    {dayStats.pending}
+                    {upcomingReminders.length}
                   </span>
                 )}
               </Button>
@@ -474,7 +536,7 @@ export function AppointmentsPage() {
         </div>
       </div>
 
-      {/* Modal Recordatorios (FASE 3) */}
+      {/* Modal Recordatorios */}
       <AnimatePresence>
         {showReminders && (
           <motion.div
@@ -500,7 +562,9 @@ export function AppointmentsPage() {
                   <div>
                     <h3 className="text-xl font-bold text-white">Recordatorios Pendientes</h3>
                     <p className="text-sm text-dark-400 mt-0.5">
-                      {appointments.filter(a => !a.reminderSent && a.status === 'pending').length} citas sin recordatorio
+                      {upcomingReminders.length === 0
+                        ? 'Todas las citas tienen recordatorio enviado'
+                        : `${upcomingReminders.length} cita${upcomingReminders.length !== 1 ? 's' : ''} sin recordatorio — próximos 7 días`}
                     </p>
                   </div>
                 </div>
@@ -514,63 +578,90 @@ export function AppointmentsPage() {
 
               {/* Lista Recordatorios */}
               <div className="p-6 overflow-y-auto max-h-[60vh]">
-                {appointments.filter(a => !a.reminderSent && a.status === 'pending').length === 0 ? (
+                {upcomingReminders.length === 0 ? (
                   <div className="text-center py-12">
                     <Bell className="w-16 h-16 text-dark-600 mx-auto mb-4" />
                     <p className="text-dark-400">No hay recordatorios pendientes</p>
                     <p className="text-xs text-dark-500 mt-2">
-                      Todas las citas confirmadas tienen recordatorio enviado
+                      Todas las citas de los próximos 7 días tienen recordatorio enviado
                     </p>
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {appointments
-                      .filter(a => !a.reminderSent && a.status === 'pending')
-                      .map((appointment) => (
+                    {upcomingReminders.map((appointment) => {
+                      const { name, phone } = parseClientFromNotes(appointment.notes);
+                      const isSending = sendingReminderId === appointment.id;
+                      return (
                         <div
                           key={appointment.id}
                           className="bg-dark-900 border border-dark-700 rounded-lg p-4 hover:border-gold-500/30 transition-colors"
                         >
                           <div className="flex items-start justify-between gap-4">
                             {/* Info Cita */}
-                            <div className="flex-1">
+                            <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-3 mb-2">
-                                <Clock className="w-4 h-4 text-gold-400" />
+                                <Clock className="w-4 h-4 text-gold-400 flex-shrink-0" />
                                 <span className="font-semibold text-white">
                                   {new Date(appointment.date).toLocaleDateString('es-ES', {
                                     weekday: 'short',
                                     day: 'numeric',
                                     month: 'short'
-                                  })} - {appointment.startTime}
+                                  })} · {appointment.startTime}
+                                </span>
+                                <span className={`px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0 ${
+                                  appointment.status === 'confirmed'
+                                    ? 'bg-green-500/20 text-green-300'
+                                    : 'bg-gold-500/20 text-gold-300'
+                                }`}>
+                                  {appointment.status === 'confirmed' ? 'Confirmada' : 'Pendiente'}
                                 </span>
                               </div>
-                              <div className="text-sm text-dark-300 space-y-1">
+                              <div className="text-sm text-dark-300 space-y-1 ml-7">
                                 <div className="flex items-center gap-2">
-                                  <User className="w-3 h-3" />
-                                  Cliente: {appointment.clientId}
+                                  <User className="w-3 h-3 flex-shrink-0" />
+                                  <span className="font-medium text-white truncate">{name}</span>
                                 </div>
+                                {phone && (
+                                  <div className="flex items-center gap-2 text-dark-400">
+                                    <Phone className="w-3 h-3 flex-shrink-0" />
+                                    <span>{phone}</span>
+                                  </div>
+                                )}
                               </div>
                             </div>
 
-                            {/* Botón Enviar */}
+                            {/* Botón WhatsApp */}
                             <Button
                               variant="primary"
                               size="sm"
-                              onClick={() => {
-                                // Enviar recordatorio
-                                toast.success('Recordatorio enviado');
-                                loadAppointments();
-                              }}
+                              onClick={() => handleSendWhatsAppReminder(appointment)}
+                              disabled={isSending || !phone}
+                              className="flex-shrink-0 bg-green-600 hover:bg-green-700 border-green-600"
+                              title={!phone ? 'Sin teléfono en notas' : 'Enviar recordatorio por WhatsApp'}
                             >
-                              <Send className="w-4 h-4 mr-1" />
-                              Enviar
+                              {isSending ? (
+                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                              ) : (
+                                <MessageCircle className="w-4 h-4 mr-1" />
+                              )}
+                              {isSending ? '' : 'WhatsApp'}
                             </Button>
                           </div>
                         </div>
-                      ))}
+                      );
+                    })}
                   </div>
                 )}
               </div>
+
+              {/* Footer con envío masivo */}
+              {upcomingReminders.length > 1 && (
+                <div className="p-4 border-t border-dark-700 bg-dark-900/50">
+                  <p className="text-xs text-dark-400 text-center">
+                    Los recordatorios por WhatsApp se abren uno a uno para que puedas personalizarlos antes de enviar.
+                  </p>
+                </div>
+              )}
             </motion.div>
           </motion.div>
         )}
