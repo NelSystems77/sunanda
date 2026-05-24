@@ -62,6 +62,24 @@ src/presentation/components/landing/
 └── ...
 ```
 
+### Orden de secciones en LandingPage (flujo actual)
+
+1. `PromosBanner` — banner superior
+2. `HeroLanding`
+3. `SocialProof` — cifras y certificaciones
+4. `BrandPartnership` — alianza Germaine de Capuccini
+5. **`FeaturedServices`** — promos (2x1, apertura) + divisor dorado + 3 tarjetas super premium
+6. `SignatureTreatment` — Timexpert Lift_IN
+7. `TreatmentDetails` — catálogo con modal tabs
+8. `BeforeAfter` — slider WowShape
+9. `AboutProfessional`
+10. `ServicesSection`
+11. `InvestmentInfo`
+12. `ProductSpotlight`
+13. `TestimonialsCarousel`
+14. `BookingCTA`
+15. `About`, `ExperienceGallery`, `BlogPreview`, `FAQSection`, `NewsletterSignup`, `Contact`
+
 ---
 
 ## Catálogo de servicios actual
@@ -151,6 +169,11 @@ Los briefs están en `c:\spa\SUNANDA-BRIEFS-DESARROLLO-FINAL\`.
 - **Expert Lab Peeling Químico** — Tercer super premium integrado (tarjeta emerald):
   - 3 variantes: Equilibrante (grasa/acné), Antiedad (colágeno/firmeza), Flash (luminosidad inmediata)
   - 5% Mandelic Acid + 5% Lactobionic Acid · Imagen: `expert-lab-flash-peel.jpg`
+- **FeaturedServices en LandingPage** — Corregido: el componente no estaba importado ni renderizado (los 3 super premium eran invisibles para visitantes). Ahora se posiciona entre `BrandPartnership` y `SignatureTreatment`.
+  - Divisor dorado "Colección Exclusiva · Germaine de Capuccini" separa promos regulares de super premium
+  - Encabezado "Tratamientos Super Premium" con acento `gold-400`
+  - Imágenes: altura aumentada a `min-h-[420px]`, padding reducido a `p-4`, hover `scale-110`
+  - Tarjeta Hydraluronic con layout espejo (imagen a la derecha) para ritmo visual izq→der→izq
 
 ---
 
