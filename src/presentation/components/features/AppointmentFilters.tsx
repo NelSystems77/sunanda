@@ -112,7 +112,7 @@ export function AppointmentFilters({
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
                 >
                   <option value="">Todas</option>
-                  <option value="esthetician-1">Esteticista 1</option>
+                  <option value="esthetician-1">Lic. Grettel Bolaños González</option>
                   <option value="esthetician-2">Esteticista 2</option>
                   <option value="esthetician-3">Esteticista 3</option>
                 </select>

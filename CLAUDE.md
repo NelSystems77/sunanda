@@ -238,6 +238,22 @@ await deleteApp(secondaryApp); // limpiar siempre en finally
 
 ---
 
+## Esteticistas del equipo
+
+Los selectores de esteticista en el dashboard usan IDs fijos (`esthetician-1`, `esthetician-2`, `esthetician-3`) como valores en Firestore. Los nombres visibles se configuran en:
+- `src/presentation/components/features/AppointmentForm.tsx` — formulario de agendar cita
+- `src/presentation/components/features/AppointmentFilters.tsx` — filtro en vista de citas
+
+| ID (Firestore) | Nombre visible |
+|---|---|
+| `esthetician-1` | Lic. Grettel Bolaños González |
+| `esthetician-2` | Esteticista 2 |
+| `esthetician-3` | Esteticista 3 |
+
+> Si se asigna nombre real a Esteticista 2 o 3, actualizar ambos archivos y esta tabla.
+
+---
+
 ## Convenciones de código
 
 - Sin comentarios innecesarios — solo cuando el WHY no es obvio

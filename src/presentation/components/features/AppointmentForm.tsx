@@ -225,7 +225,7 @@ export function AppointmentForm({
               className="w-full px-4 py-2 bg-dark-900 border border-dark-700 text-white rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent"
             >
               <option value="">Seleccionar esteticista</option>
-              <option value="esthetician-1">Esteticista 1</option>
+              <option value="esthetician-1">Lic. Grettel Bolaños González</option>
               <option value="esthetician-2">Esteticista 2</option>
               <option value="esthetician-3">Esteticista 3</option>
             </select>
