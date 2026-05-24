@@ -11,6 +11,7 @@ import { X, Calendar, User, Scissors, Clock, FileText, Phone } from 'lucide-reac
 import { Button } from '../ui/Button';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../hooks/useAuth';
+import toast from 'react-hot-toast';
 
 interface AppointmentFormProps {
   onClose: () => void;
@@ -77,6 +78,9 @@ export function AppointmentForm({
   } = useForm<CreateAppointmentDTO>({
     resolver: zodResolver(createAppointmentSchema),
     defaultValues: {
+      clientId: '',
+      estheticianId: '',
+      serviceId: '',
       date: selectedDate,
       startTime: initialTime || '',
       endTime: '',
@@ -110,6 +114,10 @@ export function AppointmentForm({
     setSelectedSlot(startTime);
     setValue('startTime', startTime);
     setValue('endTime', endTime);
+  };
+
+  const onValidationError = () => {
+    toast.error('Por favor completa todos los campos requeridos');
   };
 
   /**
@@ -146,9 +154,12 @@ export function AppointmentForm({
       if (id) {
         onSuccess?.();
         onClose();
+      } else {
+        toast.error('No se pudo crear la cita. Intenta de nuevo.');
       }
     } catch (error) {
       console.error('Error creating appointment:', error);
+      toast.error('Error inesperado al crear la cita');
     } finally {
       setSubmitting(false);
     }
@@ -183,7 +194,7 @@ export function AppointmentForm({
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit(onSubmit, onValidationError)} className="p-6 space-y-6">
           {/* Client Information */}
           <div className="space-y-4 p-4 bg-dark-900/50 border border-dark-700 rounded-lg">
             <h4 className="text-sm font-semibold text-white flex items-center gap-2">
