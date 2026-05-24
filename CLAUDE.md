@@ -242,6 +242,23 @@ await deleteApp(secondaryApp); // limpiar siempre en finally
 
 `src/presentation/components/features/AppointmentForm.tsx`
 
+### Campos del cliente
+
+| Campo | Binding | Destino |
+|---|---|---|
+| **Número de Cédula** | `register('clientId')` | `clientId` en Firestore — identificador único del cliente |
+| **Nombre Completo** | estado local `clientName` | Se prepone automáticamente a las notas al guardar |
+| **Teléfono** | estado local `clientPhone` | Se prepone automáticamente a las notas al guardar |
+
+El prefijo generado en notas tiene el formato: `Nombre: X | Tel: Y`
+
+### Validación — campos requeridos
+
+- `clientId` (cédula): requerido, mínimo 1 caracter
+- `estheticianId`: **opcional** (default `''`) — permite crear citas sin asignar esteticista
+- `serviceId`: requerido
+- `date`, `startTime`, `endTime`: requeridos
+
 ### Selector de horario
 
 El selector de hora **siempre es visible** (no está gateado por selección de esteticista):
