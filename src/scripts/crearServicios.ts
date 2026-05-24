@@ -22,6 +22,17 @@ const serviciosSUNANDA = [
     productLines: ['Germaine de Capuccini'],
   },
   {
+    name: 'Glow Force Máscara Iluminadora',
+    description: 'Timexpert Radiance C+ · Piel perfecta en 15 minutos. Luminosa, firme y radiante con Vitamina C Pura. Anti-fatiga, anti-manchas, estimula actividad celular.',
+    category: 'FACIAL',
+    duration: 15,
+    price: 55000,
+    isActive: true,
+    imageUrl: '/assets/images/landing/timexpert-radiance.jpg',
+    benefits: ['Luminosidad extraordinaria', 'Anti-manchas y anti-fatiga', 'Vitamina C Pura · HLG Patented'],
+    productLines: ['Germaine de Capuccini'],
+  },
+  {
     name: 'Limpieza Facial Profunda',
     description: 'Protocolo completo: desmaquillado, exfoliación, tónico, aparatología, activo, masaje, mascarilla, sellante y bloqueador según condición de piel',
     category: 'FACIAL',

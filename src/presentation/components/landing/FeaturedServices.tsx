@@ -10,7 +10,7 @@
 
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { Sparkles, Clock, Tag, ArrowRight } from 'lucide-react';
+import { Sparkles, Clock, Tag, ArrowRight, MessageCircle, CheckCircle2, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
@@ -152,6 +152,113 @@ export function FeaturedServices() {
             </motion.div>
           ))}
         </div>
+
+        {/* Tarjeta Premium: Glow Force */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 0.2 }}
+          className="mb-12"
+        >
+          <div className="relative rounded-3xl overflow-hidden border border-amber-500/40 bg-gradient-to-br from-amber-950/80 via-dark-900 to-orange-950/60 shadow-2xl shadow-amber-900/20">
+            {/* Fondo decorativo */}
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-amber-500/10 blur-3xl" />
+              <div className="absolute -bottom-16 -left-16 w-72 h-72 rounded-full bg-orange-500/10 blur-3xl" />
+            </div>
+
+            <div className="relative z-10 grid md:grid-cols-2 gap-0">
+              {/* Columna imagen */}
+              <div className="relative h-64 md:h-auto min-h-[300px] bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center overflow-hidden">
+                <div className="absolute -top-8 -right-8 w-48 h-48 rounded-full bg-white/10" />
+                <div className="absolute -bottom-12 -left-6 w-56 h-56 rounded-full bg-white/10" />
+                <img
+                  src="/assets/images/landing/timexpert-radiance.jpg"
+                  alt="Glow Force Timexpert Radiance C+"
+                  className="relative z-10 h-full w-full object-contain p-8 drop-shadow-2xl"
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                />
+                {/* Badge HLG */}
+                <div className="absolute top-4 left-4 z-20 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-lg shadow-md">
+                  <p className="text-xs font-bold text-gray-900 tracking-widest">HLG</p>
+                  <p className="text-[10px] text-gray-500">Patented</p>
+                </div>
+                {/* Badge Premium */}
+                <div className="absolute top-4 right-4 z-20">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-500 text-dark-900 text-xs font-bold rounded-full shadow-lg">
+                    <Zap className="w-3 h-3" />
+                    SUPER PREMIUM
+                  </span>
+                </div>
+              </div>
+
+              {/* Columna contenido */}
+              <div className="p-8 md:p-10 flex flex-col justify-center gap-5">
+                <div>
+                  <p className="text-xs font-bold tracking-widest uppercase text-amber-400 mb-2">
+                    GERMAINE DE CAPUCCINI · TIMEXPERT RADIANCE C+
+                  </p>
+                  <h3 className="text-2xl md:text-3xl font-bold text-white leading-tight mb-3">
+                    Glow Force<br />
+                    <span className="text-amber-400">Máscara Iluminadora</span>
+                  </h3>
+                  <p className="text-dark-300 text-sm leading-relaxed">
+                    Piel perfecta en tiempo récord. En solo <strong className="text-amber-400">15 minutos</strong> una piel más luminosa, firme, tonificada y radiante. Ideal para ocasiones especiales o refuerzo semanal de juventud y energía.
+                  </p>
+                </div>
+
+                {/* Incluidos */}
+                <div className="grid grid-cols-2 gap-2">
+                  {['Vitamina C Pura', 'Anti-fatiga', 'Anti-manchas', 'Efecto luminoso', 'Firmeza y tono', 'Energía celular'].map((item) => (
+                    <div key={item} className="flex items-center gap-1.5 text-xs text-amber-200">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+                      {item}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Info sesión + precio */}
+                <div className="flex items-center gap-4 py-3 border-t border-amber-700/30">
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-amber-400">15</p>
+                    <p className="text-xs text-dark-400">minutos</p>
+                  </div>
+                  <div className="w-px h-10 bg-amber-700/30" />
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-amber-400">1</p>
+                    <p className="text-xs text-dark-400">sesión</p>
+                  </div>
+                  <div className="w-px h-10 bg-amber-700/30" />
+                  <div>
+                    <p className="text-2xl font-bold text-white">₡55.000</p>
+                    <p className="text-xs text-dark-400">por sesión</p>
+                  </div>
+                </div>
+
+                {/* CTAs */}
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <a
+                    href="https://wa.me/50688083390?text=Hola!%20Me%20interesa%20el%20tratamiento%20Glow%20Force%20M%C3%A1scara%20Iluminadora%20Timexpert%20Radiance%20C%2B.%20%C2%BFPodr%C3%ADan%20darme%20m%C3%A1s%20informaci%C3%B3n%3F"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-dark-900 font-bold rounded-xl transition-all shadow-lg hover:shadow-amber-500/25 hover:-translate-y-0.5"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    Consultar por WhatsApp
+                  </a>
+                  <Link
+                    to="/booking"
+                    className="flex-1 flex items-center justify-center gap-2 py-3 border border-amber-500/40 hover:border-amber-500 hover:bg-amber-500/10 text-amber-300 font-semibold rounded-xl transition-all"
+                  >
+                    <ArrowRight className="w-4 h-4" />
+                    Agendar cita
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
 
         {/* CTA para ver todos */}
         <motion.div

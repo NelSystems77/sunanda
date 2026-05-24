@@ -120,6 +120,30 @@ const TREATMENTS: Treatment[] = [
     ],
     ideal: 'Para cualquier persona con estrés, tensión muscular o simplemente en busca de bienestar.',
   },
+  {
+    id: 'glow-force',
+    name: 'Glow Force Máscara Iluminadora',
+    category: 'Germaine de Capuccini · Premium',
+    duration: '15 min',
+    price: '₡55,000',
+    rating: 5,
+    description: 'Piel perfecta en tiempo récord. En solo 15 minutos una piel más luminosa, firme, tonificada y radiante. Perfecta para ocasiones especiales o como refuerzo semanal de juventud y energía. El tratamiento anti-fatiga que da a la tez una luminosidad extraordinaria, cargándola de energía.',
+    benefits: [
+      'Luminosidad extraordinaria desde el interior',
+      'Piel más firme y tonificada en 15 minutos',
+      'Inhibe la producción de melanina · anti-manchas',
+      'Estimula la actividad celular',
+      'Anti-fatiga · recarga de energía vital',
+      'Transforma melanina oscura en clara · iguala el tono',
+    ],
+    steps: [
+      'Limpieza y preparación de la piel',
+      'Aplicación de la máscara Glow Force Timexpert Radiance C+',
+      'Acción intensiva 15 minutos con Vitamina C Pura',
+      'Retiro y acabado luminoso final',
+    ],
+    ideal: 'Todas las pieles. Especialmente indicado para pieles cansadas y apagadas. Ideal para ocasiones especiales.',
+  },
 ];
 
 interface Props {
