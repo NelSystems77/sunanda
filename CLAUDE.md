@@ -88,9 +88,9 @@ src/presentation/components/landing/
 
 | Servicio | Precio | Duración | Notas |
 |---|---|---|---|
-| **Glow Force Máscara Iluminadora** | ₡55.000 | 15 min | Germaine de Capuccini · Timexpert Radiance C+ · Super Premium |
-| **Hydraluronic Máscara Extra-Hidratante** | ₡55.000 | 15 min | Germaine de Capuccini · Timexpert Hydraluronic · Super Premium |
-| **Expert Lab Peeling Químico** | ₡55.000 | 30 min | Germaine de Capuccini · Expert Lab · 3 variantes · Super Premium |
+| **Glow Force Máscara Iluminadora** | ₡55.000 | 90 min | Germaine de Capuccini · Timexpert Radiance C+ · Super Premium |
+| **Hydraluronic Máscara Extra-Hidratante** | ₡55.000 | 90 min | Germaine de Capuccini · Timexpert Hydraluronic · Super Premium |
+| **Expert Lab Peeling Químico** | ₡55.000 | 90 min | Germaine de Capuccini · Expert Lab · 3 variantes · Super Premium |
 | **Timexpert Lift_IN** | ₡65.000 | 90 min | Tratamiento Signature |
 | **Hydracure Facial** | ₡45.000 | 75 min | |
 | **Limpieza Facial Profunda** | ₡20.000 | 60 min | 10 pasos: protocolo completo con aparatología |

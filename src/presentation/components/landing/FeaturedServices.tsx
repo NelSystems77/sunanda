@@ -233,7 +233,7 @@ export function FeaturedServices() {
                     <span className="text-amber-400">Máscara Iluminadora</span>
                   </h3>
                   <p className="text-dark-300 text-sm leading-relaxed">
-                    Piel perfecta en tiempo récord. En solo <strong className="text-amber-400">15 minutos</strong> una piel más luminosa, firme, tonificada y radiante. Ideal para ocasiones especiales o refuerzo semanal de juventud y energía.
+                    Piel perfecta en tiempo récord. En <strong className="text-amber-400">90 minutos</strong> una piel más luminosa, firme, tonificada y radiante. Ideal para ocasiones especiales o refuerzo semanal de juventud y energía.
                   </p>
                 </div>
 
@@ -340,7 +340,7 @@ export function FeaturedServices() {
                     <span className="text-sky-400">Máscara Extra-Hidratante</span>
                   </h3>
                   <p className="text-dark-300 text-sm leading-relaxed">
-                    Hidratación suprema en <strong className="text-sky-400">15 minutos</strong>. Textura rica y cremosa que se transforma en aceite nutritivo. Con Ácido Hialurónico triple peso molecular y nanopolímero HLG patentado, la piel queda jugosa, radiante y profundamente reconfortada.
+                    Hidratación suprema en <strong className="text-sky-400">90 minutos</strong>. Textura rica y cremosa que se transforma en aceite nutritivo. Con Ácido Hialurónico triple peso molecular y nanopolímero HLG patentado, la piel queda jugosa, radiante y profundamente reconfortada.
                   </p>
                 </div>
 
