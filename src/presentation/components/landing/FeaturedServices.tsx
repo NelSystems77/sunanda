@@ -260,6 +260,113 @@ export function FeaturedServices() {
           </div>
         </motion.div>
 
+        {/* Tarjeta Premium: Hydraluronic */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 0.3 }}
+          className="mb-12"
+        >
+          <div className="relative rounded-3xl overflow-hidden border border-sky-500/40 bg-gradient-to-br from-sky-950/80 via-dark-900 to-blue-950/60 shadow-2xl shadow-sky-900/20">
+            {/* Fondo decorativo */}
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-sky-500/10 blur-3xl" />
+              <div className="absolute -bottom-16 -left-16 w-72 h-72 rounded-full bg-blue-500/10 blur-3xl" />
+            </div>
+
+            <div className="relative z-10 grid md:grid-cols-2 gap-0">
+              {/* Columna imagen */}
+              <div className="relative h-64 md:h-auto min-h-[300px] bg-gradient-to-br from-sky-300 to-blue-500 flex items-center justify-center overflow-hidden">
+                <div className="absolute -top-8 -right-8 w-48 h-48 rounded-full bg-white/10" />
+                <div className="absolute -bottom-12 -left-6 w-56 h-56 rounded-full bg-white/10" />
+                <img
+                  src="/assets/images/landing/timexpert-hydraluronic.png"
+                  alt="Hydraluronic Timexpert Extra-Hidratante"
+                  className="relative z-10 h-full w-full object-contain p-8 drop-shadow-2xl"
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                />
+                {/* Badge HLG */}
+                <div className="absolute top-4 left-4 z-20 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-lg shadow-md">
+                  <p className="text-xs font-bold text-gray-900 tracking-widest">HLG</p>
+                  <p className="text-[10px] text-gray-500">Patented</p>
+                </div>
+                {/* Badge Premium */}
+                <div className="absolute top-4 right-4 z-20">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-sky-400 text-dark-900 text-xs font-bold rounded-full shadow-lg">
+                    <Zap className="w-3 h-3" />
+                    SUPER PREMIUM
+                  </span>
+                </div>
+              </div>
+
+              {/* Columna contenido */}
+              <div className="p-8 md:p-10 flex flex-col justify-center gap-5">
+                <div>
+                  <p className="text-xs font-bold tracking-widest uppercase text-sky-400 mb-2">
+                    GERMAINE DE CAPUCCINI · TIMEXPERT HYDRALURONIC
+                  </p>
+                  <h3 className="text-2xl md:text-3xl font-bold text-white leading-tight mb-3">
+                    Hydraluronic<br />
+                    <span className="text-sky-400">Máscara Extra-Hidratante</span>
+                  </h3>
+                  <p className="text-dark-300 text-sm leading-relaxed">
+                    Hidratación suprema en <strong className="text-sky-400">15 minutos</strong>. Textura rica y cremosa que se transforma en aceite nutritivo. Con Ácido Hialurónico triple peso molecular y nanopolímero HLG patentado, la piel queda jugosa, radiante y profundamente reconfortada.
+                  </p>
+                </div>
+
+                {/* Incluidos */}
+                <div className="grid grid-cols-2 gap-2">
+                  {['HA Triple Peso Molecular', 'HLG Patented', 'Piel jugosa y radiante', 'Recupera el volumen', 'Alisa y reconforta', 'Alivio inmediato'].map((item) => (
+                    <div key={item} className="flex items-center gap-1.5 text-xs text-sky-200">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" />
+                      {item}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Info sesión + precio */}
+                <div className="flex items-center gap-4 py-3 border-t border-sky-700/30">
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-sky-400">15</p>
+                    <p className="text-xs text-dark-400">minutos</p>
+                  </div>
+                  <div className="w-px h-10 bg-sky-700/30" />
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-sky-400">1</p>
+                    <p className="text-xs text-dark-400">sesión</p>
+                  </div>
+                  <div className="w-px h-10 bg-sky-700/30" />
+                  <div>
+                    <p className="text-2xl font-bold text-white">₡55.000</p>
+                    <p className="text-xs text-dark-400">por sesión</p>
+                  </div>
+                </div>
+
+                {/* CTAs */}
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <a
+                    href="https://wa.me/50688083390?text=Hola!%20Me%20interesa%20la%20Hydraluronic%20M%C3%A1scara%20Extra-Hidratante%20Timexpert.%20%C2%BFPodr%C3%ADan%20darme%20m%C3%A1s%20informaci%C3%B3n%3F"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-sky-400 to-blue-500 hover:from-sky-500 hover:to-blue-600 text-dark-900 font-bold rounded-xl transition-all shadow-lg hover:shadow-sky-500/25 hover:-translate-y-0.5"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    Consultar por WhatsApp
+                  </a>
+                  <Link
+                    to="/booking"
+                    className="flex-1 flex items-center justify-center gap-2 py-3 border border-sky-500/40 hover:border-sky-500 hover:bg-sky-500/10 text-sky-300 font-semibold rounded-xl transition-all"
+                  >
+                    <ArrowRight className="w-4 h-4" />
+                    Agendar cita
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
         {/* CTA para ver todos */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

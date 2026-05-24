@@ -33,6 +33,17 @@ const serviciosSUNANDA = [
     productLines: ['Germaine de Capuccini'],
   },
   {
+    name: 'Hydraluronic Máscara Extra-Hidratante',
+    description: 'Timexpert Hydraluronic · Hidratación suprema en 15 minutos. Textura rica y cremosa que se transforma en aceite nutritivo. HA triple peso molecular + nanopolímero HLG patentado.',
+    category: 'FACIAL',
+    duration: 15,
+    price: 55000,
+    isActive: true,
+    imageUrl: '/assets/images/landing/timexpert-hydraluronic.png',
+    benefits: ['Hidratación suprema e intensa', 'HA triple peso molecular + HLG Patented', 'Piel jugosa, radiante y reconfortada'],
+    productLines: ['Germaine de Capuccini'],
+  },
+  {
     name: 'Limpieza Facial Profunda',
     description: 'Protocolo completo: desmaquillado, exfoliación, tónico, aparatología, activo, masaje, mascarilla, sellante y bloqueador según condición de piel',
     category: 'FACIAL',

@@ -144,6 +144,31 @@ const TREATMENTS: Treatment[] = [
     ],
     ideal: 'Todas las pieles. Especialmente indicado para pieles cansadas y apagadas. Ideal para ocasiones especiales.',
   },
+  {
+    id: 'hydraluronic',
+    name: 'Hydraluronic Máscara Extra-Hidratante',
+    category: 'Germaine de Capuccini · Premium',
+    duration: '15 min',
+    price: '₡55,000',
+    rating: 5,
+    description: 'Experiencia de hidratación suprema con textura rica y cremosa que se transforma en nutritivo aceite durante su aplicación. Formulada con Ácido Hialurónico de alto, medio y bajo peso molecular más el nanopolímero HLG patentado para una hidratación intensa y duradera.',
+    benefits: [
+      'Hidratación suprema desde el primer uso',
+      'Ácido Hialurónico triple peso molecular + HLG Patented',
+      'Piel jugosa y radiante de forma inmediata',
+      'Recupera el volumen natural con el tiempo',
+      'Alisa y reconforta profundamente',
+      'Alivio inmediato en zonas deshidratadas (manos, codos)',
+    ],
+    steps: [
+      'Limpieza y preparación de la piel',
+      'Aplicación de la máscara Hydraluronic Extra-Hidratante',
+      'Acción intensiva con HA triple peso molecular + HLG',
+      'La textura crema se transforma en aceite nutritivo',
+      'Retiro y acabado hidratado y radiante',
+    ],
+    ideal: 'Pieles deshidratadas y secas. Uso diurno como hidratación extra, nocturno como tratamiento intensivo, u ocasional para alivio inmediato.',
+  },
 ];
 
 interface Props {
