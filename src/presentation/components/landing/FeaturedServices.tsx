@@ -153,6 +153,35 @@ export function FeaturedServices() {
           ))}
         </div>
 
+        {/* Divisor: Colección Exclusiva */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="mb-14"
+        >
+          <div className="relative flex items-center gap-6 py-4">
+            <div className="flex-grow h-px bg-gradient-to-r from-transparent via-gold-500/40 to-transparent" />
+            <div className="flex items-center gap-3 text-gold-400 flex-shrink-0">
+              <Sparkles className="w-4 h-4" />
+              <span className="font-bold tracking-[0.25em] text-xs uppercase">
+                Colección Exclusiva · Germaine de Capuccini
+              </span>
+              <Sparkles className="w-4 h-4" />
+            </div>
+            <div className="flex-grow h-px bg-gradient-to-r from-transparent via-gold-500/40 to-transparent" />
+          </div>
+          <div className="text-center mt-6">
+            <h3 className="text-2xl md:text-4xl font-bold text-white mb-3">
+              Tratamientos <span className="text-gold-400">Super Premium</span>
+            </h3>
+            <p className="text-dark-300 max-w-2xl mx-auto text-sm leading-relaxed">
+              Tecnología de vanguardia Germaine de Capuccini disponible en Costa Rica. Resultados visibles desde la primera sesión, con ingredientes activos exclusivos y protocolo profesional certificado.
+            </p>
+          </div>
+        </motion.div>
+
         {/* Tarjeta Premium: Glow Force */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -170,13 +199,13 @@ export function FeaturedServices() {
 
             <div className="relative z-10 grid md:grid-cols-2 gap-0">
               {/* Columna imagen */}
-              <div className="relative h-64 md:h-auto min-h-[300px] bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center overflow-hidden">
-                <div className="absolute -top-8 -right-8 w-48 h-48 rounded-full bg-white/10" />
-                <div className="absolute -bottom-12 -left-6 w-56 h-56 rounded-full bg-white/10" />
+              <div className="relative h-72 md:h-auto min-h-[420px] bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center overflow-hidden">
+                <div className="absolute -top-8 -right-8 w-64 h-64 rounded-full bg-white/10 blur-2xl" />
+                <div className="absolute -bottom-12 -left-6 w-72 h-72 rounded-full bg-white/10 blur-2xl" />
                 <img
                   src="/assets/images/landing/timexpert-radiance.jpg"
                   alt="Glow Force Timexpert Radiance C+"
-                  className="relative z-10 h-full w-full object-contain p-8 drop-shadow-2xl"
+                  className="relative z-10 h-full w-full object-contain p-4 drop-shadow-2xl scale-105 hover:scale-110 transition-transform duration-500"
                   onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
                 />
                 {/* Badge HLG */}
@@ -276,14 +305,14 @@ export function FeaturedServices() {
             </div>
 
             <div className="relative z-10 grid md:grid-cols-2 gap-0">
-              {/* Columna imagen */}
-              <div className="relative h-64 md:h-auto min-h-[300px] bg-gradient-to-br from-sky-300 to-blue-500 flex items-center justify-center overflow-hidden">
-                <div className="absolute -top-8 -right-8 w-48 h-48 rounded-full bg-white/10" />
-                <div className="absolute -bottom-12 -left-6 w-56 h-56 rounded-full bg-white/10" />
+              {/* Columna imagen — orden inverso en desktop */}
+              <div className="relative h-72 md:h-auto min-h-[420px] bg-gradient-to-br from-sky-300 to-blue-500 flex items-center justify-center overflow-hidden md:order-2">
+                <div className="absolute -top-8 -right-8 w-64 h-64 rounded-full bg-white/10 blur-2xl" />
+                <div className="absolute -bottom-12 -left-6 w-72 h-72 rounded-full bg-white/10 blur-2xl" />
                 <img
                   src="/assets/images/landing/timexpert-hydraluronic.png"
                   alt="Hydraluronic Timexpert Extra-Hidratante"
-                  className="relative z-10 h-full w-full object-contain p-8 drop-shadow-2xl"
+                  className="relative z-10 h-full w-full object-contain p-4 drop-shadow-2xl scale-105 hover:scale-110 transition-transform duration-500"
                   onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
                 />
                 {/* Badge HLG */}
@@ -300,8 +329,8 @@ export function FeaturedServices() {
                 </div>
               </div>
 
-              {/* Columna contenido */}
-              <div className="p-8 md:p-10 flex flex-col justify-center gap-5">
+              {/* Columna contenido — orden inverso en desktop */}
+              <div className="p-8 md:p-10 flex flex-col justify-center gap-5 md:order-1">
                 <div>
                   <p className="text-xs font-bold tracking-widest uppercase text-sky-400 mb-2">
                     GERMAINE DE CAPUCCINI · TIMEXPERT HYDRALURONIC
@@ -384,13 +413,13 @@ export function FeaturedServices() {
 
             <div className="relative z-10 grid md:grid-cols-2 gap-0">
               {/* Columna imagen */}
-              <div className="relative h-64 md:h-auto min-h-[300px] bg-gradient-to-br from-amber-700 to-amber-900 flex items-center justify-center overflow-hidden">
-                <div className="absolute -top-8 -right-8 w-48 h-48 rounded-full bg-white/10" />
-                <div className="absolute -bottom-12 -left-6 w-56 h-56 rounded-full bg-white/10" />
+              <div className="relative h-72 md:h-auto min-h-[420px] bg-gradient-to-br from-amber-700 to-amber-900 flex items-center justify-center overflow-hidden">
+                <div className="absolute -top-8 -right-8 w-64 h-64 rounded-full bg-white/10 blur-2xl" />
+                <div className="absolute -bottom-12 -left-6 w-72 h-72 rounded-full bg-white/10 blur-2xl" />
                 <img
                   src="/assets/images/landing/expert-lab-flash-peel.jpg"
                   alt="Expert Lab Flash Peel Germaine de Capuccini"
-                  className="relative z-10 h-full w-full object-contain p-8 drop-shadow-2xl"
+                  className="relative z-10 h-full w-full object-contain p-4 drop-shadow-2xl scale-105 hover:scale-110 transition-transform duration-500"
                   onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
                 />
                 {/* Badge Expert Lab */}

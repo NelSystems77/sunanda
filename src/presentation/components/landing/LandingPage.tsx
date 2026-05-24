@@ -5,6 +5,7 @@ import 'aos/dist/aos.css';
 // Secciones existentes
 import { HeroLanding } from './HeroLanding';
 import { BrandPartnership } from './BrandPartnership';
+import { FeaturedServices } from './FeaturedServices';
 import { SignatureTreatment } from './SignatureTreatment';
 import { AboutProfessional } from './AboutProfessional';
 import { ServicesSection } from './ServicesSection';
@@ -60,7 +61,10 @@ export const LandingPage = () => {
         {/* Sección 1: Alianza Germaine de Capuccini */}
         <BrandPartnership />
 
-        {/* Sección 2: Tratamiento Signature */}
+        {/* Sección 2: Servicios Destacados + Colección Super Premium */}
+        <FeaturedServices />
+
+        {/* Sección 3: Tratamiento Signature */}
         <SignatureTreatment />
 
         {/* Sección 3: Catálogo de tratamientos con modal */}
