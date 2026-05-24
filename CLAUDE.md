@@ -202,7 +202,7 @@ En cards de dos columnas (imagen + contenido), usar siempre `absolute inset-0` e
 
 ```tsx
 // ✅ Correcto
-<div className="relative min-h-[260px] md:min-h-[400px] bg-gradient-to-br from-X to-Y overflow-hidden">
+<div className="relative min-h-[280px] sm:min-h-[340px] lg:min-h-[420px] bg-gradient-to-br from-X to-Y overflow-hidden">
   <img className="absolute inset-0 w-full h-full object-cover" />
 </div>
 
@@ -213,3 +213,11 @@ En cards de dos columnas (imagen + contenido), usar siempre `absolute inset-0` e
 ```
 
 El error ocurre porque `h-full` en un hijo no-absoluto dentro de un contenedor `h-auto` genera una referencia circular → altura 0.
+
+### Breakpoint para layout de 2 columnas (imagen + contenido)
+
+Usar **`lg:grid-cols-2`** (1024px), nunca `md:grid-cols-2` (768px). En tablets de 768–1023px el contenido queda demasiado comprimido. Lo mismo aplica a `lg:order-1/2` y `lg:p-10`.
+
+### Imágenes nuevas: siempre hacer git add explícito
+
+Al agregar archivos a `public/assets/images/landing/`, ejecutar `git add <archivo>` de forma explícita antes del commit. Los archivos de imagen en `public/` no se auto-detectan como cambios de código y es fácil omitirlos. Si una imagen funciona localmente pero no en Vercel, lo primero a verificar es `git ls-files public/assets/images/landing/`.
