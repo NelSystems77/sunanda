@@ -150,13 +150,69 @@ Ubicadas en `public/assets/images/landing/`:
 | CHAT-02 | Completado | Dashboard avanzado con recharts (gráficos, widgets, top clientes) |
 | CHAT-03 | Completado | Fotos en expedientes, PaymentForm con SINPE Móvil, botón Cobrar |
 | CHAT-04 | Completado | QR SINPE Móvil con deep link `sinpemovil://`, env var `VITE_SINPE_PHONE` |
-| CHAT-05 | Pendiente (Pro) | Notificaciones automáticas — Twilio + SendGrid + Cloud Functions |
+| CHAT-05 | Parcial | Recordatorios manuales por WhatsApp funcionando; automáticos (Twilio + SendGrid + Cloud Functions) pendiente (Pro) |
 | CHAT-06 | Completado | 12 nuevos componentes landing, SEO, TestimonialsCarousel, BeforeAfter |
 | CHAT-07 | Pendiente | Reportes y analytics |
 | CHAT-08 | Completado | Inventario completo, ProductSpotlight Germaine de Capuccini |
 | CHAT-09 | Pendiente | Testing y performance |
 
 Los briefs están en `c:\spa\SUNANDA-BRIEFS-DESARROLLO-FINAL\`.
+
+---
+
+## Sistema de Recordatorios (sesión 2026-05-24)
+
+### Estado actual — recordatorios manuales por WhatsApp
+
+El panel de recordatorios en `AppointmentsPage` está operativo para envío manual por WhatsApp. La automatización completa (Twilio + SendGrid + Cloud Functions) sigue pendiente como CHAT-05 Pro.
+
+### Archivos clave
+
+| Archivo | Rol |
+|---|---|
+| `src/presentation/pages/AppointmentsPage.tsx` | Modal de recordatorios + helpers de WhatsApp |
+| `src/presentation/components/features/ReminderSettings.tsx` | Modal de configuración (UI funcional, persistencia pendiente) |
+| `src/presentation/components/features/ReminderPanel.tsx` | Componente alternativo (importado pero no renderizado — ver nota abajo) |
+| `src/core/infrastructure/repositories/AppointmentRepository.ts` | `markReminderSent(id)` — actualiza `reminderSent: true` en Firestore |
+| `src/core/application/use-cases/appointments/AppointmentUseCases.ts` | `markReminderSent(id)` — proxy al repositorio |
+
+### Flujo de recordatorio manual
+
+1. Al cargar `AppointmentsPage`, se consultan citas de los **próximos 7 días** con `reminderSent: false` y estado `pending` o `confirmed`
+2. El badge del botón "Recordatorios" muestra el conteo real
+3. Al hacer clic en "WhatsApp" en el modal, se abre `wa.me/506XXXXXXXX` con mensaje personalizado
+4. Luego se llama `markReminderSent()` — la cita desaparece de la lista
+
+### Parseo de datos del cliente desde `appointment.notes`
+
+El teléfono y nombre del cliente se extraen del campo `notes` con regex:
+
+```typescript
+const nameMatch = notes.match(/Nombre:\s*([^|]+)/);
+const phoneMatch = notes.match(/Tel:\s*([^|]+)/);
+```
+
+El formato esperado en `notes` es: `Nombre: X | Tel: Y | Emergencia: Z | Tel Emergencia: W` (generado automáticamente por `AppointmentForm`). Si la cita no tiene teléfono en notas, el botón WhatsApp queda deshabilitado.
+
+### Campos de Firestore en `appointments`
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| `reminderSent` | `boolean` | `false` por defecto al crear |
+| `reminderSentAt` | `Timestamp` | Se escribe al llamar `markReminderSent()` |
+
+### Nota sobre `ReminderPanel.tsx`
+
+El componente `ReminderPanel` fue creado en una sesión anterior pero usa tema claro (blanco/gris) y no está integrado en `AppointmentsPage`. La lógica de recordatorios vive directamente en el modal inline de `AppointmentsPage` (tema oscuro, consistente con el resto del dashboard). Si se quiere unificar, migrar la lógica al componente y renderizarlo dentro del modal.
+
+### Pendiente para CHAT-05 Pro
+
+- Automatización con Firebase Cloud Scheduler (cron cada hora)
+- Integración Twilio para SMS y WhatsApp Business API
+- Integración SendGrid para emails HTML
+- Colección `reminderLogs` para historial de envíos
+- Colección `reminderConfig` para persistir configuración del panel de settings
+- Stats reales en `ReminderSettings` (actualmente hardcodeadas en 156/142/91%)
 
 ---
 
