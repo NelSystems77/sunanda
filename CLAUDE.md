@@ -28,7 +28,7 @@ SPA web para **SUNANDA Estética y Spa** (San José, Costa Rica). React + TypeSc
 ## Reglas críticas establecidas
 
 ### Precios NO se muestran públicamente
-Los precios NO deben aparecer en la landing ni en páginas públicas de servicios. Solo se muestran en el panel admin. La excepción son los servicios designados como "super premium" en FeaturedServices (Glow Force, Hydraluronic, Expert Lab Peeling). Si el cliente pide agregar precio a un servicio en la landing, confirmar primero.
+Los precios NO deben aparecer en la landing ni en páginas públicas de servicios. Solo se muestran en el panel admin. Las excepciones son: los servicios "super premium" en FeaturedServices (Glow Force, Hydraluronic, Expert Lab Peeling) y las dos **promos de apertura** (Limpieza Facial Profunda y Hidrolipoclasia). Si el cliente pide agregar precio a otro servicio en la landing, confirmar primero.
 
 ### WhatsApp es el canal de ventas principal
 Todos los CTAs de la landing deben apuntar a WhatsApp (`wa.me/50688083390`) o a `/booking`. No usar formularios de contacto como canal principal.
@@ -68,7 +68,7 @@ src/presentation/components/landing/
 2. `HeroLanding`
 3. `SocialProof` — cifras y certificaciones
 4. `BrandPartnership` — alianza Germaine de Capuccini
-5. **`FeaturedServices`** — promos (2x1, apertura) + divisor dorado + 3 tarjetas super premium
+5. **`FeaturedServices`** — 2 promos apertura ultra-premium (Limpieza Facial, Hidrolipoclasia) + divisor dorado + 3 tarjetas super premium Germaine de Capuccini
 6. `SignatureTreatment` — Timexpert Lift_IN
 7. `TreatmentDetails` — catálogo con modal tabs
 8. `BeforeAfter` — slider WowShape
@@ -93,7 +93,7 @@ src/presentation/components/landing/
 | **Expert Lab Peeling Químico** | ₡55.000 | 90 min | Germaine de Capuccini · Expert Lab · 3 variantes · Super Premium |
 | **Timexpert Lift_IN** | ₡65.000 | 90 min | Tratamiento Signature |
 | **Hydracure Facial** | ₡45.000 | 75 min | |
-| **Limpieza Facial Profunda** | ₡20.000 | 60 min | 10 pasos: protocolo completo con aparatología |
+| **Limpieza Facial Profunda** | ₡20.000/sesión · **Promo apertura: ₡35.000 pack 3 sesiones** | 90 min | 10 pasos · protocolo completo con aparatología · normal ₡60.000 las 3 |
 | **Limpieza Facial Básica** | ₡25.000 | 60 min | |
 
 ### Corporales
@@ -102,7 +102,7 @@ src/presentation/components/landing/
 |---|---|---|---|
 | **Tratamiento WowShape** | ₡180.000 | — | 5 sesiones · Cavitación, Exfoliación, Activo, Masaje, Sellante, Envoltura |
 | **Masaje Relajante** | ₡40.000 | 60 min | |
-| **Hidrolipoclasia** | ₡100.000 | 90 min | Promo apertura |
+| **Hidrolipoclasia** | **Promo apertura: ₡130.000 pack 4 sesiones** (normal ₡170.000) | 90 min | Reducción de medidas · imagen: `hidrolipoclasia.JPG` |
 
 ---
 
@@ -137,6 +137,8 @@ Ubicadas en `public/assets/images/landing/`:
 | `germaine-logo.png` | Logo marca |
 | `grettel-professional-1.png` / `grettel-professional-2.jpg` | Fotos profesional |
 | `producto-germaine.jpg` | Producto genérico |
+| `limpieza-facial.JPG` | Promo apertura — Limpieza Facial Profunda (FeaturedServices) |
+| `hidrolipoclasia.JPG` | Promo apertura — Hidrolipoclasia (FeaturedServices) |
 
 ---
 
@@ -177,6 +179,12 @@ Los briefs están en `c:\spa\SUNANDA-BRIEFS-DESARROLLO-FINAL\`.
   - Encabezado "Tratamientos Super Premium" con acento `gold-400`
   - Imágenes: altura aumentada a `min-h-[420px]`, padding reducido a `p-4`, hover `scale-110`
   - Tarjeta Hydraluronic con layout espejo (imagen a la derecha) para ritmo visual izq→der→izq
+- **Promos de apertura rediseñadas** — Limpieza Facial Profunda e Hidrolipoclasia reemplazaron las tarjetas simples con cards ultra-premium:
+  - Ribbon animado "PRECIO ESPECIAL DE APERTURA — TIEMPO LIMITADO" con llamas
+  - Banner global de urgencia naranja/rojo sobre ambas promos
+  - Limpieza Facial: 3 sesiones × 90 min · ₡35.000 (normal ₡60.000) · paleta rose/pink · `limpieza-facial.JPG`
+  - Hidrolipoclasia: 4 sesiones × 90 min · ₡130.000 (normal ₡170.000) · paleta violet/purple · `hidrolipoclasia.JPG`
+  - Cada card: imagen full-height, badge sesiones, bloque precio con tachado, badge "Ahorrás X", CTA WhatsApp pre-llenado
 
 ---
 
