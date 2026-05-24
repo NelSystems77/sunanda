@@ -23,13 +23,13 @@ const serviciosSUNANDA = [
   },
   {
     name: 'Limpieza Facial Profunda',
-    description: 'Tratamiento completo de limpieza con exfoliación, vapor, extracción y mascarilla especial',
+    description: 'Protocolo completo: desmaquillado, exfoliación, tónico, aparatología, activo, masaje, mascarilla, sellante y bloqueador según condición de piel',
     category: 'FACIAL',
-    duration: 90,
-    price: 35000,
+    duration: 60,
+    price: 20000,
     isActive: true,
     imageUrl: '',
-    benefits: ['Renovación celular', 'Hidratación profunda', 'Luminosidad'],
+    benefits: ['Desmaquillado profesional', 'Aparatología según condición', 'Mascarilla y sellante'],
     productLines: ['Germaine de Capuccini'],
   },
   {
