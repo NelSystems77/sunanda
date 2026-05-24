@@ -266,6 +266,48 @@ await deleteApp(secondaryApp); // limpiar siempre en finally
 
 ---
 
+## Firebase Storage — Reglas y estructura de archivos
+
+Archivo: `storage.rules` (raíz del proyecto). Referenciado en `firebase.json` → `"storage": { "rules": "storage.rules" }`.
+
+> **Nota histórica:** el archivo no existía hasta la sesión 2026-05-24. Sin reglas publicadas, Firebase Storage deniega toda escritura con un error de permisos que el SDK reporta como "usuario no autenticado". Si vuelve a aparecer ese error, lo primero es verificar que las reglas estén desplegadas: `firebase deploy --only storage`.
+
+### Reglas actuales
+
+```
+match /expedientes/{clientId}/{allPaths=**}
+  read:  request.auth != null
+  write: request.auth != null
+         && request.resource.size < 5 MB
+         && request.resource.contentType.matches('image/.*')
+
+Todo lo demás: denegado
+```
+
+### Estructura de paths en Storage
+
+| Path | Contenido |
+|---|---|
+| `expedientes/{clientId}/{sessionId}/antes/{fileName}` | Foto "antes" de sesión |
+| `expedientes/{clientId}/{sessionId}/despues/{fileName}` | Foto "después" de sesión |
+| `expedientes/{clientId}/firmas/{fileName}` | Firma digital del consentimiento |
+
+### Servicio de subida
+
+`src/core/infrastructure/services/MedicalRecordService.ts`:
+- `uploadImage(file, clientId, sessionId, type)` — comprime a máx 500 KB / 1920px antes de subir
+- `uploadSignature(dataUrl, clientId)` — convierte dataURL a Blob y sube como PNG
+
+### Despliegue de reglas
+
+```bash
+firebase deploy --only storage   # solo Storage
+firebase deploy --only firestore  # solo Firestore
+firebase deploy                   # todo (hosting + firestore + storage)
+```
+
+---
+
 ## Actualizaciones de contenido (sesión 2026-05-23)
 
 - **WowShape** — Highlights actualizados con los 6 componentes reales del tratamiento
