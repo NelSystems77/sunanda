@@ -160,6 +160,56 @@ Los briefs están en `c:\spa\SUNANDA-BRIEFS-DESARROLLO-FINAL\`.
 
 ---
 
+## Autenticación y gestión de usuarios (sesión 2026-05-24)
+
+### Reglas de Firestore — patrón correcto para colección `users`
+
+La regla `allow read: if isAdmin()` en `/users` causaba que `updateLastLogin` fallara para usuarios con rol `ADMIN` (solo pasaba `SUPER_ADMIN`), rompiendo el login completo. La regla correcta es:
+
+```javascript
+match /users/{userId} {
+  allow read: if isAdmin() || request.auth.uid == userId;
+  allow create: if isSuperAdmin();
+  allow update: if isSuperAdmin() ||
+    (isAuthenticated() && request.auth.uid == userId &&
+     !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'isActive']));
+  allow delete: if isSuperAdmin();
+}
+```
+
+- Cualquier usuario autenticado lee su propio documento (necesario para `LoginUseCase`)
+- El propio usuario puede actualizar campos no sensibles (`lastLogin`, foto, teléfono) pero NO `role` ni `isActive`
+- Solo `SUPER_ADMIN` puede crear/eliminar usuarios
+
+### Crear usuarios sin cerrar sesión del admin actual
+
+`createUserWithEmailAndPassword` del SDK cliente cierra la sesión actual. Para crear usuarios desde el panel admin usar **instancia secundaria de Firebase**:
+
+```typescript
+const secondaryApp = initializeApp(firebaseConfig, `create-user-${Date.now()}`);
+const secondaryAuth = getAuth(secondaryApp);
+const credential = await createUserWithEmailAndPassword(secondaryAuth, email, password);
+await deleteApp(secondaryApp); // limpiar siempre en finally
+```
+
+`firebaseConfig` debe estar exportado desde `src/core/infrastructure/firebase/config.ts`.
+
+### Páginas de autenticación disponibles
+
+| Ruta | Componente | Descripción |
+|---|---|---|
+| `/login` | `LoginPage.tsx` | Login principal |
+| `/forgot-password` | `ForgotPasswordPage.tsx` | Envía email de recuperación vía Firebase Auth |
+| `/admin-bootstrap` | `AdminBootstrapPage.tsx` | Página temporal de emergencia — crear primer admin sin acceso al email |
+
+> `AdminBootstrapPage` usa clave `sunanda2026` como gate. Eliminar del router (`App.tsx`) cuando no sea necesaria.
+
+### Modal de creación de usuarios
+
+`src/presentation/components/features/CreateUserModal.tsx` — crea usuario en Firebase Auth + Firestore en un solo paso. Accesible desde `UsersPage` con el botón "Nuevo Usuario" (visible para `SUPER_ADMIN` y `ADMIN`).
+
+---
+
 ## Actualizaciones de contenido (sesión 2026-05-23)
 
 - **WowShape** — Highlights actualizados con los 6 componentes reales del tratamiento

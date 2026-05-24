@@ -17,6 +17,8 @@ import {
   InventoryPage,
 } from './presentation/pages';
 import { PublicServicesPage } from './presentation/pages/PublicServicesPage';
+import { ForgotPasswordPage } from './presentation/pages/ForgotPasswordPage';
+import { AdminBootstrapPage } from './presentation/pages/AdminBootstrapPage';
 import { BookingRequestPage } from './presentation/pages/BookingRequestPage';
 import { BookingSuccessPage } from './presentation/pages/BookingSuccessPage';
 import { BookingRequestsPage } from './presentation/pages/BookingRequestsPage';
@@ -78,8 +80,10 @@ function App() {
             </PublicLayout>
           } />
           
-          {/* Login (sin layout) */}
+          {/* Login y recuperación de contraseña (sin layout) */}
           <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/admin-bootstrap" element={<AdminBootstrapPage />} />
           
           {/* Rutas Protegidas - Dashboard Admin (con DashboardLayout) */}
           <Route

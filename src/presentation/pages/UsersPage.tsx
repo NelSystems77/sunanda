@@ -6,9 +6,9 @@ import { ResponsiveTable, CardGrid, StatCard } from '../components/ui/responsive
 import { useAuth } from '../hooks/useAuth';
 import { userService, User } from '@/core/infrastructure/services/UserService';
 import { UserRole, canManageRole, getManageableRoles, getRoleLabel, getRoleColor } from '@/core/domain/enums/roles';
-import { Search, Plus, Edit, Trash2, UserCheck, UserX, Shield, Users } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Search, Plus, Trash2, UserCheck, UserX, Shield, Users } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { CreateUserModal } from '../components/features/CreateUserModal';
 
 export function UsersPage() {
   const { user: currentUser } = useAuth();
@@ -249,6 +249,14 @@ export function UsersPage() {
                 ? 'No se encontraron usuarios' 
                 : 'No hay usuarios registrados'
             }
+          />
+        )}
+
+        {/* Modal Crear Usuario */}
+        {showCreateModal && (
+          <CreateUserModal
+            onClose={() => setShowCreateModal(false)}
+            onSuccess={loadUsers}
           />
         )}
 
