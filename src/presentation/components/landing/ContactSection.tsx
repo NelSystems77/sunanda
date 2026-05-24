@@ -1,16 +1,11 @@
-/**
- * ContactSection Component
- * 
- * Información de contacto completa:
- * - Email: greje00@hotmail.com
- * - WhatsApp: +506 8808-3390
- * - Ubicación: San José, Guadalupe
- * - Horario: L-D 9:00 AM - 9:00 PM
- * - Facebook: Sunanda-Spa Estética
- */
-
 import { useTranslation } from 'react-i18next';
-import { Mail, Phone, MapPin, Clock, Facebook } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, Facebook, Instagram } from 'lucide-react';
+
+const TikTokIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.14 8.14 0 0 0 4.78 1.52V6.7a4.85 4.85 0 0 1-1.01-.01z"/>
+  </svg>
+);
 import { motion } from 'framer-motion';
 import { Button } from '../ui/Button';
 
@@ -127,7 +122,7 @@ export function ContactSection() {
               transition={{ duration: 0.6, delay: 0.4 }}
             >
               <a
-                href="https://www.facebook.com/profile.php?id=61571308344144"
+                href="https://www.facebook.com/people/Sunanda-Spa-Est%C3%A9tica/61581631049645/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block"
@@ -142,6 +137,64 @@ export function ContactSection() {
                     </div>
                     <div className="text-white font-medium">
                       Sunanda-Spa Estética
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </motion.div>
+
+            {/* Instagram */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+            >
+              <a
+                href="https://www.instagram.com/sunanda_spa_y_estetica?utm_source=qr"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block"
+              >
+                <div className="flex items-start gap-4 p-6 bg-gradient-to-r from-pink-500/10 to-purple-600/10 border border-pink-500/30 rounded-xl hover:border-pink-500/50 transition-all duration-300 hover:scale-105">
+                  <div className="text-pink-400 mt-1">
+                    <Instagram className="h-6 w-6" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-sm text-dark-400 mb-1">
+                      {t('common:contact.followUs')}
+                    </div>
+                    <div className="text-white font-medium">
+                      @sunanda_spa_y_estetica
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </motion.div>
+
+            {/* TikTok */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+            >
+              <a
+                href="https://www.tiktok.com/@sunanda.spa_estetica2?_r=1&_t=ZS-96c5N2tma2B"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block"
+              >
+                <div className="flex items-start gap-4 p-6 bg-gradient-to-r from-slate-500/10 to-slate-600/10 border border-slate-500/30 rounded-xl hover:border-slate-400/50 transition-all duration-300 hover:scale-105">
+                  <div className="text-slate-300 mt-1">
+                    <TikTokIcon className="h-6 w-6" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-sm text-dark-400 mb-1">
+                      {t('common:contact.followUs')}
+                    </div>
+                    <div className="text-white font-medium">
+                      @sunanda.spa_estetica2
                     </div>
                   </div>
                 </div>

@@ -1,7 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { Facebook, Phone, Mail, MapPin, Heart, Clock } from 'lucide-react';
+import { Facebook, Instagram, Phone, Mail, MapPin, Heart, Clock } from 'lucide-react';
 import { Logo } from './Logo';
+
+const TikTokIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.14 8.14 0 0 0 4.78 1.52V6.7a4.85 4.85 0 0 1-1.01-.01z"/>
+  </svg>
+);
 
 export function Footer() {
   const { t } = useTranslation('common');
@@ -91,15 +97,33 @@ export function Footer() {
             <p className="text-dark-400 text-sm mb-4">
               {t('contact.followUs')}
             </p>
-            <div className="flex gap-3">
+            <div className="flex gap-3 flex-wrap">
               <a
-                href="https://www.facebook.com/profile.php?id=61571308344144"
+                href="https://www.facebook.com/people/Sunanda-Spa-Est%C3%A9tica/61581631049645/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-primary-500/10 border border-primary-500/20 flex items-center justify-center hover:bg-primary-500/20 hover:border-primary-500/40 transition-all"
+                className="w-10 h-10 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center hover:bg-blue-500/20 hover:border-blue-500/40 transition-all"
                 title="Facebook"
               >
-                <Facebook className="w-5 h-5 text-primary-400" />
+                <Facebook className="w-5 h-5 text-blue-400" />
+              </a>
+              <a
+                href="https://www.instagram.com/sunanda_spa_y_estetica?utm_source=qr"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-pink-500/10 border border-pink-500/20 flex items-center justify-center hover:bg-pink-500/20 hover:border-pink-500/40 transition-all"
+                title="Instagram"
+              >
+                <Instagram className="w-5 h-5 text-pink-400" />
+              </a>
+              <a
+                href="https://www.tiktok.com/@sunanda.spa_estetica2?_r=1&_t=ZS-96c5N2tma2B"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-slate-500/10 border border-slate-500/20 flex items-center justify-center hover:bg-slate-500/20 hover:border-slate-500/40 transition-all"
+                title="TikTok"
+              >
+                <TikTokIcon className="w-5 h-5 text-slate-300" />
               </a>
               <a
                 href="https://wa.me/50688083390"

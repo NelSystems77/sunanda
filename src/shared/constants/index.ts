@@ -10,8 +10,8 @@ export const APP_CONFIG = {
   WHATSAPP_NUMBER: '+50688083390',
   WHATSAPP_URL: 'https://wa.me/50688083390',
   FACEBOOK_URL: 'https://www.facebook.com/people/Sunanda-Spa-Est%C3%A9tica/61581631049645/',
-  // Agregar URL real cuando se cree la cuenta de Instagram
-  INSTAGRAM_URL: '',
+  INSTAGRAM_URL: 'https://www.instagram.com/sunanda_spa_y_estetica?utm_source=qr',
+  TIKTOK_URL: 'https://www.tiktok.com/@sunanda.spa_estetica2?_r=1&_t=ZS-96c5N2tma2B',
   EMAIL: 'greje00@hotmail.com',
   PHONE: '+506 8808-3390',
   PHONE_E164: '+50688083390',

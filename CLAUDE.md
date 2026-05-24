@@ -20,6 +20,8 @@ SPA web para **SUNANDA Estética y Spa** (San José, Costa Rica). React + TypeSc
 - **SEO:** react-helmet-async + Schema.org
 - **WhatsApp:** `VITE_WHATSAPP_NUMBER=50688083390`
 - **SINPE Móvil:** `VITE_SINPE_PHONE=88083390`
+- **Instagram:** `https://www.instagram.com/sunanda_spa_y_estetica`
+- **TikTok:** `https://www.tiktok.com/@sunanda.spa_estetica2`
 
 ---
 

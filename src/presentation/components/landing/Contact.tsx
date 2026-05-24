@@ -1,4 +1,10 @@
-import { Mail, Phone, MapPin, Clock, MessageCircle, Facebook } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, MessageCircle, Facebook, Instagram } from 'lucide-react';
+
+const TikTokIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.14 8.14 0 0 0 4.78 1.52V6.7a4.85 4.85 0 0 1-1.01-.01z"/>
+  </svg>
+);
 
 export const Contact = () => {
   const contactMethods = [
@@ -45,8 +51,20 @@ export const Contact = () => {
     {
       icon: Facebook,
       label: 'Facebook',
-      value: 'Sunanda Spa Estética',
-      link: 'https://www.facebook.com/people/Sunanda-Spa-Estética/61581631049645/'
+      value: 'Sunanda-Spa Estética',
+      link: 'https://www.facebook.com/people/Sunanda-Spa-Est%C3%A9tica/61581631049645/'
+    },
+    {
+      icon: Instagram,
+      label: 'Instagram',
+      value: '@sunanda_spa_y_estetica',
+      link: 'https://www.instagram.com/sunanda_spa_y_estetica?utm_source=qr'
+    },
+    {
+      icon: TikTokIcon,
+      label: 'TikTok',
+      value: '@sunanda.spa_estetica2',
+      link: 'https://www.tiktok.com/@sunanda.spa_estetica2?_r=1&_t=ZS-96c5N2tma2B'
     }
   ];
 
