@@ -65,3 +65,7 @@ PWA_GUIDE.md
 PAYMENT_INTEGRATION_GUIDE.md
 SUNANDA-BRIEFS-DESARROLLO-FINAL/
 fix-imports.ps1
+
+# Cloud Functions
+functions/lib/
+functions/node_modules/

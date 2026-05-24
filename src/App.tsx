@@ -6,6 +6,7 @@ import { PaymentsPage } from './presentation/pages/PaymentsPage';
 import { AuthProvider } from './presentation/context/AuthProvider';
 import { ProtectedRoute } from './presentation/components/features/ProtectedRoute';
 import { UpdatePrompt, InstallPrompt } from './presentation/components/pwa/UpdatePrompt';
+import { AdminNotificationsProvider } from './presentation/components/pwa/AdminNotificationsProvider';
 import {
   LandingPage,
   DashboardPage,
@@ -44,6 +45,7 @@ function PublicLayout({ children }: { children: React.ReactNode }) {
 function App() {
   return (
     <AuthProvider>
+      <AdminNotificationsProvider>
       <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Routes>
           {/* Rutas Públicas (con Header + Footer) */}
@@ -206,6 +208,7 @@ function App() {
         <UpdatePrompt />
         <InstallPrompt />
       </BrowserRouter>
+      </AdminNotificationsProvider>
     </AuthProvider>
   );
 }

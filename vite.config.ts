@@ -1,11 +1,78 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv, Plugin } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
+import { writeFileSync } from 'fs';
+
+// Genera public/firebase-messaging-sw.js con los env vars de Firebase inyectados.
+// Firebase compat SDK (importScripts CDN) es la única forma de usar messaging en SW
+// ya que los service workers no soportan ES modules todavía en todos los navegadores.
+function generateFCMServiceWorker(): Plugin {
+  const generate = (mode: string) => {
+    const env = loadEnv(mode, process.cwd(), '');
+    const content = `// Auto-generado por vite.config.ts — NO editar manualmente
+importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-compat.js');
+
+firebase.initializeApp({
+  apiKey: '${env.VITE_FIREBASE_API_KEY || ''}',
+  authDomain: '${env.VITE_FIREBASE_AUTH_DOMAIN || ''}',
+  projectId: '${env.VITE_FIREBASE_PROJECT_ID || ''}',
+  storageBucket: '${env.VITE_FIREBASE_STORAGE_BUCKET || ''}',
+  messagingSenderId: '${env.VITE_FIREBASE_MESSAGING_SENDER_ID || ''}',
+  appId: '${env.VITE_FIREBASE_APP_ID || ''}'
+});
+
+const messaging = firebase.messaging();
+
+// Mensajes recibidos mientras la app está en segundo plano o cerrada
+messaging.onBackgroundMessage((payload) => {
+  const title = payload.notification?.title || 'SUNANDA Spa';
+  const options = {
+    body: payload.notification?.body || '',
+    icon: '/icons/icon-192.png',
+    badge: '/icons/icon-72.png',
+    vibrate: [200, 100, 200],
+    tag: payload.data?.type || 'notification',
+    requireInteraction: payload.data?.type === 'new_appointment',
+    data: {
+      url: payload.data?.url || '/dashboard/appointments',
+      type: payload.data?.type,
+      appointmentId: payload.data?.appointmentId,
+    },
+  };
+  self.registration.showNotification(title, options);
+});
+
+// Al hacer click en la notificación, abrir o enfocar el dashboard
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const url = event.notification.data?.url || '/dashboard/appointments';
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        if (client.url.includes(url) && 'focus' in client) return client.focus();
+      }
+      if (clients.openWindow) return clients.openWindow(url);
+    })
+  );
+});
+`;
+    writeFileSync('./public/firebase-messaging-sw.js', content, 'utf-8');
+  };
+
+  return {
+    name: 'generate-fcm-sw',
+    configResolved(config) {
+      generate(config.mode);
+    },
+  };
+}
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
+    generateFCMServiceWorker(),
     react({
       // Optimizaciones SWC
       plugins: [
