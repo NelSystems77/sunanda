@@ -493,6 +493,16 @@ Usar **`lg:grid-cols-2`** (1024px), nunca `md:grid-cols-2` (768px). En tablets d
 
 Al agregar archivos a `public/assets/images/landing/`, ejecutar `git add <archivo>` de forma explícita antes del commit. Los archivos de imagen en `public/` no se auto-detectan como cambios de código y es fácil omitirlos. Si una imagen funciona localmente pero no en Vercel, lo primero a verificar es `git ls-files public/assets/images/landing/`.
 
+### Layout móvil del dashboard — gotchas conocidos
+
+#### `PageHeader` — botón de acción siempre en la misma fila
+
+`src/presentation/components/layout/PageHeader.tsx` usa `flex items-center justify-between`. **No usar** `flex-col sm:flex-row` — en móvil el botón quedaría debajo del título y puede no verse sin scrollear. El patrón correcto es siempre fila horizontal: título truncado a la izquierda (`min-w-0 truncate`), botón con `flex-shrink-0` a la derecha. La descripción se oculta en móvil con `hidden sm:block` para ahorrar espacio.
+
+#### `DashboardLayout` sidebar — altura en móvil
+
+El `aside` del sidebar en móvil tiene `top-16` (header) y **`h-[calc(100vh-8rem)]`** (no `h-full`). Si se usa `h-full`, el sidebar sobrepasa el viewport (`top-16 + 100vh`) y el botón "Cerrar Sesión" (al fondo del `flex col`) queda tapado por el `MobileBottomNav` (`fixed bottom-0 h-16 z-50`). La fórmula es: `100vh − 4rem (header) − 4rem (bottom nav) = calc(100vh-8rem)`.
+
 ---
 
 ## Expediente Médico — MedicalRecordModal

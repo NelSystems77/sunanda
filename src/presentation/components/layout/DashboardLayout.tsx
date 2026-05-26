@@ -90,9 +90,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         <aside
           className={cn(
             // Base styles
-            'fixed h-full bg-dark-900 border-r border-dark-700 z-50',
+            'fixed bg-dark-900 border-r border-dark-700 z-50',
             responsiveClasses.transition,
-            
+
+            // Altura: mobile = viewport - header (4rem) - bottom nav (4rem)
+            isMobile ? 'h-[calc(100vh-8rem)]' : 'h-full',
+
             // Posicionamiento según modo
             isMobile && 'top-16', // Offset para header mobile
             (isTablet || isDesktop) && 'top-0',

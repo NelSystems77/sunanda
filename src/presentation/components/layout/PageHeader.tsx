@@ -21,17 +21,17 @@ export function PageHeader({
     <div className={cn('space-y-4', className)}>
       {breadcrumbs && breadcrumbs.length > 0 && <Breadcrumb items={breadcrumbs} />}
 
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="space-y-1">
-          <h1 className="text-2xl md:text-3xl font-serif font-bold text-dark-900 dark:text-white">
+      <div className="flex items-center justify-between gap-3">
+        <div className="space-y-0.5 min-w-0">
+          <h1 className="text-xl md:text-2xl lg:text-3xl font-serif font-bold text-dark-900 dark:text-white truncate">
             {title}
           </h1>
           {description && (
-            <p className="text-sm text-gray-600 dark:text-gray-400">{description}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 hidden sm:block">{description}</p>
           )}
         </div>
 
-        {actions && <div className="flex items-center gap-3">{actions}</div>}
+        {actions && <div className="flex items-center gap-3 flex-shrink-0">{actions}</div>}
       </div>
     </div>
   );
