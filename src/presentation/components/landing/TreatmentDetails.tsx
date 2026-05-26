@@ -182,8 +182,8 @@ export function TreatmentDetails() {
 
   return (
     <>
-      {/* Sección con fondo ligeramente más claro que dark-900 para que las tarjetas sean visibles */}
-      <section className="py-20 bg-dark-700">
+      {/* Sección: bg-dark-800 para que las tarjetas bg-dark-700 sean visibles (más claras que el fondo) */}
+      <section className="py-20 bg-dark-800">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12" data-aos="fade-up">
             <p className="text-gold-400 text-sm font-semibold tracking-widest uppercase mb-3">
@@ -205,11 +205,15 @@ export function TreatmentDetails() {
             </p>
           ) : (
             <div
-              className="grid md:grid-cols-2 gap-5 max-w-4xl mx-auto"
+              className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto"
               data-aos="fade-up"
               data-aos-delay="100"
             >
               {activeServices.map(service => {
+                const hasRealImage =
+                  service.imageURL &&
+                  (service.imageURL.startsWith('http') || service.imageURL.startsWith('/'));
+
                 const isEmoji =
                   service.imageURL &&
                   !service.imageURL.startsWith('http') &&
@@ -219,41 +223,79 @@ export function TreatmentDetails() {
                 return (
                   <motion.div
                     key={service.id}
-                    whileHover={{ y: -3 }}
-                    className="bg-dark-800 rounded-xl border border-gold-500/20 p-6 cursor-pointer hover:border-gold-500/60 hover:shadow-gold transition-all"
+                    whileHover={{ y: -4 }}
+                    className="bg-dark-700 rounded-2xl border border-gold-500/20 cursor-pointer hover:border-gold-500/50 hover:shadow-gold transition-all overflow-hidden group"
                     onClick={() => setSelectedService(service)}
                   >
-                    <div className="flex items-start justify-between mb-3 gap-3">
-                      <div className="min-w-0 flex-1">
+                    {/* Imagen de la card — visible mientras se scrollea */}
+                    {hasRealImage ? (
+                      <div className="relative h-44 overflow-hidden">
+                        <img
+                          src={service.imageURL}
+                          alt={service.name}
+                          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                        {/* Degradado para que el texto de abajo no choque con la imagen */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-dark-700 via-dark-700/30 to-transparent" />
+                        {/* Badges sobre la imagen */}
+                        <div className="absolute top-3 left-3">
+                          <span className="text-xs bg-black/60 backdrop-blur-sm text-gold-400 font-semibold uppercase tracking-wide px-2.5 py-1 rounded-full">
+                            {service.brand
+                              ? `${getServiceCategoryText(service.category)} · ${service.brand}`
+                              : getServiceCategoryText(service.category)}
+                          </span>
+                        </div>
+                        {service.hasPromotion && (
+                          <div className="absolute top-3 right-3">
+                            <span className="text-xs bg-gold-500/90 text-dark-900 font-bold px-2.5 py-1 rounded-full">
+                              Promo
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      /* Sin imagen real: fondo degradado con emoji o ícono genérico */
+                      <div className="relative h-24 bg-gradient-to-br from-dark-600 to-dark-700 flex items-center justify-center overflow-hidden">
+                        <span className="text-5xl opacity-60">
+                          {isEmoji ? service.imageURL : '✨'}
+                        </span>
+                        <div className="absolute inset-0 bg-gradient-to-t from-dark-700 to-transparent" />
+                        {service.hasPromotion && (
+                          <div className="absolute top-3 right-3">
+                            <span className="text-xs bg-gold-500/90 text-dark-900 font-bold px-2.5 py-1 rounded-full">
+                              Promo
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Contenido textual */}
+                    <div className="p-5">
+                      {!hasRealImage && (
                         <span className="text-xs text-gold-400 font-semibold uppercase tracking-wide">
                           {service.brand
                             ? `${getServiceCategoryText(service.category)} · ${service.brand}`
                             : getServiceCategoryText(service.category)}
                         </span>
-                        <h3 className="text-lg font-bold text-white mt-1 leading-snug">
-                          {service.name}
-                        </h3>
-                      </div>
-                      {isEmoji && (
-                        <span className="text-3xl flex-shrink-0">{service.imageURL}</span>
                       )}
-                    </div>
+                      <h3 className={`text-lg font-bold text-white leading-snug ${!hasRealImage ? 'mt-1' : ''}`}>
+                        {service.name}
+                      </h3>
 
-                    <p className="text-sm text-dark-300 mb-4 line-clamp-2">
-                      {service.description}
-                    </p>
+                      <p className="text-sm text-dark-300 mt-2 mb-4 line-clamp-2">
+                        {service.description}
+                      </p>
 
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5 text-xs text-dark-300">
-                        <Clock className="w-3.5 h-3.5 text-gold-500" />
-                        {service.duration} min
-                      </div>
-                      {service.hasPromotion && (
-                        <span className="text-xs bg-gold-500/20 text-gold-400 px-2 py-0.5 rounded-full font-medium">
-                          Promoción
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1.5 text-xs text-dark-300">
+                          <Clock className="w-3.5 h-3.5 text-gold-500" />
+                          {service.duration} min
+                        </div>
+                        <span className="text-xs text-gold-400 font-medium group-hover:text-gold-300 transition-colors">
+                          Ver detalles →
                         </span>
-                      )}
-                      <span className="text-xs text-gold-400 font-medium">Ver detalles →</span>
+                      </div>
                     </div>
                   </motion.div>
                 );
