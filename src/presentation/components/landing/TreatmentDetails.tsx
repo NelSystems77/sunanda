@@ -1,212 +1,30 @@
-import { useState } from 'react';
-import { X, Clock, Star, CheckCircle, Calendar, MessageCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { X, Clock, Star, CheckCircle, Calendar, MessageCircle, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useServiceStore } from '../../context/ServiceStore';
+import { Service } from '@/core/domain/interfaces/Service';
+import { getServiceCategoryText } from '@/core/domain/enums/serviceCategory';
 
 const WA = import.meta.env.VITE_WHATSAPP_NUMBER ?? '50688083390';
 
-interface Treatment {
-  id: string;
-  name: string;
-  category: string;
-  duration: string;
-  price: string;
-  rating: number;
-  description: string;
-  benefits: string[];
-  steps: string[];
-  ideal: string;
-}
-
-const TREATMENTS: Treatment[] = [
-  {
-    id: 'timexpert',
-    name: 'Timexpert Lift_IN',
-    category: 'Tratamiento Signature',
-    duration: '90 min',
-    price: '₡65,000',
-    rating: 5,
-    description: 'El tratamiento insignia de SUNANDA Spa. Tecnología avanzada Germaine de Capuccini que actúa sobre los mecanismos del envejecimiento desde adentro.',
-    benefits: [
-      'Efecto lifting visible desde la primera sesión',
-      'Reafirmación cutánea profunda',
-      'Reducción de arrugas y líneas de expresión',
-      'Luminosidad y uniformidad del tono',
-    ],
-    steps: [
-      'Consulta personalizada y análisis de piel',
-      'Limpieza profunda y preparación',
-      'Aplicación de sérum activo Lift_IN',
-      'Masaje lifting con técnica especializada',
-      'Mascarilla tensora con ácido hialurónico',
-      'Finalización con FPS y cuidados post-tratamiento',
-    ],
-    ideal: 'Pieles maduras, flácidas o con pérdida de firmeza. A partir de 35 años.',
-  },
-  {
-    id: 'hydracure',
-    name: 'Hydracure Facial',
-    category: 'Hidratación',
-    duration: '75 min',
-    price: '₡45,000',
-    rating: 5,
-    description: 'Hidratación profunda de última generación. Activa los acuaporines de la piel para una hidratación desde adentro hacia afuera.',
-    benefits: [
-      'Hidratación profunda de larga duración',
-      'Reducción de rojeces e irritaciones',
-      'Textura más suave y uniforme',
-      'Barrera cutánea fortalecida',
-    ],
-    steps: [
-      'Análisis de niveles de hidratación',
-      'Limpieza suave con gel purificante',
-      'Exfoliación enzimática',
-      'Sérum Hydracure con hialurónico',
-      'Mascarilla criotermal',
-      'Crema barrera con SPF',
-    ],
-    ideal: 'Pieles deshidratadas, sensibles o con sensación de tirantez.',
-  },
-  {
-    id: 'purifying',
-    name: 'Limpieza Facial Profunda',
-    category: 'Purificación',
-    duration: '60 min',
-    price: '₡20,000',
-    rating: 5,
-    description: 'Protocolo completo de limpieza facial profunda con aparatología y productos seleccionados según la condición de tu piel.',
-    benefits: [
-      'Protocolo de inicio personalizado',
-      'Desmaquillado profesional',
-      'Exfoliación y tónico',
-      'Aparatología según condición',
-      'Activo y masaje según condición',
-      'Mascarilla, sellante y bloqueador',
-    ],
-    steps: [
-      'Protocolo de inicio',
-      'Desmaquillado',
-      'Exfoliar',
-      'Tónico',
-      'Aparatología (según condición)',
-      'Activo (según condición)',
-      'Masaje (según condición)',
-      'Mascarilla (según condición)',
-      'Sellante',
-      'Bloqueador',
-    ],
-    ideal: 'Todo tipo de piel. Tratamiento de 1 sesión.',
-  },
-  {
-    id: 'massage',
-    name: 'Masaje Relajante',
-    category: 'Cuerpo',
-    duration: '60 min',
-    price: '₡40,000',
-    rating: 5,
-    description: 'Masaje de cuerpo completo con técnica sueca y aceites esenciales premium que libera tensiones y restaura el equilibrio energético.',
-    benefits: [
-      'Relajación muscular profunda',
-      'Reducción del estrés y ansiedad',
-      'Mejora de la circulación',
-      'Sensación de bienestar total',
-    ],
-    steps: [
-      'Consulta de zonas de tensión',
-      'Preparación con aceites esenciales',
-      'Masaje técnica sueca (espalda)',
-      'Masaje miembro superior e inferior',
-      'Reflexología de pies',
-      'Relajación final con aromaterapia',
-    ],
-    ideal: 'Para cualquier persona con estrés, tensión muscular o simplemente en busca de bienestar.',
-  },
-  {
-    id: 'glow-force',
-    name: 'Glow Force Máscara Iluminadora',
-    category: 'Germaine de Capuccini · Premium',
-    duration: '90 min',
-    price: '₡55,000',
-    rating: 5,
-    description: 'Piel perfecta en tiempo récord. En 90 minutos una piel más luminosa, firme, tonificada y radiante. Perfecta para ocasiones especiales o como refuerzo semanal de juventud y energía. El tratamiento anti-fatiga que da a la tez una luminosidad extraordinaria, cargándola de energía.',
-    benefits: [
-      'Luminosidad extraordinaria desde el interior',
-      'Piel más firme y tonificada en 90 minutos',
-      'Inhibe la producción de melanina · anti-manchas',
-      'Estimula la actividad celular',
-      'Anti-fatiga · recarga de energía vital',
-      'Transforma melanina oscura en clara · iguala el tono',
-    ],
-    steps: [
-      'Limpieza y preparación de la piel',
-      'Aplicación de la máscara Glow Force Timexpert Radiance C+',
-      'Acción intensiva con Vitamina C Pura',
-      'Retiro y acabado luminoso final',
-    ],
-    ideal: 'Todas las pieles. Especialmente indicado para pieles cansadas y apagadas. Ideal para ocasiones especiales.',
-  },
-  {
-    id: 'hydraluronic',
-    name: 'Hydraluronic Máscara Extra-Hidratante',
-    category: 'Germaine de Capuccini · Premium',
-    duration: '90 min',
-    price: '₡55,000',
-    rating: 5,
-    description: 'Experiencia de hidratación suprema con textura rica y cremosa que se transforma en nutritivo aceite durante su aplicación. Formulada con Ácido Hialurónico de alto, medio y bajo peso molecular más el nanopolímero HLG patentado para una hidratación intensa y duradera.',
-    benefits: [
-      'Hidratación suprema desde el primer uso',
-      'Ácido Hialurónico triple peso molecular + HLG Patented',
-      'Piel jugosa y radiante de forma inmediata',
-      'Recupera el volumen natural con el tiempo',
-      'Alisa y reconforta profundamente',
-      'Alivio inmediato en zonas deshidratadas (manos, codos)',
-    ],
-    steps: [
-      'Limpieza y preparación de la piel',
-      'Aplicación de la máscara Hydraluronic Extra-Hidratante',
-      'Acción intensiva con HA triple peso molecular + HLG',
-      'La textura crema se transforma en aceite nutritivo',
-      'Retiro y acabado hidratado y radiante',
-    ],
-    ideal: 'Pieles deshidratadas y secas. Uso diurno como hidratación extra, nocturno como tratamiento intensivo, u ocasional para alivio inmediato.',
-  },
-  {
-    id: 'expert-lab-peeling',
-    name: 'Expert Lab Peeling Químico',
-    category: 'Germaine de Capuccini · Expert Lab',
-    duration: '90 min',
-    price: '₡55,000',
-    rating: 5,
-    description: 'Peeling de alta gama con químicos de uso estricto profesional diseñados para mejorar la calidad y la regeneración de la piel. Tres fórmulas especializadas: Equilibrante para pieles grasas o con acné, Antiedad para estimular colágeno y firmeza, y Flash para luminosidad e hidratación inmediatas.',
-    benefits: [
-      'Peeling Equilibrante · equilibra producción de sebo y propiedades antiacné',
-      'Peeling Antiedad · estimula colágeno, mejora firmeza y reduce arrugas',
-      'Peeling Flash · luminosidad e hidratación inmediatas, efecto brillo instantáneo',
-      '5% Ácido Mandélico + 5% Ácido Lactobiónico',
-      'Mejora la calidad y regeneración de la piel',
-      'Fórmula seleccionada según condición de piel',
-    ],
-    steps: [
-      'Consulta y análisis del tipo y condición de piel',
-      'Limpieza y preparación de la piel',
-      'Selección de variante: Equilibrante / Antiedad / Flash',
-      'Aplicación del peeling químico Expert Lab',
-      'Tiempo de acción controlado con ácidos de alta precisión',
-      'Neutralización y retiro del peeling',
-      'Calmante y sellante post-peeling',
-    ],
-    ideal: 'Equilibrante: pieles grasas o con tendencia al acné. Antiedad: pieles maduras con pérdida de firmeza o arrugas. Flash: pieles apagadas o deshidratadas que buscan luminosidad inmediata.',
-  },
-];
-
-interface Props {
-  preselectedId?: string;
+// ---------------------------------------------------------------------------
+// Modal de detalle — muestra un Service de Firestore
+// ---------------------------------------------------------------------------
+interface ModalProps {
+  service: Service;
   onClose: () => void;
 }
 
-export function TreatmentDetailsModal({ preselectedId, onClose }: Props) {
-  const [selected, setSelected] = useState<Treatment>(
-    TREATMENTS.find(t => t.id === preselectedId) ?? TREATMENTS[0]
-  );
+function TreatmentDetailsModal({ service, onClose }: ModalProps) {
+  const durationLabel = `${service.duration} min`;
+  const priceLabel    = `₡${service.priceCRC.toLocaleString()}`;
+  const categoryLabel = service.brand
+    ? `${getServiceCategoryText(service.category)} · ${service.brand}`
+    : getServiceCategoryText(service.category);
+
+  const hasRealImage =
+    service.imageURL &&
+    (service.imageURL.startsWith('http') || service.imageURL.startsWith('/'));
 
   return (
     <AnimatePresence>
@@ -222,104 +40,109 @@ export function TreatmentDetailsModal({ preselectedId, onClose }: Props) {
           animate={{ scale: 1, y: 0 }}
           exit={{ scale: 0.95, y: 20 }}
           onClick={e => e.stopPropagation()}
-          className="bg-dark-800 rounded-2xl border border-dark-700 w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col"
+          className="bg-dark-800 rounded-2xl border border-dark-700 w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col"
         >
-          {/* Header con selector */}
+          {/* Header */}
           <div className="flex items-center justify-between p-5 border-b border-dark-700">
-            <div className="flex gap-2 flex-wrap">
-              {TREATMENTS.map(t => (
-                <button
-                  key={t.id}
-                  onClick={() => setSelected(t)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    selected.id === t.id
-                      ? 'bg-gold-500 text-dark-900'
-                      : 'bg-dark-700 text-dark-400 hover:bg-dark-600'
-                  }`}
-                >
-                  {t.name}
-                </button>
-              ))}
+            <div className="min-w-0 flex-1">
+              <span className="text-xs text-gold-400 font-semibold uppercase tracking-wide">
+                {categoryLabel}
+              </span>
+              <h3 className="text-xl font-bold text-white mt-1 leading-tight">{service.name}</h3>
             </div>
-            <button onClick={onClose} className="p-2 hover:bg-dark-700 rounded-lg ml-2 flex-shrink-0">
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-dark-700 rounded-lg ml-3 flex-shrink-0"
+            >
               <X className="w-5 h-5 text-dark-400" />
             </button>
           </div>
 
           {/* Contenido */}
-          <div className="overflow-y-auto flex-1 p-6">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={selected.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2 }}
-              >
-                <div className="flex items-start justify-between mb-2">
-                  <div>
-                    <span className="text-xs text-gold-400 font-semibold uppercase tracking-wide">{selected.category}</span>
-                    <h3 className="text-2xl font-bold text-white mt-1">{selected.name}</h3>
-                  </div>
-                  <div className="flex items-center gap-1 text-dark-400">
-                    <Clock className="w-3.5 h-3.5" />
-                    <span className="text-sm">{selected.duration}</span>
-                  </div>
-                </div>
+          <div className="overflow-y-auto flex-1 p-6 space-y-5">
+            {/* Imagen real */}
+            {hasRealImage && (
+              <div className="relative h-48 rounded-xl overflow-hidden">
+                <img
+                  src={service.imageURL}
+                  alt={service.name}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+              </div>
+            )}
 
-                <div className="flex gap-1 mb-4">
-                  {Array.from({ length: selected.rating }).map((_, i) => (
-                    <Star key={i} className="w-4 h-4 text-gold-500 fill-current" />
+            {/* Duración · Estrellas · Precio */}
+            <div className="flex items-center gap-4 flex-wrap">
+              <div className="flex items-center gap-1.5 text-sm text-dark-400">
+                <Clock className="w-4 h-4 text-gold-400" />
+                {durationLabel}
+              </div>
+              <div className="flex items-center gap-0.5">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star key={i} className="w-3.5 h-3.5 text-gold-500 fill-current" />
+                ))}
+              </div>
+              {service.hasPromotion && service.promotionValue ? (
+                <div className="ml-auto text-right">
+                  <span className="text-xs text-dark-500 line-through block">
+                    {priceLabel}
+                  </span>
+                  <span className="text-gold-400 font-bold text-sm">
+                    {service.promotionType === 'percentage'
+                      ? `₡${Math.round(service.priceCRC * (1 - service.promotionValue / 100)).toLocaleString()}`
+                      : priceLabel}
+                  </span>
+                </div>
+              ) : (
+                <span className="text-gold-400 font-bold ml-auto">{priceLabel}</span>
+              )}
+            </div>
+
+            {/* Descripción */}
+            <p className="text-dark-400 leading-relaxed">{service.description}</p>
+
+            {/* Beneficios */}
+            {service.benefits && service.benefits.length > 0 && (
+              <div>
+                <h4 className="font-semibold text-white mb-3 flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-gold-400" />
+                  Beneficios
+                </h4>
+                <ul className="space-y-2">
+                  {service.benefits.map((b, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-dark-400">
+                      <span className="w-1.5 h-1.5 rounded-full bg-gold-500 mt-1.5 flex-shrink-0" />
+                      {b}
+                    </li>
                   ))}
-                </div>
+                </ul>
+              </div>
+            )}
 
-                <p className="text-dark-400 mb-6 leading-relaxed">{selected.description}</p>
+            {/* Promoción vigente */}
+            {service.hasPromotion && service.promotionDescription && (
+              <div className="p-4 bg-gold-500/10 rounded-xl border border-gold-500/30">
+                <p className="text-xs text-gold-400 uppercase font-semibold mb-1">
+                  Promoción especial
+                </p>
+                <p className="text-sm text-dark-300">{service.promotionDescription}</p>
+              </div>
+            )}
 
-                <div className="grid md:grid-cols-2 gap-6 mb-6">
-                  {/* Beneficios */}
-                  <div>
-                    <h4 className="font-semibold text-white mb-3 flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-gold-400" />
-                      Beneficios
-                    </h4>
-                    <ul className="space-y-2">
-                      {selected.benefits.map((b, i) => (
-                        <li key={i} className="flex items-start gap-2 text-sm text-dark-400">
-                          <span className="w-1.5 h-1.5 rounded-full bg-gold-500 mt-1.5 flex-shrink-0" />
-                          {b}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Pasos */}
-                  <div>
-                    <h4 className="font-semibold text-white mb-3 flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-gold-400" />
-                      Procedimiento
-                    </h4>
-                    <ol className="space-y-2">
-                      {selected.steps.map((s, i) => (
-                        <li key={i} className="flex items-start gap-2 text-sm text-dark-400">
-                          <span className="w-5 h-5 rounded-full bg-dark-700 flex items-center justify-center text-xs text-gold-400 font-bold flex-shrink-0 mt-0.5">
-                            {i + 1}
-                          </span>
-                          {s}
-                        </li>
-                      ))}
-                    </ol>
-                  </div>
-                </div>
-
-                <div className="p-4 bg-dark-900 rounded-xl border border-dark-700 mb-6">
-                  <p className="text-xs text-dark-500 uppercase font-semibold mb-1">Ideal para</p>
-                  <p className="text-sm text-dark-400">{selected.ideal}</p>
-                </div>
-              </motion.div>
-            </AnimatePresence>
+            {/* Sesiones si aplica */}
+            {service.sessions && service.sessions > 1 && (
+              <div className="p-4 bg-dark-900 rounded-xl border border-dark-700">
+                <p className="text-xs text-dark-500 uppercase font-semibold mb-1">
+                  Sesiones incluidas
+                </p>
+                <p className="text-sm text-dark-300 font-medium">
+                  {service.sessions} sesiones
+                </p>
+              </div>
+            )}
           </div>
 
-          {/* Footer CTA */}
+          {/* Footer CTAs */}
           <div className="p-5 border-t border-dark-700 flex gap-3">
             <a
               href="/booking"
@@ -329,7 +152,7 @@ export function TreatmentDetailsModal({ preselectedId, onClose }: Props) {
               Agendar ahora
             </a>
             <a
-              href={`https://wa.me/${WA}?text=${encodeURIComponent(`Hola! Me interesa el tratamiento ${selected.name} 🌸`)}`}
+              href={`https://wa.me/${WA}?text=${encodeURIComponent(`Hola! Me interesa el tratamiento ${service.name} 🌸`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 bg-dark-700 text-white rounded-xl font-medium hover:bg-dark-600 transition-colors border border-dark-600"
@@ -344,54 +167,104 @@ export function TreatmentDetailsModal({ preselectedId, onClose }: Props) {
   );
 }
 
+// ---------------------------------------------------------------------------
+// Sección pública del catálogo — carga desde Firestore
+// ---------------------------------------------------------------------------
 export function TreatmentDetails() {
-  const [open, setOpen] = useState(false);
-  const [treatmentId, setTreatmentId] = useState<string | undefined>();
+  const { services, loading, fetchActiveServices } = useServiceStore();
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+
+  useEffect(() => {
+    fetchActiveServices();
+  }, [fetchActiveServices]);
+
+  const activeServices = services.filter(s => s.isActive);
 
   return (
     <>
       <section className="py-20 bg-dark-800">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12" data-aos="fade-up">
-            <p className="text-gold-400 text-sm font-semibold tracking-widest uppercase mb-3">Tratamientos</p>
+            <p className="text-gold-400 text-sm font-semibold tracking-widest uppercase mb-3">
+              Tratamientos
+            </p>
             <h2 className="text-4xl font-bold text-white mb-4">Nuestros Tratamientos</h2>
             <p className="text-dark-400 max-w-2xl mx-auto">
               Cada servicio está diseñado para dar resultados visibles desde la primera sesión
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-5 max-w-4xl mx-auto" data-aos="fade-up" data-aos-delay="100">
-            {TREATMENTS.map(t => (
-              <motion.div
-                key={t.id}
-                whileHover={{ y: -3 }}
-                className="bg-dark-900 rounded-xl border border-dark-700 p-6 cursor-pointer hover:border-gold-500/50 transition-all"
-                onClick={() => { setTreatmentId(t.id); setOpen(true); }}
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <span className="text-xs text-gold-400 font-semibold uppercase tracking-wide">{t.category}</span>
-                    <h3 className="text-lg font-bold text-white mt-1">{t.name}</h3>
-                  </div>
-                </div>
-                <p className="text-sm text-dark-400 mb-4 line-clamp-2">{t.description}</p>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 text-xs text-dark-500">
-                    <Clock className="w-3.5 h-3.5" />
-                    {t.duration}
-                  </div>
-                  <span className="text-xs text-gold-400 font-medium">Ver detalles →</span>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+          {loading ? (
+            <div className="flex items-center justify-center py-16">
+              <Loader2 className="w-8 h-8 text-gold-400 animate-spin" />
+            </div>
+          ) : activeServices.length === 0 ? (
+            <p className="text-center text-dark-400 py-12">
+              No hay tratamientos disponibles en este momento.
+            </p>
+          ) : (
+            <div
+              className="grid md:grid-cols-2 gap-5 max-w-4xl mx-auto"
+              data-aos="fade-up"
+              data-aos-delay="100"
+            >
+              {activeServices.map(service => {
+                const isEmoji =
+                  service.imageURL &&
+                  !service.imageURL.startsWith('http') &&
+                  !service.imageURL.startsWith('/');
+
+                return (
+                  <motion.div
+                    key={service.id}
+                    whileHover={{ y: -3 }}
+                    className="bg-dark-900 rounded-xl border border-dark-700 p-6 cursor-pointer hover:border-gold-500/50 transition-all"
+                    onClick={() => setSelectedService(service)}
+                  >
+                    <div className="flex items-start justify-between mb-3 gap-3">
+                      <div className="min-w-0 flex-1">
+                        <span className="text-xs text-gold-400 font-semibold uppercase tracking-wide">
+                          {service.brand
+                            ? `${getServiceCategoryText(service.category)} · ${service.brand}`
+                            : getServiceCategoryText(service.category)}
+                        </span>
+                        <h3 className="text-lg font-bold text-white mt-1 leading-snug">
+                          {service.name}
+                        </h3>
+                      </div>
+                      {isEmoji && (
+                        <span className="text-3xl flex-shrink-0">{service.imageURL}</span>
+                      )}
+                    </div>
+
+                    <p className="text-sm text-dark-400 mb-4 line-clamp-2">
+                      {service.description}
+                    </p>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5 text-xs text-dark-500">
+                        <Clock className="w-3.5 h-3.5" />
+                        {service.duration} min
+                      </div>
+                      {service.hasPromotion && (
+                        <span className="text-xs bg-gold-500/20 text-gold-400 px-2 py-0.5 rounded-full font-medium">
+                          Promoción
+                        </span>
+                      )}
+                      <span className="text-xs text-gold-400 font-medium">Ver detalles →</span>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
 
-      {open && (
+      {selectedService && (
         <TreatmentDetailsModal
-          preselectedId={treatmentId}
-          onClose={() => setOpen(false)}
+          service={selectedService}
+          onClose={() => setSelectedService(null)}
         />
       )}
     </>

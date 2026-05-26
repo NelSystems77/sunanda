@@ -28,7 +28,7 @@ export { WhatsAppFloat } from './WhatsAppFloat';
 export { SEOMetadata } from './SEOMetadata';
 export { PromosBanner } from './PromosBanner';
 export { SocialProof } from './SocialProof';
-export { TreatmentDetails, TreatmentDetailsModal } from './TreatmentDetails';
+export { TreatmentDetails } from './TreatmentDetails';
 export { BeforeAfter } from './BeforeAfter';
 export { TestimonialsCarousel } from './TestimonialsCarousel';
 export { BookingCTA } from './BookingCTA';

@@ -1,31 +1,53 @@
-import { Sparkles, Heart, Zap, Gift, ArrowRight, Check } from 'lucide-react';
+import { useEffect } from 'react';
+import { Sparkles, Heart, Gift, ArrowRight, Check } from 'lucide-react';
+import { useServiceStore } from '../../context/ServiceStore';
+import { ServiceCategory } from '@/core/domain/enums/serviceCategory';
+
+// Fallbacks por si Firestore aún no cargó
+const FALLBACK_FACIALES  = ['Limpieza Profunda', 'Hidratación Intensiva', 'Anti-aging', 'Timexpert Lift_IN'];
+const FALLBACK_CORPORALES = ['Masajes Relajantes', 'Reductores', 'Drenaje Linfático', 'Post Operatorio'];
+const FALLBACK_PAQUETES  = ['Paquete Novia', 'Paquete Bienestar', 'Paquete Premium', 'Paquetes Personalizados'];
 
 export const ServicesSection = () => {
-  const services = [
+  const { services, fetchActiveServices } = useServiceStore();
+
+  useEffect(() => {
+    fetchActiveServices();
+  }, [fetchActiveServices]);
+
+  // Nombres reales por categoría (máx. 4 para no alargar la card)
+  const faciales  = services.filter(s => s.isActive && s.category === ServiceCategory.FACIAL).map(s => s.name).slice(0, 4);
+  const corporales = services.filter(s => s.isActive && s.category === ServiceCategory.CORPORAL).map(s => s.name).slice(0, 4);
+  const paquetes  = services.filter(s => s.isActive && s.category === ServiceCategory.PAQUETE).map(s => s.name).slice(0, 4);
+
+  const categories = [
     {
       icon: Sparkles,
       title: 'Tratamientos Faciales',
       description: 'Limpiezas profundas, hidratación y rejuvenecimiento facial con productos premium',
-      features: ['Limpieza Profunda', 'Hidratación Intensiva', 'Anti-aging', 'Timexpert Lift_IN'],
+      features: faciales.length > 0 ? faciales : FALLBACK_FACIALES,
       gradient: 'from-purple-500 to-pink-500',
-      bgGradient: 'from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20'
+      bgGradient: 'from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20',
+      waText: 'Tratamientos Faciales',
     },
     {
       icon: Heart,
       title: 'Tratamientos Corporales',
       description: 'Masajes terapéuticos, reductores y relajantes para tu cuerpo',
-      features: ['Masajes Relajantes', 'Reductores', 'Drenaje Linfático', 'Post Operatorio'],
+      features: corporales.length > 0 ? corporales : FALLBACK_CORPORALES,
       gradient: 'from-blue-500 to-cyan-500',
-      bgGradient: 'from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20'
+      bgGradient: 'from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20',
+      waText: 'Tratamientos Corporales',
     },
     {
       icon: Gift,
       title: 'Paquetes Especiales',
       description: 'Combina varios tratamientos y ahorra con nuestros paquetes',
-      features: ['Paquete Novia', 'Paquete Bienestar', 'Paquete Premium', 'Paquetes Personalizados'],
+      features: paquetes.length > 0 ? paquetes : FALLBACK_PAQUETES,
       gradient: 'from-amber-500 to-orange-500',
-      bgGradient: 'from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20'
-    }
+      bgGradient: 'from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-amber-900/20',
+      waText: 'Paquetes Especiales',
+    },
   ];
 
   return (
@@ -35,7 +57,7 @@ export const ServicesSection = () => {
           {/* Header */}
           <div className="text-center mb-16" data-aos="fade-up">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-gold/10 text-gold rounded-full text-sm font-medium mb-6">
-              <Zap className="w-4 h-4" />
+              <Sparkles className="w-4 h-4" />
               <span>Nuestros Servicios</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 dark:text-white mb-4">
@@ -48,16 +70,20 @@ export const ServicesSection = () => {
 
           {/* Services Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-            {services.map((service, idx) => (
-              <div 
+            {categories.map((service, idx) => (
+              <div
                 key={idx}
                 data-aos="fade-up"
                 data-aos-delay={idx * 100}
                 className="group relative"
               >
-                <div className={`h-full p-8 rounded-3xl bg-gradient-to-br ${service.bgGradient} border border-gray-200 dark:border-dark-700 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2`}>
+                <div
+                  className={`h-full p-8 rounded-3xl bg-gradient-to-br ${service.bgGradient} border border-gray-200 dark:border-dark-700 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2`}
+                >
                   {/* Icon */}
-                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${service.gradient} flex items-center justify-center mb-6 shadow-lg transform group-hover:scale-110 transition-transform duration-300`}>
+                  <div
+                    className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${service.gradient} flex items-center justify-center mb-6 shadow-lg transform group-hover:scale-110 transition-transform duration-300`}
+                  >
                     <service.icon className="w-8 h-8 text-white" />
                   </div>
 
@@ -80,8 +106,13 @@ export const ServicesSection = () => {
                   </ul>
 
                   {/* CTA */}
-                  <button 
-                    onClick={() => window.open('https://wa.me/50688083390?text=Hola!%20Me%20interesa%20información%20sobre%20' + service.title, '_blank')}
+                  <button
+                    onClick={() =>
+                      window.open(
+                        `https://wa.me/50688083390?text=Hola!%20Me%20interesa%20información%20sobre%20${encodeURIComponent(service.waText)}`,
+                        '_blank'
+                      )
+                    }
                     className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-semibold rounded-full hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors duration-300 group-hover:shadow-lg"
                   >
                     <span>Consultar</span>
@@ -90,7 +121,9 @@ export const ServicesSection = () => {
                 </div>
 
                 {/* Decorative Glow */}
-                <div className={`absolute -z-10 inset-0 bg-gradient-to-br ${service.gradient} opacity-0 group-hover:opacity-20 blur-2xl transition-opacity duration-500 rounded-3xl`}></div>
+                <div
+                  className={`absolute -z-10 inset-0 bg-gradient-to-br ${service.gradient} opacity-0 group-hover:opacity-20 blur-2xl transition-opacity duration-500 rounded-3xl`}
+                />
               </div>
             ))}
           </div>
@@ -106,7 +139,7 @@ export const ServicesSection = () => {
                   Contáctanos para crear un tratamiento personalizado
                 </p>
               </div>
-              <a 
+              <a
                 href="https://wa.me/50688083390?text=Hola!%20Necesito%20un%20tratamiento%20personalizado"
                 target="_blank"
                 rel="noopener noreferrer"
