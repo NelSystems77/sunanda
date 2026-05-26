@@ -1,4 +1,5 @@
 import { Appointment } from '@/core/domain/interfaces/Appointment';
+import { AppointmentStatus } from '@/core/domain/enums';
 import { AppointmentRepository } from '../repositories/AppointmentRepository';
 
 /**
@@ -77,8 +78,13 @@ const advanceWarning = !this.hasMinimumAdvance(date, startTime)
 
     // 4. Verificar conflictos con otras citas
     const appointments = await this.appointmentRepo.getByDate(date);
-    
+
     const conflicts = appointments.filter(apt => {
+      // Excluir citas canceladas o no-show — el slot queda libre
+      if (apt.status === AppointmentStatus.CANCELLED || apt.status === AppointmentStatus.NO_SHOW) {
+        return false;
+      }
+
       // Excluir la cita actual si estamos editando
       if (excludeAppointmentId && apt.id === excludeAppointmentId) {
         return false;
@@ -122,7 +128,10 @@ const advanceWarning = !this.hasMinimumAdvance(date, startTime)
   ): Promise<TimeSlot[]> {
     const appointments = await this.appointmentRepo.getByDate(date);
     const estheticianAppointments = appointments.filter(
-      apt => apt.estheticianId === estheticianId
+      apt =>
+        apt.estheticianId === estheticianId &&
+        apt.status !== AppointmentStatus.CANCELLED &&
+        apt.status !== AppointmentStatus.NO_SHOW
     );
 
     const slots: TimeSlot[] = [];
@@ -160,9 +169,15 @@ const advanceWarning = !this.hasMinimumAdvance(date, startTime)
   async getDayOccupancy(date: Date, estheticianId?: string): Promise<number> {
     const appointments = await this.appointmentRepo.getByDate(date);
     
-    let relevantAppointments = appointments;
+    const activeAppointments = appointments.filter(
+      apt =>
+        apt.status !== AppointmentStatus.CANCELLED &&
+        apt.status !== AppointmentStatus.NO_SHOW
+    );
+
+    let relevantAppointments = activeAppointments;
     if (estheticianId) {
-      relevantAppointments = appointments.filter(
+      relevantAppointments = activeAppointments.filter(
         apt => apt.estheticianId === estheticianId
       );
     }

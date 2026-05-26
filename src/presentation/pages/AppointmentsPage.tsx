@@ -842,18 +842,21 @@ export function AppointmentsPage() {
                                 Cobrar
                               </Button>
                             )}
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => {
-                                if (confirm('¿Cancelar esta cita?')) {
-                                  cancelAppointment(appointment.id, 'Cancelada por usuario');
-                                  loadAppointments();
-                                }
-                              }}
-                            >
-                              ✕ Cancelar
-                            </Button>
+                            {(appointment.status === 'pending' || appointment.status === 'confirmed') && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  if (confirm('¿Cancelar esta cita? El espacio quedará disponible para nuevas reservas.')) {
+                                    cancelAppointment(appointment.id, 'Cancelada desde lista de citas');
+                                    loadAppointments();
+                                  }
+                                }}
+                                className="text-red-400 border-red-800 hover:bg-red-900/30"
+                              >
+                                ✕ Cancelar
+                              </Button>
+                            )}
                           </div>
                         </div>
                       </div>
