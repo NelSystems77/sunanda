@@ -33,12 +33,18 @@ Los precios NO deben aparecer en la landing ni en páginas públicas de servicio
 ### WhatsApp es el canal de ventas principal
 Todos los CTAs de la landing deben apuntar a WhatsApp (`wa.me/50688083390`) o a `/booking`. No usar formularios de contacto como canal principal.
 
-### Actualizar siempre en sincronía (4 archivos)
-Cuando se agrega o modifica un servicio, se deben actualizar **todos** estos archivos para mantener consistencia:
-1. `src/presentation/components/landing/TreatmentDetails.tsx` — modal de detalles
-2. `src/presentation/components/landing/FeaturedServices.tsx` — tarjetas destacadas
-3. `src/presentation/pages/SetupPage.tsx` — seed de base de datos
-4. `src/scripts/crearServicios.ts` — script de creación
+### Gestión de servicios — dónde vive cada cosa
+
+**`TreatmentDetails.tsx` y `ServicesSection.tsx` son dinámicos** (sesión 2026-05-26): cargan desde Firestore via `useServiceStore` → `fetchActiveServices()`. Ya NO tienen arrays hardcodeados. Cualquier servicio activo en Firestore aparece automáticamente en la landing.
+
+Para agregar o editar un servicio en la landing basta con usar el panel admin (`/dashboard/services`).
+
+**`FeaturedServices.tsx` sigue siendo hardcodeado** — las promos de apertura y los 3 super premium Germaine de Capuccini están en código. Si se quiere cambiar esas tarjetas hay que editar el archivo directamente.
+
+Cuando se agrega un servicio que deba aparecer también en `FeaturedServices`, actualizar:
+1. `src/presentation/components/landing/FeaturedServices.tsx` — tarjetas destacadas (hardcodeado)
+2. `src/presentation/pages/SetupPage.tsx` — seed de base de datos (para ambientes nuevos)
+3. `src/scripts/crearServicios.ts` — script de creación batch
 
 ### Commits siempre al terminar
 Hacer commit + push al finalizar cada cambio. El usuario lo pide explícitamente o se hace proactivamente al final de cada tarea.
@@ -360,6 +366,38 @@ firebase deploy                   # todo (hosting + firestore + storage)
 
 ---
 
+## Actualizaciones de arquitectura (sesión 2026-05-26)
+
+### Landing conectada a Firestore — servicios dinámicos
+
+`TreatmentDetails.tsx` y `ServicesSection.tsx` ya no tienen datos hardcodeados. Ahora leen de Firestore.
+
+**`TreatmentDetails.tsx`**
+- Eliminado: array estático `TREATMENTS` con 6 tratamientos fijos
+- Nuevo: `useServiceStore` → `fetchActiveServices()` al montar
+- Muestra todos los servicios con `isActive: true` de Firestore
+- Modal adaptado al schema real (`name`, `description`, `benefits`, `priceCRC`, `duration`, `imageURL`, `hasPromotion`, `promotionDescription`, `sessions`)
+- Soporta emoji como ícono (si `imageURL` no es URL ni base64) e imágenes reales (`http*` o `/`)
+- Las imágenes base64 (`data:image/...`) se ignoran como ícono visual (demasiado peso)
+- Fondo de sección: `bg-dark-700` · Tarjetas: `bg-dark-800` · Borde: `border-gold-500/20`
+
+**`ServicesSection.tsx`**
+- Conectada a `useServiceStore` — popula las features de cada card con nombres reales por categoría (máx. 4)
+- Fallback a nombres genéricos si Firestore aún no cargó
+
+**`index.ts` del landing**
+- Eliminado re-export de `TreatmentDetailsModal` (ya no existe como export separado)
+
+### Imágenes base64 en Firestore — gotcha
+
+Si el admin sube una imagen desde el formulario de servicios del dashboard, la imagen se guarda como base64 en Firestore (campo `imageURL`). Esto es:
+- **Funcional** pero ineficiente (documentos muy grandes, carga lenta)
+- **No se renderiza** como emoji en las tarjetas de la landing (se excluye con `!imageURL.startsWith('data:')`)
+- **Sí se renderiza** en el modal de detalle si es una URL http real o path `/`
+- Mejor práctica futura: subir imágenes a Firebase Storage y guardar la URL
+
+---
+
 ## Actualizaciones de contenido (sesión 2026-05-23)
 
 - **WowShape** — Highlights actualizados con los 6 componentes reales del tratamiento
@@ -492,6 +530,27 @@ Usar **`lg:grid-cols-2`** (1024px), nunca `md:grid-cols-2` (768px). En tablets d
 ### Imágenes nuevas: siempre hacer git add explícito
 
 Al agregar archivos a `public/assets/images/landing/`, ejecutar `git add <archivo>` de forma explícita antes del commit. Los archivos de imagen en `public/` no se auto-detectan como cambios de código y es fácil omitirlos. Si una imagen funciona localmente pero no en Vercel, lo primero a verificar es `git ls-files public/assets/images/landing/`.
+
+### Paleta dark — valores reales y gotcha de contraste
+
+Los valores hex de la paleta custom `dark-*` (definida en `tailwind.config.js`):
+
+| Token | Hex | Descripción |
+|---|---|---|
+| `dark-900` | `#000000` | Negro puro — fondo más oscuro posible |
+| `dark-800` | `#141414` | Casi negro — fondo principal del dashboard |
+| `dark-700` | `#1f1f1f` | Gris muy oscuro — bordes y separadores |
+| `dark-600` | `#2d2d2d` | Gris oscuro — elementos secundarios |
+| `dark-500` | `#4a4a4a` | Gris medio |
+| `dark-400` | `#717171` | Gris claro — texto secundario |
+| `dark-300` | `#a4a4a4` | Gris más claro — texto descriptivo |
+
+**Gotcha crítico**: `dark-900` (`#000000`) sobre `dark-800` (`#141414`) es prácticamente invisible. Las tarjetas deben ser **al menos un tono más claro** que su contenedor:
+- Sección `bg-dark-800` → cards `bg-dark-700` ✅  
+- Sección `bg-dark-700` → cards `bg-dark-600` ✅  
+- Sección `bg-dark-800` → cards `bg-dark-900` ❌ (negro sobre casi-negro)
+
+Para reforzar visibilidad en dark: usar `border-gold-500/20` como borde por defecto (sutil dorado visible) y `hover:border-gold-500/60` en hover. Evitar `border-dark-700` como único diferenciador visual.
 
 ### Layout móvil del dashboard — gotchas conocidos
 
