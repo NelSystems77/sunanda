@@ -59,7 +59,7 @@ src/presentation/components/landing/
 ├── HeroLanding.tsx
 ├── FeaturedServices.tsx     — servicios destacados + 3 tarjetas super premium (Glow Force, Hydraluronic, Expert Lab Peeling)
 ├── ProductSpotlight.tsx     — productos Germaine de Capuccini (2 tarjetas: Radiance C+ y Hydraluronic)
-├── TreatmentDetails.tsx     — modal con tabs por tratamiento
+├── TreatmentDetails.tsx     — catálogo de servicios: cards con imagen thumbnail + modal de detalle (dinámico Firestore)
 ├── BeforeAfter.tsx          — slider antes/después (WowShape)
 ├── SignatureTreatment.tsx
 ├── TestimonialsCarousel.tsx
@@ -76,7 +76,7 @@ src/presentation/components/landing/
 4. `BrandPartnership` — alianza Germaine de Capuccini
 5. **`FeaturedServices`** — 2 promos apertura ultra-premium (Limpieza Facial, Hidrolipoclasia) + divisor dorado + 3 tarjetas super premium Germaine de Capuccini
 6. `SignatureTreatment` — Timexpert Lift_IN
-7. `TreatmentDetails` — catálogo con modal tabs
+7. `TreatmentDetails` — catálogo de servicios: cards con imagen thumbnail al scrollear + modal de detalle al hacer click
 8. `BeforeAfter` — slider WowShape
 9. `AboutProfessional`
 10. `ServicesSection`
@@ -376,10 +376,12 @@ firebase deploy                   # todo (hosting + firestore + storage)
 - Eliminado: array estático `TREATMENTS` con 6 tratamientos fijos
 - Nuevo: `useServiceStore` → `fetchActiveServices()` al montar
 - Muestra todos los servicios con `isActive: true` de Firestore
+- **Cards muestran imagen real del servicio** (thumbnail `h-44`, `object-cover`) directamente al scrollear — no solo en el modal
+- Hover zoom en imagen (`scale-105 transition-500`) + badge categoría/marca sobre la imagen con `backdrop-blur`
+- Fallback sin imagen: emoji grande o ✨ sobre `bg-dark-600`
 - Modal adaptado al schema real (`name`, `description`, `benefits`, `priceCRC`, `duration`, `imageURL`, `hasPromotion`, `promotionDescription`, `sessions`)
-- Soporta emoji como ícono (si `imageURL` no es URL ni base64) e imágenes reales (`http*` o `/`)
-- Las imágenes base64 (`data:image/...`) se ignoran como ícono visual (demasiado peso)
-- Fondo de sección: `bg-dark-700` · Tarjetas: `bg-dark-800` · Borde: `border-gold-500/20`
+- Imágenes base64 (`data:image/...`) se ignoran como thumbnail de card (demasiado peso), sí se muestran en el modal
+- **Contraste correcto (sesión 2026-05-27):** Fondo de sección `bg-dark-800` → Tarjetas `bg-dark-700` (cards más claras que el fondo) · Borde: `border-gold-500/20`
 
 **`ServicesSection.tsx`**
 - Conectada a `useServiceStore` — popula las features de cada card con nombres reales por categoría (máx. 4)
@@ -387,6 +389,10 @@ firebase deploy                   # todo (hosting + firestore + storage)
 
 **`index.ts` del landing**
 - Eliminado re-export de `TreatmentDetailsModal` (ya no existe como export separado)
+
+### PWA Manifest — gotcha screenshots
+
+`public/manifest.json` tenía una sección `screenshots` referenciando `/screenshots/dashboard.png` y `/screenshots/mobile.png` que **no existen** (carpeta nunca creada). Causaba error 404 en consola. **Esa sección fue eliminada** (2026-05-27) — es opcional y solo sirve para preview en instalación tipo app store. Si en el futuro se quieren agregar capturas, crear primero la carpeta `public/screenshots/` con las imágenes reales antes de añadirlas al manifest.
 
 ### Imágenes base64 en Firestore — gotcha
 
