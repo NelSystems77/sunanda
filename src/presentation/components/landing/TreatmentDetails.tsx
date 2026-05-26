@@ -182,14 +182,15 @@ export function TreatmentDetails() {
 
   return (
     <>
-      <section className="py-20 bg-dark-800">
+      {/* Sección con fondo ligeramente más claro que dark-900 para que las tarjetas sean visibles */}
+      <section className="py-20 bg-dark-700">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12" data-aos="fade-up">
             <p className="text-gold-400 text-sm font-semibold tracking-widest uppercase mb-3">
               Tratamientos
             </p>
             <h2 className="text-4xl font-bold text-white mb-4">Nuestros Tratamientos</h2>
-            <p className="text-dark-400 max-w-2xl mx-auto">
+            <p className="text-dark-300 max-w-2xl mx-auto">
               Cada servicio está diseñado para dar resultados visibles desde la primera sesión
             </p>
           </div>
@@ -199,7 +200,7 @@ export function TreatmentDetails() {
               <Loader2 className="w-8 h-8 text-gold-400 animate-spin" />
             </div>
           ) : activeServices.length === 0 ? (
-            <p className="text-center text-dark-400 py-12">
+            <p className="text-center text-dark-300 py-12">
               No hay tratamientos disponibles en este momento.
             </p>
           ) : (
@@ -212,13 +213,14 @@ export function TreatmentDetails() {
                 const isEmoji =
                   service.imageURL &&
                   !service.imageURL.startsWith('http') &&
-                  !service.imageURL.startsWith('/');
+                  !service.imageURL.startsWith('/') &&
+                  !service.imageURL.startsWith('data:');
 
                 return (
                   <motion.div
                     key={service.id}
                     whileHover={{ y: -3 }}
-                    className="bg-dark-900 rounded-xl border border-dark-700 p-6 cursor-pointer hover:border-gold-500/50 transition-all"
+                    className="bg-dark-800 rounded-xl border border-gold-500/20 p-6 cursor-pointer hover:border-gold-500/60 hover:shadow-gold transition-all"
                     onClick={() => setSelectedService(service)}
                   >
                     <div className="flex items-start justify-between mb-3 gap-3">
@@ -237,13 +239,13 @@ export function TreatmentDetails() {
                       )}
                     </div>
 
-                    <p className="text-sm text-dark-400 mb-4 line-clamp-2">
+                    <p className="text-sm text-dark-300 mb-4 line-clamp-2">
                       {service.description}
                     </p>
 
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5 text-xs text-dark-500">
-                        <Clock className="w-3.5 h-3.5" />
+                      <div className="flex items-center gap-1.5 text-xs text-dark-300">
+                        <Clock className="w-3.5 h-3.5 text-gold-500" />
                         {service.duration} min
                       </div>
                       {service.hasPromotion && (
