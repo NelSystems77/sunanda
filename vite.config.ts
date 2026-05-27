@@ -251,19 +251,6 @@ export default defineConfig({
             }
           },
           
-          // JavaScript y CSS - Stale While Revalidate
-          {
-            urlPattern: /\.(?:js|css)$/i,
-            handler: 'StaleWhileRevalidate',
-            options: {
-              cacheName: 'static-resources',
-              expiration: {
-                maxEntries: 60,
-                maxAgeSeconds: 60 * 60 * 24 * 7 // 7 días
-              }
-            }
-          },
-          
           // Navegación - Network First con fallback
           {
             urlPattern: ({ request }) => request.mode === 'navigate',
