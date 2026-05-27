@@ -436,10 +436,10 @@ Las imágenes de servicios van a **Firebase Storage**, no a Firestore como base6
 1. Admin sube imagen en `/dashboard/services` → formulario llama `uploadServiceImage()` → imagen va a `services/{id}/main.jpg` → Firestore guarda solo la URL `https://...`
 2. Landing (`TreatmentDetails.tsx`) muestra la imagen porque `imageURL.startsWith('http')` → `hasRealImage = true`
 
-**Migrar imágenes base64 existentes:**
-- Ir a `/dashboard/services` → botón **"Migrar imágenes"** en el header
-- Ejecuta `migrateServiceImagesToStorage()`: lee todos los servicios con `data:` en `imageURL`, sube cada uno a Storage, actualiza Firestore con la URL real
-- Muestra log en tiempo real y resultado (migrados / errores)
+**Migración base64 → Storage (ya ejecutada, 2026-05-28):**
+- Se usó `migrateServiceImagesToStorage()` para convertir todos los `data:` existentes en Firestore a URLs reales de Storage
+- El botón "Migrar imágenes" fue eliminado del dashboard después de la migración (ya no es necesario)
+- La función sigue disponible en `ServiceImageUploadService.ts` por si se necesita invocar desde consola en el futuro
 
 **⚠️ Historial:** antes de la sesión 2026-05-28, `handleImageFileChange` en `ServicesPage.tsx` guardaba la imagen como base64 directamente en `formData.imageURL` y `TreatmentDetails.tsx` excluía esas URLs (`!startsWith('data:')`) haciendo que las cards mostraran solo ✨. Ya corregido.
 
