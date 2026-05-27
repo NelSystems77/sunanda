@@ -204,11 +204,7 @@ export function TreatmentDetails() {
               No hay tratamientos disponibles en este momento.
             </p>
           ) : (
-            <div
-              className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto"
-              data-aos="fade-up"
-              data-aos-delay="100"
-            >
+            <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
               {activeServices.map(service => {
                 const hasRealImage =
                   service.imageURL &&
@@ -223,6 +219,9 @@ export function TreatmentDetails() {
                 return (
                   <motion.div
                     key={service.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.1 }}
                     whileHover={{ y: -4 }}
                     className="bg-dark-700 rounded-2xl border border-gold-500/30 cursor-pointer hover:border-gold-500/70 hover:shadow-gold transition-all overflow-hidden group"
                     onClick={() => setSelectedService(service)}
