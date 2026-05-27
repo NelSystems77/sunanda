@@ -445,6 +445,53 @@ Las imágenes de servicios van a **Firebase Storage**, no a Firestore como base6
 
 ---
 
+## AppointmentCard — rediseño paleta dark + datos reales (sesión 2026-05-29)
+
+`src/presentation/components/features/AppointmentCard.tsx`
+
+### Problemas corregidos
+
+| Antes | Después |
+|---|---|
+| Fondo blanco (`bg-white`) — fuera de la paleta del dashboard | `bg-dark-800` con borde izquierdo de color por estado |
+| `Cliente ID: 702040975` — cédula cruda | Nombre real parseado de `appointment.notes` |
+| `Servicio ID: lblnYXH3IY19XJHHXTje` — ID de Firestore crudo | Nombre real del servicio via `useServiceStore` |
+| `onOpenRecord(clientId, clientId)` — nombre incorrecto | `onOpenRecord(clientId, clientName)` — nombre real |
+
+### Parseo del nombre de cliente
+
+```typescript
+function parseClientName(notes?: string): string {
+  if (!notes) return '';
+  const match = notes.match(/Nombre:\s*([^|]+)/);
+  return match ? match[1].trim() : '';
+}
+```
+Fallback: si no hay match muestra `Cédula: {appointment.clientId}`.
+
+### Resolución del nombre de servicio
+
+```typescript
+const { services } = useServiceStore();
+const serviceName = services.find(s => s.id === appointment.serviceId)?.name ?? appointment.serviceId;
+```
+Fallback: si el store aún no cargó, muestra el ID crudo.
+
+### Paleta de estados (dark)
+
+| Estado | Badge | Borde izquierdo |
+|---|---|---|
+| Pendiente | `bg-gold-500/20 text-gold-300` | `border-l-gold-500` |
+| Confirmada | `bg-blue-500/20 text-blue-300` | `border-l-blue-400` |
+| Completada | `bg-purple-500/20 text-purple-300` | `border-l-purple-400` |
+| Cancelada | `bg-red-500/20 text-red-400` | `border-l-red-500` |
+| En atención | `bg-blue-500/20 text-blue-300` | `border-l-blue-400` |
+| No asistió | `bg-dark-500/40 text-dark-300` | `border-l-dark-500` |
+
+El menú desplegable y el diálogo de cancelación también siguen la paleta dark (`dark-700`, `dark-600`).
+
+---
+
 ## Actualizaciones de contenido (sesión 2026-05-23)
 
 - **WowShape** — Highlights actualizados con los 6 componentes reales del tratamiento
