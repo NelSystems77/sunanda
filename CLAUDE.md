@@ -339,6 +339,12 @@ match /expedientes/{clientId}/{allPaths=**}
          && request.resource.size < 5 MB
          && request.resource.contentType.matches('image/.*')
 
+match /services/{serviceId}/{allPaths=**}
+  read:  true                         ← público para la landing
+  write: request.auth != null
+         && request.resource.size < 5 MB
+         && request.resource.contentType.matches('image/.*')
+
 Todo lo demás: denegado
 ```
 
@@ -349,12 +355,17 @@ Todo lo demás: denegado
 | `expedientes/{clientId}/{sessionId}/antes/{fileName}` | Foto "antes" de sesión |
 | `expedientes/{clientId}/{sessionId}/despues/{fileName}` | Foto "después" de sesión |
 | `expedientes/{clientId}/firmas/{fileName}` | Firma digital del consentimiento |
+| `services/{serviceId}/main.jpg` | Imagen del servicio — subida desde el dashboard |
 
-### Servicio de subida
+### Servicios de subida
 
 `src/core/infrastructure/services/MedicalRecordService.ts`:
 - `uploadImage(file, clientId, sessionId, type)` — comprime a máx 500 KB / 1920px antes de subir
 - `uploadSignature(dataUrl, clientId)` — convierte dataURL a Blob y sube como PNG
+
+`src/core/infrastructure/services/ServiceImageUploadService.ts` (sesión 2026-05-28):
+- `uploadServiceImage(file, serviceId, fileName?)` — sube imagen de servicio a `services/{id}/main.jpg`, retorna URL pública
+- `migrateServiceImagesToStorage(onProgress?)` — migra batch todas las imágenes base64 que existan en Firestore a Storage, actualiza `imageURL` en cada documento
 
 ### Despliegue de reglas
 
@@ -380,7 +391,7 @@ firebase deploy                   # todo (hosting + firestore + storage)
 - Hover zoom en imagen (`scale-105 transition-500`) + badge categoría/marca sobre la imagen con `backdrop-blur`
 - Fallback sin imagen: emoji grande o ✨ sobre `bg-dark-600`
 - Modal adaptado al schema real (`name`, `description`, `benefits`, `priceCRC`, `duration`, `imageURL`, `hasPromotion`, `promotionDescription`, `sessions`)
-- Imágenes base64 (`data:image/...`) se ignoran como thumbnail de card (demasiado peso), sí se muestran en el modal
+- `hasRealImage` = `imageURL.startsWith('http') || imageURL.startsWith('/')` → muestra thumbnail `h-44`. Los base64 (`data:`) quedaban excluidos — resuelto en sesión 2026-05-28 migrando a Storage.
 - **Contraste correcto (sesión 2026-05-27):** Fondo de sección `bg-dark-900` (negro puro) → Tarjetas `bg-dark-700` (#1f1f1f) — diferencia de 31 RGB puntos, claramente visible · Borde: `border-gold-500/30` → hover `border-gold-500/70`
   - ⚠️ Lección: `dark-800` vs `dark-700` solo difiere 11 puntos RGB — demasiado sutil para ser visible. Usar `dark-900` como base cuando se necesite contraste real en fondos oscuros.
 
@@ -417,13 +428,20 @@ Este bug ocurrió en `TreatmentDetails.tsx` (sesión 2026-05-27): el grid con `d
 
 `public/manifest.json` tenía una sección `screenshots` referenciando `/screenshots/dashboard.png` y `/screenshots/mobile.png` que **no existen** (carpeta nunca creada). Causaba error 404 en consola. **Esa sección fue eliminada** (2026-05-27) — es opcional y solo sirve para preview en instalación tipo app store. Si en el futuro se quieren agregar capturas, crear primero la carpeta `public/screenshots/` con las imágenes reales antes de añadirlas al manifest.
 
-### Imágenes base64 en Firestore — gotcha
+### Imágenes de servicios — flujo correcto (sesión 2026-05-28)
 
-Si el admin sube una imagen desde el formulario de servicios del dashboard, la imagen se guarda como base64 en Firestore (campo `imageURL`). Esto es:
-- **Funcional** pero ineficiente (documentos muy grandes, carga lenta)
-- **No se renderiza** como emoji en las tarjetas de la landing (se excluye con `!imageURL.startsWith('data:')`)
-- **Sí se renderiza** en el modal de detalle si es una URL http real o path `/`
-- Mejor práctica futura: subir imágenes a Firebase Storage y guardar la URL
+Las imágenes de servicios van a **Firebase Storage**, no a Firestore como base64.
+
+**Flujo actual (después de la migración):**
+1. Admin sube imagen en `/dashboard/services` → formulario llama `uploadServiceImage()` → imagen va a `services/{id}/main.jpg` → Firestore guarda solo la URL `https://...`
+2. Landing (`TreatmentDetails.tsx`) muestra la imagen porque `imageURL.startsWith('http')` → `hasRealImage = true`
+
+**Migrar imágenes base64 existentes:**
+- Ir a `/dashboard/services` → botón **"Migrar imágenes"** en el header
+- Ejecuta `migrateServiceImagesToStorage()`: lee todos los servicios con `data:` en `imageURL`, sube cada uno a Storage, actualiza Firestore con la URL real
+- Muestra log en tiempo real y resultado (migrados / errores)
+
+**⚠️ Historial:** antes de la sesión 2026-05-28, `handleImageFileChange` en `ServicesPage.tsx` guardaba la imagen como base64 directamente en `formData.imageURL` y `TreatmentDetails.tsx` excluía esas URLs (`!startsWith('data:')`) haciendo que las cards mostraran solo ✨. Ya corregido.
 
 ---
 
