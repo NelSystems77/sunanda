@@ -72,6 +72,7 @@ export function AppointmentCard({
           relative bg-dark-800 rounded-lg border border-dark-600 border-l-4 ${status.border}
           shadow-sm hover:shadow-gold-500/10 hover:border-gold-500/30 transition-all
           ${onClick ? 'cursor-pointer' : ''}
+          ${showMenu ? 'z-30' : 'z-[1]'}
         `}
         onClick={onClick}
       >
@@ -97,7 +98,7 @@ export function AppointmentCard({
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.95 }}
-                      className="absolute right-0 mt-2 w-48 bg-dark-700 rounded-lg shadow-xl border border-dark-600 z-10"
+                      className="absolute right-0 mt-2 w-48 bg-dark-700 rounded-lg shadow-xl border border-dark-600 z-50"
                       onClick={(e) => e.stopPropagation()}
                     >
                       {appointment.status === AppointmentStatus.PENDING && onConfirm && (
