@@ -381,7 +381,8 @@ firebase deploy                   # todo (hosting + firestore + storage)
 - Fallback sin imagen: emoji grande o ✨ sobre `bg-dark-600`
 - Modal adaptado al schema real (`name`, `description`, `benefits`, `priceCRC`, `duration`, `imageURL`, `hasPromotion`, `promotionDescription`, `sessions`)
 - Imágenes base64 (`data:image/...`) se ignoran como thumbnail de card (demasiado peso), sí se muestran en el modal
-- **Contraste correcto (sesión 2026-05-27):** Fondo de sección `bg-dark-800` → Tarjetas `bg-dark-700` (cards más claras que el fondo) · Borde: `border-gold-500/20`
+- **Contraste correcto (sesión 2026-05-27):** Fondo de sección `bg-dark-900` (negro puro) → Tarjetas `bg-dark-700` (#1f1f1f) — diferencia de 31 RGB puntos, claramente visible · Borde: `border-gold-500/30` → hover `border-gold-500/70`
+  - ⚠️ Lección: `dark-800` vs `dark-700` solo difiere 11 puntos RGB — demasiado sutil para ser visible. Usar `dark-900` como base cuando se necesite contraste real en fondos oscuros.
 
 **`ServicesSection.tsx`**
 - Conectada a `useServiceStore` — popula las features de cada card con nombres reales por categoría (máx. 4)
