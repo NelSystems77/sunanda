@@ -182,8 +182,8 @@ export function TreatmentDetails() {
 
   return (
     <>
-      {/* Sección: bg-dark-800 para que las tarjetas bg-dark-700 sean visibles (más claras que el fondo) */}
-      <section className="py-20 bg-dark-800">
+      {/* Sección: bg-dark-900 (negro puro) para máximo contraste con tarjetas bg-dark-700 */}
+      <section className="py-20 bg-dark-900">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12" data-aos="fade-up">
             <p className="text-gold-400 text-sm font-semibold tracking-widest uppercase mb-3">
@@ -224,7 +224,7 @@ export function TreatmentDetails() {
                   <motion.div
                     key={service.id}
                     whileHover={{ y: -4 }}
-                    className="bg-dark-700 rounded-2xl border border-gold-500/20 cursor-pointer hover:border-gold-500/50 hover:shadow-gold transition-all overflow-hidden group"
+                    className="bg-dark-700 rounded-2xl border border-gold-500/30 cursor-pointer hover:border-gold-500/70 hover:shadow-gold transition-all overflow-hidden group"
                     onClick={() => setSelectedService(service)}
                   >
                     {/* Imagen de la card — visible mientras se scrollea */}
@@ -236,7 +236,7 @@ export function TreatmentDetails() {
                           className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                         {/* Degradado para que el texto de abajo no choque con la imagen */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-dark-700 via-dark-700/30 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-dark-700 via-dark-700/40 to-transparent" />
                         {/* Badges sobre la imagen */}
                         <div className="absolute top-3 left-3">
                           <span className="text-xs bg-black/60 backdrop-blur-sm text-gold-400 font-semibold uppercase tracking-wide px-2.5 py-1 rounded-full">
