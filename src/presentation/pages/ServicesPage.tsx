@@ -8,9 +8,14 @@ import { ServiceCard } from '../components/features/ServiceCard';
 import { Button } from '../components/ui/Button';
 import { Modal, ModalFooter } from '../components/ui/Modal';
 import { Alert } from '../components/ui/Alert';
-import { Plus, Search, AlertCircle } from 'lucide-react';
+import { Plus, Search, AlertCircle, Upload, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
+import {
+  uploadServiceImage,
+  migrateServiceImagesToStorage,
+  type MigrationResult,
+} from '@/core/infrastructure/services/ServiceImageUploadService';
 
 export function ServicesPage() {
   const {
@@ -35,6 +40,11 @@ export function ServicesPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
+
+  // Estado de migración de imágenes base64 → Firebase Storage
+  const [isMigrating, setIsMigrating] = useState(false);
+  const [migrationLog, setMigrationLog] = useState<string[]>([]);
+  const [migrationResult, setMigrationResult] = useState<MigrationResult | null>(null);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -136,12 +146,11 @@ export function ServicesPage() {
 
     setImageFile(file);
 
-    // Crear preview
+    // Solo crear preview local — la URL real se obtiene al guardar (Storage)
     const reader = new FileReader();
     reader.onloadend = () => {
-      const result = reader.result as string;
-      setImagePreview(result);
-      setFormData({ ...formData, imageURL: result });
+      setImagePreview(reader.result as string);
+      // NO guardamos base64 en formData; se sube a Storage en handleSubmit
     };
     reader.readAsDataURL(file);
   };
@@ -156,16 +165,32 @@ export function ServicesPage() {
 
     setIsSubmitting(true);
     try {
+      let finalImageURL = formData.imageURL;
+
+      // Si hay un archivo nuevo, subirlo a Firebase Storage primero
+      if (imageFile) {
+        const serviceId = editingService?.id ?? `new-${Date.now()}`;
+        const ext = imageFile.type.includes('png') ? 'png' : 'jpg';
+        toast.loading('Subiendo imagen…', { id: 'img-upload' });
+        finalImageURL = await uploadServiceImage(imageFile, serviceId, `main.${ext}`);
+        toast.dismiss('img-upload');
+      }
+
+      const dataToSave = { ...formData, imageURL: finalImageURL };
+
       if (editingService) {
-        await updateService(editingService.id, formData);
+        await updateService(editingService.id, dataToSave);
         toast.success('Servicio actualizado correctamente');
       } else {
-        await createService(formData);
+        await createService(dataToSave);
         toast.success('Servicio creado correctamente');
       }
       setShowForm(false);
+      setImageFile(null);
+      setImagePreview('');
       fetchActiveServices();
     } catch (error) {
+      toast.dismiss('img-upload');
       toast.error('Error al guardar el servicio');
     } finally {
       setIsSubmitting(false);
@@ -186,6 +211,29 @@ export function ServicesPage() {
       toast.error('Error al eliminar el servicio');
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleMigrateImages = async () => {
+    setIsMigrating(true);
+    setMigrationLog([]);
+    setMigrationResult(null);
+    try {
+      const result = await migrateServiceImagesToStorage((msg) =>
+        setMigrationLog(prev => [...prev, msg])
+      );
+      setMigrationResult(result);
+      if (result.migrated > 0) {
+        toast.success(`${result.migrated} imagen(es) migrada(s) a Storage`);
+        fetchActiveServices();
+      } else {
+        toast('No había imágenes base64 para migrar');
+      }
+    } catch (err: any) {
+      toast.error('Error durante la migración');
+      setMigrationLog(prev => [...prev, `Error general: ${err?.message}`]);
+    } finally {
+      setIsMigrating(false);
     }
   };
 
@@ -213,15 +261,63 @@ export function ServicesPage() {
           description="Catálogo de tratamientos y servicios"
           breadcrumbs={[{ label: 'Servicios' }]}
           actions={
-            <Button 
-              variant="primary"
-              onClick={handleOpenCreate}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Nuevo Servicio
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="secondary"
+                onClick={handleMigrateImages}
+                disabled={isMigrating}
+                title="Migra imágenes base64 guardadas en Firestore a Firebase Storage"
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                {isMigrating ? 'Migrando…' : 'Migrar imágenes'}
+              </Button>
+              <Button
+                variant="primary"
+                onClick={handleOpenCreate}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Nuevo Servicio
+              </Button>
+            </div>
           }
         />
+
+        {/* Panel de migración de imágenes */}
+        <AnimatePresence>
+          {(isMigrating || migrationLog.length > 0) && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="bg-dark-800 border border-gold-500/40 rounded-xl p-4 space-y-3"
+            >
+              <div className="flex items-center gap-2 text-gold-400 font-semibold text-sm">
+                {isMigrating ? (
+                  <div className="w-4 h-4 border-2 border-gold-400 border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <CheckCircle className="w-4 h-4 text-green-400" />
+                )}
+                {isMigrating ? 'Migrando imágenes a Firebase Storage…' : 'Migración completada'}
+              </div>
+              <div className="bg-dark-900 rounded-lg p-3 max-h-40 overflow-y-auto font-mono text-xs space-y-1">
+                {migrationLog.map((line, i) => (
+                  <p key={i} className={line.startsWith('✓') ? 'text-green-400' : line.startsWith('✗') ? 'text-red-400' : 'text-dark-300'}>
+                    {line}
+                  </p>
+                ))}
+              </div>
+              {migrationResult && (
+                <div className="flex gap-4 text-xs text-dark-300">
+                  <span>Total con base64: <strong className="text-white">{migrationResult.total}</strong></span>
+                  <span>Migrados: <strong className="text-green-400">{migrationResult.migrated}</strong></span>
+                  {migrationResult.errors.length > 0 && (
+                    <span>Errores: <strong className="text-red-400">{migrationResult.errors.length}</strong></span>
+                  )}
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
