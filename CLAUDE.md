@@ -492,6 +492,57 @@ El menú desplegable y el diálogo de cancelación también siguen la paleta dar
 
 ---
 
+## PWA — Caché y MIME type error (sesión 2026-05-29)
+
+### Síntoma
+
+```
+Failed to load module script: Expected a JavaScript-or-Wasm module script
+but the server responded with a MIME type of "text/html".
+```
+
+Ocurre **ocasionalmente al refrescar**, especialmente justo después de un deploy nuevo.
+
+### Causa raíz
+
+Flujo del problema:
+1. Se hace deploy → Vite genera chunks con nuevos hashes (`main-XYZ.js`). El build anterior (`main-ABC.js`) ya no existe en Firebase Hosting.
+2. El browser tiene el `index.html` **viejo** en caché (o el SW lo sirvió stale). Ese HTML referencia `main-ABC.js`.
+3. El browser pide `main-ABC.js` → Firebase no lo encuentra → aplica el rewrite `**` → devuelve `index.html` con `Content-Type: text/html`.
+4. El browser esperaba `application/javascript` → 💥 MIME type error.
+
+Es **ocasional** porque solo afecta a usuarios que tienen el `index.html` viejo cacheado, en la ventana entre deploy y actualización del SW/browser.
+
+### Fix aplicado (2026-05-29)
+
+**`firebase.json` — `no-cache` para `index.html`, `immutable` para assets hasheados:**
+
+```json
+{ "source": "/index.html",
+  "headers": [{ "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
+               { "key": "Pragma",        "value": "no-cache" }] },
+{ "source": "**/*.@(js|css)",
+  "headers": [{ "key": "Cache-Control", "value": "max-age=31536000, immutable" }] }
+```
+
+**`vite.config.ts` — eliminado el `runtimeCaching` duplicado para `*.js/*.css`:**
+
+Workbox precaching ya gestiona los chunks de Vite con revisión de contenido hash. El `runtimeCaching` con `StaleWhileRevalidate` para `*.js` era redundante y podía entrar en conflicto, sirviendo versiones stale de chunks obsoletos.
+
+### Regla de oro para SPAs con Vite
+
+| Recurso | Cache-Control | Razón |
+|---|---|---|
+| `index.html` | `no-cache, no-store` | Siempre debe ser fresco — apunta a los chunks actuales |
+| `*.js`, `*.css` con hash | `max-age=31536000, immutable` | El hash cambia con el contenido → nombre nuevo = archivo nuevo |
+| Imágenes/fuentes con hash | `max-age=31536000, immutable` | Mismo principio |
+
+### También eliminado: `runtimeCaching` para `.js/.css` en workbox
+
+Los chunks de Vite ya tienen hash en el nombre (`main-[hash].js`). Workbox precaching los gestiona correctamente vía revisión. El runtime cache para `*.js` creaba una segunda capa de gestión que podía devolver versiones viejas de chunks que ya no existen en el servidor.
+
+---
+
 ## Actualizaciones de contenido (sesión 2026-05-23)
 
 - **WowShape** — Highlights actualizados con los 6 componentes reales del tratamiento
