@@ -391,6 +391,28 @@ firebase deploy                   # todo (hosting + firestore + storage)
 **`index.ts` del landing**
 - Eliminado re-export de `TreatmentDetailsModal` (ya no existe como export separado)
 
+### AOS + Firestore — gotcha elementos invisibles
+
+**Nunca usar `data-aos` en elementos que se renderizan condicionalmente después de una carga asíncrona** (Firestore, fetch, etc.).
+
+AOS escanea el DOM una sola vez al inicializar. Si un elemento con `data-aos="fade-up"` aparece *después* de ese escaneo (porque Firestore aún no había cargado), AOS nunca dispara su animación y el elemento queda en `opacity: 0` permanentemente — clickeable pero invisible.
+
+**Regla:** usar `data-aos` solo en elementos que se renderizan inmediatamente (headers estáticos, secciones que no dependen de datos async). Para contenido dinámico post-carga, usar **Framer Motion** con `initial/animate`:
+
+```tsx
+// ✅ Correcto — anima siempre, independiente de cuándo se monte
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.4 }}
+>
+
+// ❌ Incorrecto — si se monta después de AOS.init(), queda invisible
+<div data-aos="fade-up">
+```
+
+Este bug ocurrió en `TreatmentDetails.tsx` (sesión 2026-05-27): el grid con `data-aos` se renderizaba después de que Firestore cargaba los servicios, por lo que AOS nunca lo veía.
+
 ### PWA Manifest — gotcha screenshots
 
 `public/manifest.json` tenía una sección `screenshots` referenciando `/screenshots/dashboard.png` y `/screenshots/mobile.png` que **no existen** (carpeta nunca creada). Causaba error 404 en consola. **Esa sección fue eliminada** (2026-05-27) — es opcional y solo sirve para preview en instalación tipo app store. Si en el futuro se quieren agregar capturas, crear primero la carpeta `public/screenshots/` con las imágenes reales antes de añadirlas al manifest.
