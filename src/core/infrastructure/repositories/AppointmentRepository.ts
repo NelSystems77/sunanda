@@ -140,7 +140,7 @@ export class AppointmentRepository {
     try {
       const startOfDay = new Date(date);
       startOfDay.setHours(0, 0, 0, 0);
-      
+
       const endOfDay = new Date(date);
       endOfDay.setHours(23, 59, 59, 999);
 
@@ -148,15 +148,15 @@ export class AppointmentRepository {
         collection(db, this.collectionName),
         where('date', '>=', Timestamp.fromDate(startOfDay)),
         where('date', '<=', Timestamp.fromDate(endOfDay)),
-        orderBy('date', 'asc'),
-        orderBy('startTime', 'asc')
+        orderBy('date', 'asc')
       );
-      
+
       const querySnapshot = await getDocs(q);
 
-      return querySnapshot.docs.map(doc => 
+      const results = querySnapshot.docs.map(doc =>
         this.mapDocToAppointment(doc.id, doc.data())
       );
+      return results.sort((a, b) => a.startTime.localeCompare(b.startTime));
     } catch (error) {
       console.error('Error getting appointments by date:', error);
       throw new Error('No se pudieron obtener las citas del día');
@@ -170,7 +170,7 @@ export class AppointmentRepository {
     try {
       const start = new Date(startDate);
       start.setHours(0, 0, 0, 0);
-      
+
       const end = new Date(endDate);
       end.setHours(23, 59, 59, 999);
 
@@ -178,15 +178,15 @@ export class AppointmentRepository {
         collection(db, this.collectionName),
         where('date', '>=', Timestamp.fromDate(start)),
         where('date', '<=', Timestamp.fromDate(end)),
-        orderBy('date', 'asc'),
-        orderBy('startTime', 'asc')
+        orderBy('date', 'asc')
       );
-      
+
       const querySnapshot = await getDocs(q);
 
-      return querySnapshot.docs.map(doc => 
+      const results = querySnapshot.docs.map(doc =>
         this.mapDocToAppointment(doc.id, doc.data())
       );
+      return results.sort((a, b) => a.startTime.localeCompare(b.startTime));
     } catch (error) {
       console.error('Error getting appointments by date range:', error);
       throw new Error('No se pudieron obtener las citas del rango de fechas');
