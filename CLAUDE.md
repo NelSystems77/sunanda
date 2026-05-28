@@ -595,6 +595,74 @@ Los chunks de Vite ya tienen hash en el nombre (`main-[hash].js`). Workbox preca
 
 ---
 
+## Firestore — Gotcha índices compuestos en queries con rango (sesión 2026-05-29)
+
+### Síntoma
+
+```
+Uncaught (in promise) Error: No se pudieron obtener las citas del día
+Uncaught (in promise) Error: No se pudieron obtener las citas del rango de fechas
+```
+
+Errores en `AppointmentRepository.getByDate` y `getByDateRange`. Los errores son re-lanzados genéricamente desde el `catch`, ocultando el error real de Firestore.
+
+### Causa raíz
+
+Las queries usaban `orderBy('date', 'asc') + orderBy('startTime', 'asc')` simultáneamente con un filtro de rango (`where('date', '>=', ...) + where('date', '<=', ...)')`). Firestore requiere un **índice compuesto** `(date ASC, startTime ASC)` para ese patrón. El índice estaba definido en `firestore.indexes.json` pero **nunca fue desplegado** a Firestore con `firebase deploy --only firestore:indexes`.
+
+**Flujo de la cadena de errores:**
+- `AppointmentsPage` → `getDayOccupancy` → `AppointmentUseCases` → `AvailabilityService` → `AppointmentRepository.getByDate` → 💥
+- `AppointmentsPage.loadUpcomingReminders` → `AppointmentRepository.getByDateRange` → 💥
+- `getWeekOccupancy` llama `getDayOccupancy` 7 veces — también afectado
+
+### Fix aplicado (2026-05-29) — `AppointmentRepository.ts`
+
+Eliminado el segundo `orderBy` del query Firestore; el ordenamiento por `startTime` se hace **client-side**:
+
+```typescript
+// ✅ Correcto — solo un campo en orderBy, sort client-side
+const q = query(
+  collection(db, this.collectionName),
+  where('date', '>=', Timestamp.fromDate(startOfDay)),
+  where('date', '<=', Timestamp.fromDate(endOfDay)),
+  orderBy('date', 'asc')
+  // ← NO orderBy('startTime') aquí
+);
+const results = querySnapshot.docs.map(doc => this.mapDocToAppointment(doc.id, doc.data()));
+return results.sort((a, b) => a.startTime.localeCompare(b.startTime));
+
+// ❌ Incorrecto — requiere índice compuesto que puede no estar desplegado
+const q = query(
+  ...,
+  orderBy('date', 'asc'),
+  orderBy('startTime', 'asc')   // ← causa error si el índice no está en Firestore
+);
+```
+
+### Regla
+
+**Nunca usar `orderBy` en dos campos distintos sobre una query de rango** sin antes haber desplegado el índice compuesto correspondiente en Firestore. Para conjuntos pequeños (citas de un día o de una semana), el sort client-side es perfectamente aceptable y elimina la dependencia del índice.
+
+Si se necesita `orderBy` compuesto en producción, desplegar primero:
+```bash
+firebase deploy --only firestore:indexes
+```
+
+### Nota sobre `isActive` y el error en estadísticas del dashboard
+
+Si el dashboard muestra "Error cargando estadísticas" y NO está relacionado con el índice (los `getAll()` usan `orderBy` de un solo campo), la causa probable es la función `isActive()` en las reglas de Firestore:
+
+```javascript
+function isActive() {
+  return isAuthenticated() &&
+         get(/databases/.../users/$(request.auth.uid)).data.isActive == true;
+}
+```
+
+Todos los reads de `appointments`, `clients` y `payments` requieren `isActive == true`. Si el documento del usuario en Firestore no tiene ese campo en `true`, **todos los reads protegidos fallan silenciosamente**. Verificar en Firebase Console → Firestore → colección `users` → documento del admin → campo `isActive: true`.
+
+---
+
 ## Actualizaciones de contenido (sesión 2026-05-23)
 
 - **WowShape** — Highlights actualizados con los 6 componentes reales del tratamiento
