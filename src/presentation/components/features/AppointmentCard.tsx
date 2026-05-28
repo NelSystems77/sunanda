@@ -1,7 +1,8 @@
 import { Appointment } from '@/core/domain/interfaces/Appointment';
 import { AppointmentStatus } from '@/core/domain/enums';
 import { Clock, User, Scissors, MoreVertical, Check, X, AlertCircle, FileText } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useServiceStore } from '../../context/ServiceStore';
 
@@ -18,7 +19,6 @@ interface AppointmentCardProps {
 
 export type { AppointmentCardProps };
 
-/** Parsea el nombre del cliente desde el campo notes */
 function parseClientName(notes?: string): string {
   if (!notes) return '';
   const match = notes.match(/Nombre:\s*([^|]+)/);
@@ -26,12 +26,12 @@ function parseClientName(notes?: string): string {
 }
 
 const STATUS_STYLES: Record<AppointmentStatus, { badge: string; border: string; label: string }> = {
-  [AppointmentStatus.PENDING]:   { badge: 'bg-gold-500/20 text-gold-300 border border-gold-500/40',    border: 'border-l-gold-500',   label: 'Pendiente'   },
-  [AppointmentStatus.CONFIRMED]: { badge: 'bg-blue-500/20 text-blue-300 border border-blue-500/40',    border: 'border-l-blue-400',   label: 'Confirmada'  },
-  [AppointmentStatus.COMPLETED]: { badge: 'bg-purple-500/20 text-purple-300 border border-purple-500/40', border: 'border-l-purple-400', label: 'Completada'  },
-  [AppointmentStatus.CANCELLED]: { badge: 'bg-red-500/20 text-red-400 border border-red-500/40',       border: 'border-l-red-500',    label: 'Cancelada'   },
-  [AppointmentStatus.NO_SHOW]:   { badge: 'bg-dark-500/40 text-dark-300 border border-dark-500/40',    border: 'border-l-dark-500',   label: 'No asistió'  },
-  [AppointmentStatus.IN_PROGRESS]: { badge: 'bg-blue-500/20 text-blue-300 border border-blue-500/40', border: 'border-l-blue-400',   label: 'En atención' },
+  [AppointmentStatus.PENDING]:     { badge: 'bg-gold-500/20 text-gold-300 border border-gold-500/40',       border: 'border-l-gold-500',   label: 'Pendiente'   },
+  [AppointmentStatus.CONFIRMED]:   { badge: 'bg-blue-500/20 text-blue-300 border border-blue-500/40',       border: 'border-l-blue-400',   label: 'Confirmada'  },
+  [AppointmentStatus.COMPLETED]:   { badge: 'bg-purple-500/20 text-purple-300 border border-purple-500/40', border: 'border-l-purple-400', label: 'Completada'  },
+  [AppointmentStatus.CANCELLED]:   { badge: 'bg-red-500/20 text-red-400 border border-red-500/40',          border: 'border-l-red-500',    label: 'Cancelada'   },
+  [AppointmentStatus.NO_SHOW]:     { badge: 'bg-dark-500/40 text-dark-300 border border-dark-500/40',       border: 'border-l-dark-500',   label: 'No asistió'  },
+  [AppointmentStatus.IN_PROGRESS]: { badge: 'bg-blue-500/20 text-blue-300 border border-blue-500/40',       border: 'border-l-blue-400',   label: 'En atención' },
 };
 
 export function AppointmentCard({
@@ -45,23 +45,103 @@ export function AppointmentCard({
   showActions = true,
 }: AppointmentCardProps) {
   const [showMenu, setShowMenu]               = useState(false);
+  const [menuPos, setMenuPos]                 = useState({ top: 0, right: 0 });
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [cancelReason, setCancelReason]       = useState('');
+  const menuBtnRef = useRef<HTMLButtonElement>(null);
 
   const { services } = useServiceStore();
   const serviceName = services.find(s => s.id === appointment.serviceId)?.name ?? appointment.serviceId;
   const clientName  = parseClientName(appointment.notes);
+  const status      = STATUS_STYLES[appointment.status] ?? STATUS_STYLES[AppointmentStatus.PENDING];
 
-  const status = STATUS_STYLES[appointment.status] ?? STATUS_STYLES[AppointmentStatus.PENDING];
+  // Cerrar el menú al hacer click fuera o al scrollear
+  useEffect(() => {
+    if (!showMenu) return;
+    const close = () => setShowMenu(false);
+    document.addEventListener('mousedown', close);
+    document.addEventListener('scroll', close, true);
+    return () => {
+      document.removeEventListener('mousedown', close);
+      document.removeEventListener('scroll', close, true);
+    };
+  }, [showMenu]);
+
+  const openMenu = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!menuBtnRef.current) return;
+    const rect = menuBtnRef.current.getBoundingClientRect();
+    setMenuPos({
+      top: rect.bottom + 8,
+      right: window.innerWidth - rect.right,
+    });
+    setShowMenu(v => !v);
+  };
 
   const handleCancel = () => {
     if (cancelReason.trim() && onCancel) {
       onCancel(appointment.id, cancelReason);
       setShowCancelDialog(false);
       setCancelReason('');
-      setShowMenu(false);
     }
   };
+
+  // Dropdown renderizado en document.body para escapar cualquier stacking context
+  const dropdown = showMenu && createPortal(
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: -4 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: -4 }}
+        style={{ position: 'fixed', top: menuPos.top, right: menuPos.right, zIndex: 9999 }}
+        className="w-48 bg-dark-700 rounded-lg shadow-2xl border border-dark-600"
+        onMouseDown={(e) => e.stopPropagation()}
+      >
+        {appointment.status === AppointmentStatus.PENDING && onConfirm && (
+          <button
+            onClick={() => { onConfirm(appointment.id); setShowMenu(false); }}
+            className="w-full px-4 py-2 text-left text-sm text-dark-200 hover:bg-dark-600 hover:text-white flex items-center gap-2 rounded-t-lg transition-colors"
+          >
+            <Check className="w-4 h-4 text-green-400" />
+            Confirmar
+          </button>
+        )}
+
+        {(appointment.status === AppointmentStatus.PENDING ||
+          appointment.status === AppointmentStatus.CONFIRMED) && onComplete && (
+          <button
+            onClick={() => { onComplete(appointment.id); setShowMenu(false); }}
+            className="w-full px-4 py-2 text-left text-sm text-dark-200 hover:bg-dark-600 hover:text-white flex items-center gap-2 transition-colors"
+          >
+            <Check className="w-4 h-4 text-blue-400" />
+            Marcar completada
+          </button>
+        )}
+
+        {(appointment.status === AppointmentStatus.PENDING ||
+          appointment.status === AppointmentStatus.CONFIRMED) && onNoShow && (
+          <button
+            onClick={() => { onNoShow(appointment.id); setShowMenu(false); }}
+            className="w-full px-4 py-2 text-left text-sm text-dark-200 hover:bg-dark-600 hover:text-white flex items-center gap-2 transition-colors"
+          >
+            <AlertCircle className="w-4 h-4 text-orange-400" />
+            No asistió
+          </button>
+        )}
+
+        {appointment.status !== AppointmentStatus.COMPLETED && onCancel && (
+          <button
+            onClick={() => { setShowCancelDialog(true); setShowMenu(false); }}
+            className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-red-900/30 hover:text-red-300 flex items-center gap-2 rounded-b-lg transition-colors"
+          >
+            <X className="w-4 h-4" />
+            Cancelar cita
+          </button>
+        )}
+      </motion.div>
+    </AnimatePresence>,
+    document.body
+  );
 
   return (
     <>
@@ -72,7 +152,6 @@ export function AppointmentCard({
           relative bg-dark-800 rounded-lg border border-dark-600 border-l-4 ${status.border}
           shadow-sm hover:shadow-gold-500/10 hover:border-gold-500/30 transition-all
           ${onClick ? 'cursor-pointer' : ''}
-          ${showMenu ? 'z-30' : 'z-[1]'}
         `}
         onClick={onClick}
       >
@@ -84,68 +163,13 @@ export function AppointmentCard({
             </span>
 
             {showActions && appointment.status !== AppointmentStatus.CANCELLED && (
-              <div className="relative">
-                <button
-                  onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }}
-                  className="p-1 hover:bg-dark-600 rounded-full transition-colors"
-                >
-                  <MoreVertical className="w-4 h-4 text-dark-400" />
-                </button>
-
-                <AnimatePresence>
-                  {showMenu && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      className="absolute right-0 mt-2 w-48 bg-dark-700 rounded-lg shadow-xl border border-dark-600 z-50"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {appointment.status === AppointmentStatus.PENDING && onConfirm && (
-                        <button
-                          onClick={() => { onConfirm(appointment.id); setShowMenu(false); }}
-                          className="w-full px-4 py-2 text-left text-sm text-dark-200 hover:bg-dark-600 hover:text-white flex items-center gap-2 rounded-t-lg transition-colors"
-                        >
-                          <Check className="w-4 h-4 text-green-400" />
-                          Confirmar
-                        </button>
-                      )}
-
-                      {(appointment.status === AppointmentStatus.PENDING ||
-                        appointment.status === AppointmentStatus.CONFIRMED) && onComplete && (
-                        <button
-                          onClick={() => { onComplete(appointment.id); setShowMenu(false); }}
-                          className="w-full px-4 py-2 text-left text-sm text-dark-200 hover:bg-dark-600 hover:text-white flex items-center gap-2 transition-colors"
-                        >
-                          <Check className="w-4 h-4 text-blue-400" />
-                          Marcar completada
-                        </button>
-                      )}
-
-                      {(appointment.status === AppointmentStatus.PENDING ||
-                        appointment.status === AppointmentStatus.CONFIRMED) && onNoShow && (
-                        <button
-                          onClick={() => { onNoShow(appointment.id); setShowMenu(false); }}
-                          className="w-full px-4 py-2 text-left text-sm text-dark-200 hover:bg-dark-600 hover:text-white flex items-center gap-2 transition-colors"
-                        >
-                          <AlertCircle className="w-4 h-4 text-orange-400" />
-                          No asistió
-                        </button>
-                      )}
-
-                      {appointment.status !== AppointmentStatus.COMPLETED && onCancel && (
-                        <button
-                          onClick={() => { setShowCancelDialog(true); setShowMenu(false); }}
-                          className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-red-900/30 hover:text-red-300 flex items-center gap-2 rounded-b-lg transition-colors"
-                        >
-                          <X className="w-4 h-4" />
-                          Cancelar cita
-                        </button>
-                      )}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+              <button
+                ref={menuBtnRef}
+                onClick={openMenu}
+                className="p-1 hover:bg-dark-600 rounded-full transition-colors"
+              >
+                <MoreVertical className="w-4 h-4 text-dark-400" />
+              </button>
             )}
           </div>
 
@@ -200,6 +224,9 @@ export function AppointmentCard({
           )}
         </div>
       </motion.div>
+
+      {/* Dropdown via Portal — escapa todos los stacking contexts */}
+      {dropdown}
 
       {/* Diálogo de cancelación */}
       <AnimatePresence>
