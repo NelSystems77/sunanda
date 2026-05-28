@@ -490,6 +490,23 @@ Fallback: si el store aún no cargó, muestra el ID crudo.
 
 El menú desplegable y el diálogo de cancelación también siguen la paleta dark (`dark-700`, `dark-600`).
 
+### Gotcha: menú tres puntos — z-index y stacking context (sesión 2026-05-29)
+
+**Síntoma:** el dropdown del menú emergía (el estado `showMenu` era `true`) pero no era visible — quedaba tapado por la card siguiente en el timeline.
+
+**Causa:** Framer Motion aplica `transform: translateY()` durante la animación de entrada de cada card, lo que crea un **stacking context propio** por card. El dropdown tenía `z-10` relativo al stacking context de su card, no a la página. La card siguiente en el DOM se pintaba encima por orden de paint.
+
+**Fix aplicado:**
+```tsx
+// Card: z-index dinámico según estado del menú
+className={`... ${showMenu ? 'z-30' : 'z-[1]'}`}
+
+// Dropdown: subir a z-50 (sale del stacking context de la card)
+className="absolute right-0 mt-2 w-48 bg-dark-700 rounded-lg shadow-xl border border-dark-600 z-50"
+```
+
+**Regla:** cualquier dropdown/popover dentro de un componente animado con Framer Motion necesita que el **componente padre eleve su z-index dinámicamente** cuando el menú está abierto, además de que el dropdown tenga un z-index alto. Solo subir el z-index del dropdown no es suficiente porque ese valor es relativo al stacking context del padre.
+
 ---
 
 ## PWA — Caché y MIME type error (sesión 2026-05-29)
