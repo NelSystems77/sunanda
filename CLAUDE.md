@@ -490,22 +490,57 @@ Fallback: si el store aún no cargó, muestra el ID crudo.
 
 El menú desplegable y el diálogo de cancelación también siguen la paleta dark (`dark-700`, `dark-600`).
 
-### Gotcha: menú tres puntos — z-index y stacking context (sesión 2026-05-29)
+### Gotcha: menú tres puntos — stacking context anidado → solución Portal (sesión 2026-05-29)
 
-**Síntoma:** el dropdown del menú emergía (el estado `showMenu` era `true`) pero no era visible — quedaba tapado por la card siguiente en el timeline.
+**Síntoma:** el dropdown emergía (`showMenu = true`) pero era invisible — tapado por la card siguiente o por el row del timeline.
 
-**Causa:** Framer Motion aplica `transform: translateY()` durante la animación de entrada de cada card, lo que crea un **stacking context propio** por card. El dropdown tenía `z-10` relativo al stacking context de su card, no a la página. La card siguiente en el DOM se pintaba encima por orden de paint.
+**Causa raíz:** hay **dos niveles de stacking context** creados por Framer Motion:
+1. El `motion.div` de cada time slot en `CalendarDayView` (animación `x: -20 → 0`)
+2. El `motion.div` de cada `AppointmentCard` (animación `y: 12 → 0`)
 
-**Fix aplicado:**
+Subir `z-index` al dropdown o a la card no sirve: esos valores son relativos al stacking context del padre (`motion.div` del time slot), que no tiene z-index explícito y queda por debajo del siguiente slot en orden de paint.
+
+**Fix definitivo — `createPortal` (sesión 2026-05-29):**
+
 ```tsx
-// Card: z-index dinámico según estado del menú
-className={`... ${showMenu ? 'z-30' : 'z-[1]'}`}
+import { createPortal } from 'react-dom';
 
-// Dropdown: subir a z-50 (sale del stacking context de la card)
-className="absolute right-0 mt-2 w-48 bg-dark-700 rounded-lg shadow-xl border border-dark-600 z-50"
+const menuBtnRef = useRef<HTMLButtonElement>(null);
+const [menuPos, setMenuPos] = useState({ top: 0, right: 0 });
+
+const openMenu = (e: React.MouseEvent) => {
+  e.stopPropagation();
+  const rect = menuBtnRef.current!.getBoundingClientRect();
+  setMenuPos({ top: rect.bottom + 8, right: window.innerWidth - rect.right });
+  setShowMenu(v => !v);
+};
+
+// Dropdown en document.body — escapa todos los stacking contexts
+const dropdown = showMenu && createPortal(
+  <motion.div
+    style={{ position: 'fixed', top: menuPos.top, right: menuPos.right, zIndex: 9999 }}
+    className="w-48 bg-dark-700 rounded-lg shadow-2xl border border-dark-600"
+    onMouseDown={(e) => e.stopPropagation()}
+  >
+    {/* opciones */}
+  </motion.div>,
+  document.body
+);
+
+// Cerrar al click fuera y al scroll
+useEffect(() => {
+  if (!showMenu) return;
+  const close = () => setShowMenu(false);
+  document.addEventListener('mousedown', close);
+  document.addEventListener('scroll', close, true);
+  return () => {
+    document.removeEventListener('mousedown', close);
+    document.removeEventListener('scroll', close, true);
+  };
+}, [showMenu]);
 ```
 
-**Regla:** cualquier dropdown/popover dentro de un componente animado con Framer Motion necesita que el **componente padre eleve su z-index dinámicamente** cuando el menú está abierto, además de que el dropdown tenga un z-index alto. Solo subir el z-index del dropdown no es suficiente porque ese valor es relativo al stacking context del padre.
+**Regla:** cualquier dropdown/popover dentro de componentes animados con Framer Motion (listas en loop) debe usar **`createPortal` + `position: fixed` + `getBoundingClientRect()`**. Nunca solo `z-index` — es insuficiente cuando hay múltiples stacking contexts anidados.
 
 ---
 
