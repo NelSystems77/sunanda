@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Mail, Phone, Calendar, MapPin, User } from 'lucide-react';
+import { Mail, Phone, Calendar, MapPin } from 'lucide-react';
 import { Card, CardContent } from '../ui/Card';
 import { Avatar } from '../ui/Avatar';
 import { Badge } from '../ui/Badge';
@@ -95,7 +95,7 @@ export function ClientCard({ client, onClick, className }: ClientCardProps) {
               </div>
 
               {/* Additional Info */}
-              {(client.skinType || client.allergies?.length > 0) && (
+              {(client.skinType || (client.allergies?.length ?? 0) > 0) && (
                 <div className="mt-3 pt-3 border-t border-gray-100 dark:border-dark-700">
                   {client.skinType && (
                     <p className="text-xs text-gray-500 dark:text-gray-400">

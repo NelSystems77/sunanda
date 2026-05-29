@@ -907,7 +907,7 @@ Detectados con `npx tsc --noEmit` (sesión 2026-05-29). Todos pre-existentes; ni
 - [x] **`PaymentsPage.tsx:92`** — variante `"error"` no existe en Badge → cambiado a `"danger"` (sesión 2026-05-30)
 - [x] **`ServicesPage.tsx:111`** — `Service.productLines` no existe en el tipo de dominio → eliminado del formData (campo sin mapeo real en el dominio) (sesión 2026-05-30)
 - [x] **`ServicesPage.tsx:113`** — tipo de descuento `"fixed"` no asignable a `"percentage" | "2x1"` → narrowing explícito al leer del servicio, fallback a `'percentage'` (sesión 2026-05-30)
-- [ ] **`ClientCard.tsx:98`** — `client.allergies.length` posiblemente `undefined` → agregar optional chaining `client.allergies?.length`
+- [x] **`ClientCard.tsx:98`** — `client.allergies.length` posiblemente `undefined` → `(client.allergies?.length ?? 0) > 0` (sesión 2026-05-30)
 - [ ] **`DashboardPage.tsx:154`** — formatter de recharts recibe `ValueType | undefined` pero tipado como `number` → manejar `undefined` en el formatter
 - [ ] **`ClientsPage.tsx:42`** — tipo de parámetro incompatible en `useDebounce` → tipar correctamente el callback o el hook
 
@@ -935,7 +935,7 @@ Limpieza cosmética — no afectan funcionalidad. Agrupar en una sola sesión de
 - [ ] **`AppointmentForm.tsx:59`** — eliminar `user` de la desestructuración
 - [ ] **`BookingRequestCard.tsx:17`** — eliminar import `User`
 - [ ] **`CalendarMonthView.tsx:2`** — eliminar import `Calendar`
-- [ ] **`ClientCard.tsx:2`** — eliminar import `User`
+- [x] **`ClientCard.tsx:2`** — eliminar import `User` (sesión 2026-05-30)
 - [ ] **`MedicalRecordModal.tsx:7,31,38-39`** — eliminar imports `MEDICAMENTOS_PIEL`, `ACTIVOS_COSMETICOS`, `TRATAMIENTOS_PREVIOS`, `FOTOTIPOS`, `TIPOS_PIEL` y vars `updateSession`, `setEditingSessionId`, `sessionToDelete`, `setSessionToDelete`
 - [ ] **`RecordsPage.tsx:7-8`** — eliminar imports `FileText`, `motion`
 - [ ] **`ClientDetailPage.tsx:39`** — eliminar `hasPermission`
