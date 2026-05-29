@@ -115,7 +115,7 @@ export function PublicServiceCard({ service }: PublicServiceCardProps) {
                 <span className="text-dark-400 line-through text-sm">
                   {t('common:currency.crc')}{service.priceCRC.toLocaleString()}
                 </span>
-                <Badge variant="error" className="text-xs">
+                <Badge variant="danger" className="text-xs">
                   -{service.promotionValue}%
                 </Badge>
               </div>

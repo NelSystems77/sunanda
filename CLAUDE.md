@@ -952,8 +952,8 @@ Detectados con `npx tsc --noEmit` (sesión 2026-05-29). Todos pre-existentes; ni
 - [ ] **`AppointmentsPage.tsx:112,242-244,274,615,619,777-782,801,825,837,848`** — 13 comparaciones `AppointmentStatus` vs strings minúscula (`'pending'`, `'confirmed'`, `'completed'`) → mismo patrón que los ya corregidos: usar `AppointmentStatus.PENDING/CONFIRMED/COMPLETED`
 - [x] **`BookingRequestsPage.tsx:136`** — prop `tabs` no existe en `TabsProps` → refactorizado a API compuesta `Tabs + TabsList + TabsTrigger` (sesión 2026-05-31)
 - [x] **`BookingRequestsPage.tsx:83`** — prop `subtitle` e `icon` no existen en `PageHeaderProps` → cambiados a `description` (sesión 2026-05-31)
-- [ ] **`Header.tsx:120,316`** — variante `"error"` no existe en Badge → cambiar a `"danger"` (mismo patrón)
-- [ ] **`BookingRequestsPage.tsx:111`** — variante `"error"` no existe en Badge → cambiar a `"danger"`
+- [x] **`Header.tsx:120,316`** — variante `"error"` no existe en Badge → cambiado a `"danger"` (sesión 2026-06-01)
+- [x] **`BookingRequestsPage.tsx:111`** — variante `"error"` no existe en StatsCard → cambiado a `"danger"` (sesión 2026-06-01)
 
 ### Prioridad media — comparaciones de tipo sin overlap (`TS2367`)
 

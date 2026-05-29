@@ -111,7 +111,7 @@ export function BookingRequestsPage() {
           title="Rechazadas"
           value={stats.rejected}
           icon={Calendar}
-          variant="error"
+          variant="danger"
         />
       </div>
 

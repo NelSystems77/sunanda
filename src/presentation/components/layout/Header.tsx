@@ -117,7 +117,7 @@ export function Header({
                 <Bell className="w-5 h-5 text-dark-400" />
                 {notifications > 0 && (
                   <Badge
-                    variant="error"
+                    variant="danger"
                     size="sm"
                     className="absolute -top-1 -right-1 min-w-[1.25rem] h-5 flex items-center justify-center"
                   >
@@ -313,7 +313,7 @@ export function Header({
                       Notificaciones
                     </span>
                     {notifications > 0 && (
-                      <Badge variant="error" size="sm">
+                      <Badge variant="danger" size="sm">
                         {notifications > 99 ? '99+' : notifications}
                       </Badge>
                     )}
