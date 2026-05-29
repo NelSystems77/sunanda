@@ -905,8 +905,8 @@ Detectados con `npx tsc --noEmit` (sesión 2026-05-29). Todos pre-existentes; ni
 - [x] **`BookingRequestCard.tsx:54`** — variante `"error"` no existe en Badge → cambiado a `"danger"` (sesión 2026-05-29)
 - [x] **`PaymentsPage.tsx:187,203`** — prop `tabs` no existe en `TabsProps` → refactorizado a API compuesta `Tabs + TabsList + TabsTrigger` (sesión 2026-05-30)
 - [x] **`PaymentsPage.tsx:92`** — variante `"error"` no existe en Badge → cambiado a `"danger"` (sesión 2026-05-30)
-- [ ] **`ServicesPage.tsx:111`** — `Service.productLines` no existe en el tipo de dominio → eliminar referencia o agregar campo al tipo
-- [ ] **`ServicesPage.tsx:113`** — tipo de descuento `"fixed"` no asignable a `"percentage" | "2x1"` → alinear con el tipo real o extender el union
+- [x] **`ServicesPage.tsx:111`** — `Service.productLines` no existe en el tipo de dominio → eliminado del formData (campo sin mapeo real en el dominio) (sesión 2026-05-30)
+- [x] **`ServicesPage.tsx:113`** — tipo de descuento `"fixed"` no asignable a `"percentage" | "2x1"` → narrowing explícito al leer del servicio, fallback a `'percentage'` (sesión 2026-05-30)
 - [ ] **`ClientCard.tsx:98`** — `client.allergies.length` posiblemente `undefined` → agregar optional chaining `client.allergies?.length`
 - [ ] **`DashboardPage.tsx:154`** — formatter de recharts recibe `ValueType | undefined` pero tipado como `number` → manejar `undefined` en el formatter
 - [ ] **`ClientsPage.tsx:42`** — tipo de parámetro incompatible en `useDebounce` → tipar correctamente el callback o el hook

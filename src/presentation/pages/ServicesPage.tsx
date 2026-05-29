@@ -48,7 +48,6 @@ export function ServicesPage() {
     priceUSD: 0,
     imageURL: '',
     benefits: [] as string[],
-    productLines: ['Germaine de Capuccini'],
     hasPromotion: false,
     promotionType: 'percentage' as 'percentage' | '2x1',
     promotionValue: 0,
@@ -82,7 +81,6 @@ export function ServicesPage() {
       priceUSD: 0,
       imageURL: '',
       benefits: [],
-      productLines: ['Germaine de Capuccini'],
       hasPromotion: false,
       promotionType: 'percentage',
       promotionValue: 0,
@@ -108,9 +106,10 @@ export function ServicesPage() {
       priceUSD: service.priceUSD,
       imageURL: service.imageURL || '',
       benefits: service.benefits || [],
-      productLines: service.productLines || ['Germaine de Capuccini'],
       hasPromotion: service.hasPromotion || false,
-      promotionType: service.promotionType || 'percentage',
+      promotionType: (service.promotionType === 'percentage' || service.promotionType === '2x1')
+        ? service.promotionType
+        : 'percentage',
       promotionValue: service.promotionValue || 0,
       isActive: service.isActive,
     });
