@@ -909,7 +909,12 @@ Detectados con `npx tsc --noEmit` (sesión 2026-05-29). Todos pre-existentes; ni
 - [x] **`ServicesPage.tsx:113`** — tipo de descuento `"fixed"` no asignable a `"percentage" | "2x1"` → narrowing explícito al leer del servicio, fallback a `'percentage'` (sesión 2026-05-30)
 - [x] **`ClientCard.tsx:98`** — `client.allergies.length` posiblemente `undefined` → `(client.allergies?.length ?? 0) > 0` (sesión 2026-05-30)
 - [x] **`DashboardPage.tsx:154`** — formatter de recharts recibe `ValueType | undefined` pero tipado como `number` → `Number(v)` en lugar de anotación explícita `v: number` (sesión 2026-05-30)
-- [ ] **`ClientsPage.tsx:42`** — tipo de parámetro incompatible en `useDebounce` → tipar correctamente el callback o el hook
+- [x] **`ClientsPage.tsx:42`** — constraint `(...args: unknown[]) => unknown` en `debounce` no acepta funciones con parámetros tipados → cambiado a `any[]` en `shared/utils/index.ts` (sesión 2026-05-30)
+- [ ] **`AppointmentsPage.tsx:112,242-244,274,615,619,777-782,801,825,837,848`** — 13 comparaciones `AppointmentStatus` vs strings minúscula (`'pending'`, `'confirmed'`, `'completed'`) → mismo patrón que los ya corregidos: usar `AppointmentStatus.PENDING/CONFIRMED/COMPLETED`
+- [ ] **`BookingRequestsPage.tsx:136`** — prop `tabs` no existe en `TabsProps` → refactorizar a API compuesta `Tabs + TabsList + TabsTrigger` (mismo patrón que `PaymentsPage.tsx`)
+- [ ] **`BookingRequestsPage.tsx:83`** — prop `subtitle` no existe en `PageHeaderProps` → eliminar la prop o agregarla al tipo `PageHeaderProps`
+- [ ] **`Header.tsx:120,316`** — variante `"error"` no existe en Badge → cambiar a `"danger"` (mismo patrón)
+- [ ] **`BookingRequestsPage.tsx:111`** — variante `"error"` no existe en Badge → cambiar a `"danger"`
 
 ### Prioridad media — comparaciones de tipo sin overlap (`TS2367`)
 
@@ -917,30 +922,39 @@ Causa probable: `AppointmentStatus` es un enum o union con valores capitalizados
 
 - [x] **`AIAgentService.ts:200`** — `AppointmentStatus` vs `'cancelled'` → usar `AppointmentStatus.CANCELLED` (sesión 2026-05-30)
 - [x] **`CalendarMonthView.tsx:74-76`** — `AppointmentStatus` vs `'pending'`, `'confirmed'`, `'completed'` → usar `AppointmentStatus.PENDING/CONFIRMED/COMPLETED` (sesión 2026-05-30)
-- [ ] **`ReminderPanel.tsx:34`** — comparación con tipo incompatible → mismo patrón
+- [x] **`ReminderPanel.tsx:34`** — comparación con tipo incompatible → mismo patrón (sesión 2026-05-30)
 
 ### Prioridad media — exports / módulos rotos
 
-- [ ] **`features/index.ts:2`** — `ServiceCardProps` no existe como export de `ServiceCard` → eliminar re-export o corregir nombre
-- [ ] **`main.tsx:1-2`** — `allowSyntheticDefaultImports` requerido para React/ReactDOM → verificar `tsconfig.json` (probablemente ya está en Vite pero no en `tsc` standalone)
-- [ ] **`i18n.config.ts:16-27`** — mismo problema de `allowSyntheticDefaultImports` para los 10 archivos de locales → mismo fix de tsconfig
+- [x] **`features/index.ts:2`** — `ServiceCardProps` no existía como export → agregado `export` a la interfaz en `ServiceCard.tsx` (sesión 2026-05-30)
+- [x] **`main.tsx:1-2`** — `allowSyntheticDefaultImports` requerido para React; `ReactDOM` sin default export → agregado flag en `tsconfig.json` + cambiado a `import { createRoot }` (sesión 2026-05-30)
+- [x] **`i18n.config.ts:16-27`** — mismo problema de `allowSyntheticDefaultImports` para los 10 archivos de locales → resuelto con el flag en `tsconfig.json` (sesión 2026-05-30)
+
+### Prioridad media — conflictos de tipo en componentes UI base
+
+Causa: Framer Motion define `onDrag` como `(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => void`, pero React lo define como `DragEventHandler<T>`. Al extender `HTMLMotionProps` en los wrappers de UI el tipo entra en conflicto.
+
+- [ ] **`Alert.tsx:58`** — `onDrag` incompatible entre `HTMLMotionProps<"div">` y `HTMLAttributes<div>` → usar `Omit<HTMLMotionProps<'div'>, 'onDrag'>` en la firma del componente
+- [ ] **`Button.tsx:47`** — mismo conflicto en `HTMLMotionProps<"button">` → `Omit<HTMLMotionProps<'button'>, 'onDrag'>`
+- [ ] **`Card.tsx:43`** — mismo conflicto en `HTMLMotionProps<"div">` → `Omit<HTMLMotionProps<'div'>, 'onDrag'>`
+- [ ] **`Switch.tsx:4`** — prop `size` tipo `"sm" | "md" | "lg"` choca con `HTMLInputElement.size: number` → renombrar prop a `sizeVariant` o usar `Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'size'>`
 
 ### Prioridad baja — imports/variables no usadas (`TS6133`)
 
 Limpieza cosmética — no afectan funcionalidad. Agrupar en una sola sesión de limpieza.
 
-- [ ] **`AppointmentRepository.ts:14,21`** — eliminar imports `Query`, `AppointmentWithDetails`
+- [x] **`AppointmentRepository.ts:14,21`** — eliminados imports `Query`, `AppointmentWithDetails` (sesión 2026-05-30)
 - [x] **`AIAgentService.ts:151-153,238`** — parámetros TODO sin usar → prefijo `_` (convención TS para params intencionalmente no usados) (sesión 2026-05-30)
-- [ ] **`MedicalRecordService.ts:10`** — eliminar import `where`
-- [ ] **`AppointmentForm.tsx:59`** — eliminar `user` de la desestructuración
+- [x] **`MedicalRecordService.ts:10`** — eliminado import `where` (sesión 2026-05-30)
+- [x] **`AppointmentForm.tsx:59`** — eliminado `user` de la desestructuración e import `useAuth` (sesión 2026-05-30)
 - [ ] **`BookingRequestCard.tsx:17`** — eliminar import `User`
 - [x] **`CalendarMonthView.tsx:2`** — eliminar import `Calendar` (sesión 2026-05-30)
 - [x] **`ClientCard.tsx:2`** — eliminar import `User` (sesión 2026-05-30)
-- [ ] **`MedicalRecordModal.tsx:7,31,38-39`** — eliminar imports `MEDICAMENTOS_PIEL`, `ACTIVOS_COSMETICOS`, `TRATAMIENTOS_PREVIOS`, `FOTOTIPOS`, `TIPOS_PIEL` y vars `updateSession`, `setEditingSessionId`, `sessionToDelete`, `setSessionToDelete`
-- [ ] **`RecordsPage.tsx:7-8`** — eliminar imports `FileText`, `motion`
-- [ ] **`ClientDetailPage.tsx:39`** — eliminar `hasPermission`
-- [ ] **`ClientsPage.tsx:21,28`** — eliminar `hasPermission`, `deleteClient`
+- [x] **`MedicalRecordModal.tsx:7,31,38-39`** — eliminados imports `MEDICAMENTOS_PIEL`, `ACTIVOS_COSMETICOS`, `TRATAMIENTOS_PREVIOS`, `FOTOTIPOS`, `TIPOS_PIEL` y vars `updateSession`, `setEditingSessionId`, `sessionToDelete`, `setSessionToDelete` (sesión 2026-05-30)
+- [x] **`RecordsPage.tsx:7-8`** — eliminados imports `FileText`, `motion` (sesión 2026-05-30)
+- [x] **`ClientDetailPage.tsx:39`** — eliminado `hasPermission` e import `useAuth` (sesión 2026-05-30)
+- [x] **`ClientsPage.tsx:21,28`** — eliminados `hasPermission`, `deleteClient` e import `useAuth` (sesión 2026-05-30)
 - [x] **`PaymentsPage.tsx:30`** — eliminar `payments` (sesión 2026-05-30)
-- [ ] **`UsersPage.tsx:8`** — eliminar `getManageableRoles`
-- [ ] **`service-worker.ts:19-20`** — eliminar `OFFLINE_PAGE`, `OFFLINE_IMAGE`
-- [ ] **`pdfGenerator.ts:2`** — eliminar import `autoTable`
+- [x] **`UsersPage.tsx:8`** — eliminado `getManageableRoles` (sesión 2026-05-30)
+- [x] **`service-worker.ts:19-20`** — eliminadas constantes `OFFLINE_PAGE`, `OFFLINE_IMAGE` (sesión 2026-05-30)
+- [x] **`pdfGenerator.ts:2`** — eliminado import `autoTable` (sesión 2026-05-30)
