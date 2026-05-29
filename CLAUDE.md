@@ -908,7 +908,7 @@ Detectados con `npx tsc --noEmit` (sesión 2026-05-29). Todos pre-existentes; ni
 - [x] **`ServicesPage.tsx:111`** — `Service.productLines` no existe en el tipo de dominio → eliminado del formData (campo sin mapeo real en el dominio) (sesión 2026-05-30)
 - [x] **`ServicesPage.tsx:113`** — tipo de descuento `"fixed"` no asignable a `"percentage" | "2x1"` → narrowing explícito al leer del servicio, fallback a `'percentage'` (sesión 2026-05-30)
 - [x] **`ClientCard.tsx:98`** — `client.allergies.length` posiblemente `undefined` → `(client.allergies?.length ?? 0) > 0` (sesión 2026-05-30)
-- [ ] **`DashboardPage.tsx:154`** — formatter de recharts recibe `ValueType | undefined` pero tipado como `number` → manejar `undefined` en el formatter
+- [x] **`DashboardPage.tsx:154`** — formatter de recharts recibe `ValueType | undefined` pero tipado como `number` → `Number(v)` en lugar de anotación explícita `v: number` (sesión 2026-05-30)
 - [ ] **`ClientsPage.tsx:42`** — tipo de parámetro incompatible en `useDebounce` → tipar correctamente el callback o el hook
 
 ### Prioridad media — comparaciones de tipo sin overlap (`TS2367`)

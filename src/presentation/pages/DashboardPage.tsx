@@ -151,7 +151,7 @@ export function DashboardPage() {
                   contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid #333', borderRadius: '0.5rem' }}
                   labelStyle={{ color: '#fff' }}
                   itemStyle={{ color: '#22c55e' }}
-                  formatter={(v: number) => [`₡${v.toLocaleString('es-CR')}`, 'Ingresos']}
+                  formatter={(v) => [`₡${Number(v).toLocaleString('es-CR')}`, 'Ingresos']}
                 />
                 <Line
                   type="monotone"
