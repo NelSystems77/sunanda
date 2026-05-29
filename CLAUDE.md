@@ -542,6 +542,23 @@ useEffect(() => {
 
 **Regla:** cualquier dropdown/popover dentro de componentes animados con Framer Motion (listas en loop) debe usar **`createPortal` + `position: fixed` + `getBoundingClientRect()`**. Nunca solo `z-index` — es insuficiente cuando hay múltiples stacking contexts anidados.
 
+### Menú tres puntos — acciones disponibles por estado (sesión 2026-05-29)
+
+El botón `MoreVertical` se muestra para **todos los estados** (incluido `CANCELLED`). Props: `onConfirm`, `onCancel`, `onComplete`, `onNoShow`, `onReopen`, `onDelete`.
+
+| Estado | Opciones del menú |
+|---|---|
+| `PENDING` | Confirmar · Marcar completada · No asistió · — · Cancelar · Borrar |
+| `CONFIRMED` | Marcar completada · No asistió · — · Cancelar · Borrar |
+| `IN_PROGRESS` | Marcar completada · No asistió · — · Cancelar · Borrar |
+| `COMPLETED` | Reabrir cita · — · Borrar |
+| `NO_SHOW` | Reabrir cita · — · Cancelar · Borrar |
+| `CANCELLED` | Reabrir cita · — · Borrar |
+
+- **Reabrir** → `status: PENDING`, limpia campos de cancelación
+- **Borrar** → hard delete real en Firestore (`deleteDoc`), con diálogo de confirmación que muestra nombre del cliente y hora
+- La cadena completa: `repo.reopen()` / `repo.delete()` → `AppointmentUseCases` → `AppointmentStore` → `useAppointments` hook → `CalendarDayView` → `AppointmentCard`
+
 ---
 
 ## PWA — Caché y MIME type error (sesión 2026-05-29)
