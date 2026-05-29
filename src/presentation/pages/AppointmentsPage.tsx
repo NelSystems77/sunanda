@@ -13,7 +13,7 @@ import { OccupancyIndicator } from '../components/features/OccupancyIndicator';
 import { Button } from '../components/ui/Button';
 import { MedicalRecordModal } from '../components/features/MedicalRecordModal';
 import { PaymentForm } from '../components/features/PaymentForm';
-import { ChevronLeft, ChevronRight, Plus, Bell, Calendar as CalendarIcon, CheckCircle, Clock, Users, X, User, Send, Settings, DollarSign, MessageCircle, Phone } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Bell, Calendar as CalendarIcon, CheckCircle, Clock, Users, X, User, Settings, DollarSign, MessageCircle, Phone } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AppointmentUseCases } from '../../core/application/use-cases/appointments/AppointmentUseCases';
 import { AppointmentRepository } from '../../core/infrastructure/repositories/AppointmentRepository';
@@ -81,7 +81,6 @@ export function AppointmentsPage() {
     
     // Helpers
     todayAppointments,
-    stats
   } = useAppointments();
 
   const [showForm, setShowForm] = useState(false);

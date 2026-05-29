@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Bell, Clock, Send, CheckCircle, X, Settings } from 'lucide-react';
+import { Bell, Send, CheckCircle, X, Settings } from 'lucide-react';
 import { Button } from '../ui/Button';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 
 interface ReminderSettingsProps {

@@ -10,7 +10,6 @@ import { useServices } from '../../hooks/useServices';
 import { X, Calendar, User, Scissors, Clock, FileText, Phone } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { motion } from 'framer-motion';
-import { useAuth } from '../../hooks/useAuth';
 import toast from 'react-hot-toast';
 
 interface AppointmentFormProps {
@@ -56,7 +55,6 @@ export function AppointmentForm({
     loadingSlots
   } = useAppointments();
   const { services, fetchActiveServices } = useServices();
-  const { user } = useAuth();
 
   const [selectedDate, setSelectedDate] = useState<Date>(initialDate || new Date());
   const [selectedEsthetician, setSelectedEsthetician] = useState<string>('');

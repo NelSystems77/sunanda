@@ -24,7 +24,6 @@ import { Modal, ModalFooter } from '../components/ui/Modal';
 import { Alert } from '../components/ui/Alert';
 import { ClientForm } from '../components/features/ClientForm';
 import { useClientStore } from '../context/ClientStore';
-import { useAuth } from '../hooks/useAuth';
 import { formatDate, formatPhoneNumber, calculateAge } from '@/shared/utils';
 
 const genderLabels = {
@@ -36,7 +35,6 @@ const genderLabels = {
 export function ClientDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { hasPermission } = useAuth();
   const {
     selectedClient,
     isLoading,

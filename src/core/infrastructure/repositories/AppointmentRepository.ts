@@ -7,18 +7,16 @@ import {
   updateDoc, 
   deleteDoc, 
   query, 
-  where, 
+  where,
   orderBy,
   Timestamp,
   DocumentData,
-  Query
 } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import { 
-  Appointment, 
-  CreateAppointmentDTO, 
+  Appointment,
+  CreateAppointmentDTO,
   UpdateAppointmentDTO,
-  AppointmentWithDetails 
 } from '@/core/domain/interfaces/Appointment';
 import { AppointmentStatus } from '../../domain/enums';
 

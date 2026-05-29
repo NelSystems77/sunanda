@@ -4,7 +4,7 @@ import { Button } from '../ui/Button';
 import { useMedicalRecords } from '../../hooks/useMedicalRecords';
 import { useAuth } from '../../hooks/useAuth';
 import { useMobileDetect } from '../../hooks/useMobileDetect';
-import { MedicalRecord, Anamnesis, Consentimiento, SessionRecord, CONDICIONES_PIEL, ENFERMEDADES_COMUNES, MEDICAMENTOS_PIEL, ACTIVOS_COSMETICOS, TRATAMIENTOS_PREVIOS, FOTOTIPOS, TIPOS_PIEL } from '@/core/domain/interfaces/MedicalRecord';
+import { MedicalRecord, Anamnesis, Consentimiento, SessionRecord, CONDICIONES_PIEL, ENFERMEDADES_COMUNES } from '@/core/domain/interfaces/MedicalRecord';
 import { generateMedicalRecordPDF, generateSessionPDF, generateConsentPDF } from '@/shared/utils/pdfGenerator';
 import { X, Save, FileText, Printer, Upload, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
 import SignatureCanvas from 'react-signature-canvas';
@@ -28,15 +28,14 @@ const CONDICIONES_PIEL_FLAT = [
 export function MedicalRecordModal({ clientId, clientName, onClose }: MedicalRecordModalProps) {
   const { user } = useAuth();
   const { isMobile } = useMobileDetect();
-  const { getByClientId, create, saveAnamnesis, saveConsentimiento, addSession, updateSession, deleteSession, uploadImage, uploadSignature } = useMedicalRecords();
+  const { getByClientId, create, saveAnamnesis, saveConsentimiento, addSession, deleteSession, uploadImage, uploadSignature } = useMedicalRecords();
   
   const [record, setRecord] = useState<MedicalRecord | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>('anamnesis');
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
-  const [editingSessionId, setEditingSessionId] = useState<string | null>(null);
-  const [sessionToDelete, setSessionToDelete] = useState<string | null>(null);
+  const [editingSessionId] = useState<string | null>(null);
   
   // ← NUEVO: Estados para acordeón mobile
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({

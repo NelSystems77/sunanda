@@ -16,8 +16,6 @@ declare const self: ServiceWorkerGlobalScope;
 
 // Configuración
 const CACHE_VERSION = 'v1';
-const OFFLINE_PAGE = '/offline.html';
-const OFFLINE_IMAGE = '/icons/icon-512.png';
 
 // Toma control inmediatamente
 clientsClaim();

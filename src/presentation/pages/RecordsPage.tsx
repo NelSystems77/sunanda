@@ -4,8 +4,7 @@ import { PageHeader } from '../components/layout/PageHeader';
 import { CardGrid, StatCard, ResponsiveTable } from '../components/ui/responsive';
 import { useMedicalRecords } from '../hooks/useMedicalRecords';
 import { MedicalRecordModal } from '../components/features/MedicalRecordModal';
-import { Search, FileText, Calendar, User, CheckCircle, FolderOpen } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Search, Calendar, User, CheckCircle, FolderOpen } from 'lucide-react';
 
 export function RecordsPage() {
   const { records, loading } = useMedicalRecords();

@@ -5,7 +5,7 @@ import { Button } from '../components/ui/Button';
 import { ResponsiveTable, CardGrid, StatCard } from '../components/ui/responsive';
 import { useAuth } from '../hooks/useAuth';
 import { userService, User } from '@/core/infrastructure/services/UserService';
-import { UserRole, canManageRole, getManageableRoles, getRoleLabel, getRoleColor } from '@/core/domain/enums/roles';
+import { UserRole, canManageRole, getRoleLabel, getRoleColor } from '@/core/domain/enums/roles';
 import { Search, Plus, Trash2, UserCheck, UserX, Shield, Users } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { CreateUserModal } from '../components/features/CreateUserModal';

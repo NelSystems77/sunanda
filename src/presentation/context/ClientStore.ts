@@ -7,7 +7,6 @@ import {
   SearchClientsUseCase,
   UpdateClientUseCase,
   DeleteClientUseCase,
-  GetClientStatsUseCase,
 } from '@/core/application/use-cases/clients/ClientUseCases';
 
 interface ClientState {

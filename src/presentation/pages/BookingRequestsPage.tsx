@@ -23,7 +23,6 @@ import { StatsCard } from '@/presentation/components/features/StatsCard';
 
 export function BookingRequestsPage() {
   const {
-    requests,
     setRequests,
     loading,
     setLoading,

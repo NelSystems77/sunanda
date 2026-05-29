@@ -12,20 +12,17 @@ import { ClientCard } from '../components/features/ClientCard';
 import { ResponsiveModal } from '../components/ui/responsive';
 import { ClientForm } from '../components/features/ClientForm';
 import { useClientStore } from '../context/ClientStore';
-import { useAuth } from '../hooks/useAuth';
 import { Client } from '@/core/domain/interfaces/Client';
 import { debounce } from '@/shared/utils';
 
 export function ClientsPage() {
   const navigate = useNavigate();
-  const { hasPermission } = useAuth();
   const {
     clients,
     isLoading,
     fetchClients,
     searchClients,
     createClient,
-    deleteClient,
   } = useClientStore();
 
   const [searchTerm, setSearchTerm] = useState('');
