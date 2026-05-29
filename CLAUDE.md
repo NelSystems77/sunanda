@@ -596,7 +596,25 @@ Cuando el admin confirma una `bookingRequest`, **aún no se crea automáticament
 
 ### Notificaciones push para nuevas solicitudes
 
-**Implementado (sesión 2026-06-01):** `onBookingRequestCreated` — trigger Firestore en `bookingRequests/{requestId}` que envía push inmediato al staff cuando un cliente hace una solicitud desde la landing. Cuerpo: `${clientName} · ${serviceName} · ${fecha} ${hora}`. Si `flexibleTime: true`, muestra "(horario flexible)". Enlaza a `/dashboard/booking-requests`. `requireInteraction: true` igual que las citas nuevas. Desplegada en `us-central1`.
+**Implementado (sesión 2026-06-01):** `onBookingRequestCreated` — trigger Firestore en `bookingRequests/{requestId}` que envía push inmediato al staff cuando un cliente hace una solicitud desde la landing. Cuerpo: `${clientName} · ${serviceName} · ${fecha} ${hora}`. Si `flexibleTime: true`, muestra "(horario flexible)". Enlace a `/dashboard/booking-requests`. `requireInteraction: true` igual que las citas nuevas. Desplegada en `us-central1`.
+
+### Badge de solicitudes pendientes en el dashboard (sesión 2026-06-01)
+
+**Dónde aparece:**
+- **Campana del header** (desktop) — numerito rojo con el conteo de solicitudes `PENDING`
+- **Ítem "Solicitudes" del sidebar** — badge al lado del label en modo expandido, sobre el ícono en modo rail (tablet)
+
+**Cómo funciona:**
+- `DashboardLayout.tsx` llama `bookingRequestRepository.getAll()` al montar y alimenta `useBookingRequestStore`
+- El Header recibe `notifications={stats.pending}` — si es 0 no muestra badge
+- El Sidebar lee `useBookingRequestStore(s => s.stats.pending)` y lo inyecta como `badge` en el ítem `/dashboard/booking-requests` mediante `.map()` sobre `filteredItems`
+- Cuando el admin confirma o rechaza una solicitud en `BookingRequestsPage`, el store se actualiza y los badges se actualizan solos
+
+**Archivos clave:**
+| Archivo | Cambio |
+|---|---|
+| `DashboardLayout.tsx` | Carga solicitudes al montar, pasa `stats.pending` al Header |
+| `Sidebar.tsx` | Lee store y aplica badge al ítem "Solicitudes" |
 
 ---
 
