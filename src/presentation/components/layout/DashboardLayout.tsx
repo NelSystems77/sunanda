@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Header } from './Header';
 import { Sidebar } from './Sidebar';
@@ -7,6 +7,8 @@ import { useAuth } from '@/presentation/hooks/useAuth';
 import { useMobileDetect, useSidebar } from '@/presentation/hooks';
 import { responsiveClasses } from '@/shared/utils/responsive';
 import { cn } from '@/shared/utils';
+import { useBookingRequestStore } from '@/presentation/context/BookingRequestStore';
+import { bookingRequestRepository } from '@/core/infrastructure/repositories/BookingRequestRepository';
 
 export interface DashboardLayoutProps {
   children: ReactNode;
@@ -16,6 +18,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const { user } = useAuth();
   const { isMobile, isTablet, isDesktop } = useMobileDetect();
   const { isOpen, isCollapsed, isOverlay, toggleSidebar, closeSidebar } = useSidebar();
+  const { stats, setRequests } = useBookingRequestStore();
+
+  useEffect(() => {
+    if (!user) return;
+    bookingRequestRepository.getAll().then(setRequests).catch(() => {});
+  }, [user]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-dark-900">
@@ -34,7 +42,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 }
               : undefined
           }
-          notifications={0}
+          notifications={stats.pending}
           onMenuToggle={toggleSidebar}
         />
       )}

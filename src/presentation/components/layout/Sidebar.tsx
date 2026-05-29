@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import { cn } from '@/shared/utils';
 import { useAuth } from '@/presentation/hooks/useAuth';
 import { ROUTES } from '@/shared/constants';
+import { useBookingRequestStore } from '@/presentation/context/BookingRequestStore';
 import {
   LayoutDashboard,
   Users,
@@ -108,11 +109,18 @@ export function Sidebar({ isOpen = true, isCollapsed = false, userRole, onNaviga
   const location = useLocation();
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const pendingRequests = useBookingRequestStore((s) => s.stats.pending);
 
-  const filteredItems = navigationItems.filter((item) => {
-    if (!item.roles) return true;
-    return userRole && item.roles.includes(userRole);
-  });
+  const filteredItems = navigationItems
+    .filter((item) => {
+      if (!item.roles) return true;
+      return userRole && item.roles.includes(userRole);
+    })
+    .map((item) =>
+      item.href === '/dashboard/booking-requests'
+        ? { ...item, badge: pendingRequests || undefined }
+        : item
+    );
 
   const handleNavClick = () => {
     if (onNavigate) {
