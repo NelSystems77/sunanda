@@ -321,6 +321,22 @@ export class AppointmentRepository {
     }
   }
 
+  async reopen(id: string): Promise<void> {
+    try {
+      const docRef = doc(db, this.collectionName, id);
+      await updateDoc(docRef, {
+        status: AppointmentStatus.PENDING,
+        cancelledAt: null,
+        cancelledBy: null,
+        cancellationReason: null,
+        updatedAt: Timestamp.now()
+      });
+    } catch (error) {
+      console.error('Error reopening appointment:', error);
+      throw new Error('No se pudo reabrir la cita');
+    }
+  }
+
   /**
    * Eliminar cita
    */

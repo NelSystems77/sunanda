@@ -36,6 +36,7 @@ export function useAppointments() {
     markAsNoShow: markAsNoShowStore,
     reassignAppointment: reassignAppointmentStore,
     deleteAppointment: deleteAppointmentStore,
+    reopenAppointment: reopenAppointmentStore,
     fetchAvailableSlots,
     checkAvailability,
     
@@ -188,6 +189,17 @@ export function useAppointments() {
     }
   }, [user, deleteAppointmentStore]);
 
+  const reopenAppointment = useCallback(async (id: string) => {
+    try {
+      await reopenAppointmentStore(id);
+      toast.success('Cita reabierta');
+      return true;
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Error al reabrir cita');
+      return false;
+    }
+  }, [reopenAppointmentStore]);
+
   /**
    * Filtrar citas localmente
    */
@@ -331,6 +343,7 @@ export function useAppointments() {
     markAsNoShow,
     reassignAppointment,
     deleteAppointment,
+    reopenAppointment,
 
     // Disponibilidad
     fetchAvailableSlots,

@@ -1,6 +1,6 @@
 import { Appointment } from '@/core/domain/interfaces/Appointment';
 import { AppointmentStatus } from '@/core/domain/enums';
-import { Clock, User, Scissors, MoreVertical, Check, X, AlertCircle, FileText } from 'lucide-react';
+import { Clock, User, Scissors, MoreVertical, Check, X, AlertCircle, FileText, RotateCcw, Trash2 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -12,6 +12,8 @@ interface AppointmentCardProps {
   onCancel?: (id: string, reason: string) => void;
   onComplete?: (id: string) => void;
   onNoShow?: (id: string) => void;
+  onReopen?: (id: string) => void;
+  onDelete?: (id: string) => void;
   onClick?: () => void;
   onOpenRecord?: (clientId: string, clientName: string) => void;
   showActions?: boolean;
@@ -40,6 +42,8 @@ export function AppointmentCard({
   onCancel,
   onComplete,
   onNoShow,
+  onReopen,
+  onDelete,
   onClick,
   onOpenRecord,
   showActions = true,
@@ -47,6 +51,7 @@ export function AppointmentCard({
   const [showMenu, setShowMenu]               = useState(false);
   const [menuPos, setMenuPos]                 = useState({ top: 0, right: 0 });
   const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [cancelReason, setCancelReason]       = useState('');
   const menuBtnRef = useRef<HTMLButtonElement>(null);
 
@@ -86,6 +91,10 @@ export function AppointmentCard({
     }
   };
 
+  const s = appointment.status;
+  const isActive = s === AppointmentStatus.PENDING || s === AppointmentStatus.CONFIRMED || s === AppointmentStatus.IN_PROGRESS;
+  const isClosed = s === AppointmentStatus.COMPLETED || s === AppointmentStatus.CANCELLED || s === AppointmentStatus.NO_SHOW;
+
   // Dropdown renderizado en document.body para escapar cualquier stacking context
   const dropdown = showMenu && createPortal(
     <AnimatePresence>
@@ -94,49 +103,61 @@ export function AppointmentCard({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: -4 }}
         style={{ position: 'fixed', top: menuPos.top, right: menuPos.right, zIndex: 9999 }}
-        className="w-48 bg-dark-700 rounded-lg shadow-2xl border border-dark-600"
+        className="w-52 bg-dark-700 rounded-lg shadow-2xl border border-dark-600 overflow-hidden"
         onMouseDown={(e) => e.stopPropagation()}
       >
-        {appointment.status === AppointmentStatus.PENDING && onConfirm && (
-          <button
-            onClick={() => { onConfirm(appointment.id); setShowMenu(false); }}
-            className="w-full px-4 py-2 text-left text-sm text-dark-200 hover:bg-dark-600 hover:text-white flex items-center gap-2 rounded-t-lg transition-colors"
-          >
-            <Check className="w-4 h-4 text-green-400" />
-            Confirmar
+        {/* Confirmar — solo pendiente */}
+        {s === AppointmentStatus.PENDING && onConfirm && (
+          <button onClick={() => { onConfirm(appointment.id); setShowMenu(false); }}
+            className="w-full px-4 py-2.5 text-left text-sm text-dark-200 hover:bg-dark-600 hover:text-white flex items-center gap-2.5 transition-colors">
+            <Check className="w-4 h-4 text-green-400 flex-shrink-0" /> Confirmar
           </button>
         )}
 
-        {(appointment.status === AppointmentStatus.PENDING ||
-          appointment.status === AppointmentStatus.CONFIRMED) && onComplete && (
-          <button
-            onClick={() => { onComplete(appointment.id); setShowMenu(false); }}
-            className="w-full px-4 py-2 text-left text-sm text-dark-200 hover:bg-dark-600 hover:text-white flex items-center gap-2 transition-colors"
-          >
-            <Check className="w-4 h-4 text-blue-400" />
-            Marcar completada
+        {/* Marcar completada — activas */}
+        {isActive && onComplete && (
+          <button onClick={() => { onComplete(appointment.id); setShowMenu(false); }}
+            className="w-full px-4 py-2.5 text-left text-sm text-dark-200 hover:bg-dark-600 hover:text-white flex items-center gap-2.5 transition-colors">
+            <Check className="w-4 h-4 text-blue-400 flex-shrink-0" /> Marcar completada
           </button>
         )}
 
-        {(appointment.status === AppointmentStatus.PENDING ||
-          appointment.status === AppointmentStatus.CONFIRMED) && onNoShow && (
-          <button
-            onClick={() => { onNoShow(appointment.id); setShowMenu(false); }}
-            className="w-full px-4 py-2 text-left text-sm text-dark-200 hover:bg-dark-600 hover:text-white flex items-center gap-2 transition-colors"
-          >
-            <AlertCircle className="w-4 h-4 text-orange-400" />
-            No asistió
+        {/* No asistió — activas */}
+        {isActive && onNoShow && (
+          <button onClick={() => { onNoShow(appointment.id); setShowMenu(false); }}
+            className="w-full px-4 py-2.5 text-left text-sm text-dark-200 hover:bg-dark-600 hover:text-white flex items-center gap-2.5 transition-colors">
+            <AlertCircle className="w-4 h-4 text-orange-400 flex-shrink-0" /> No asistió
           </button>
         )}
 
-        {appointment.status !== AppointmentStatus.COMPLETED && onCancel && (
-          <button
-            onClick={() => { setShowCancelDialog(true); setShowMenu(false); }}
-            className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-red-900/30 hover:text-red-300 flex items-center gap-2 rounded-b-lg transition-colors"
-          >
-            <X className="w-4 h-4" />
-            Cancelar cita
+        {/* Reabrir — cerradas */}
+        {isClosed && onReopen && (
+          <button onClick={() => { onReopen(appointment.id); setShowMenu(false); }}
+            className="w-full px-4 py-2.5 text-left text-sm text-dark-200 hover:bg-dark-600 hover:text-white flex items-center gap-2.5 transition-colors">
+            <RotateCcw className="w-4 h-4 text-emerald-400 flex-shrink-0" /> Reabrir cita
           </button>
+        )}
+
+        {/* Cancelar — activas + no-show */}
+        {(isActive || s === AppointmentStatus.NO_SHOW) && onCancel && (
+          <>
+            <div className="border-t border-dark-600 my-0.5" />
+            <button onClick={() => { setShowCancelDialog(true); setShowMenu(false); }}
+              className="w-full px-4 py-2.5 text-left text-sm text-red-400 hover:bg-red-900/30 hover:text-red-300 flex items-center gap-2.5 transition-colors">
+              <X className="w-4 h-4 flex-shrink-0" /> Cancelar cita
+            </button>
+          </>
+        )}
+
+        {/* Borrar — siempre */}
+        {onDelete && (
+          <>
+            <div className="border-t border-dark-600 my-0.5" />
+            <button onClick={() => { setShowDeleteDialog(true); setShowMenu(false); }}
+              className="w-full px-4 py-2.5 text-left text-sm text-red-500 hover:bg-red-900/40 hover:text-red-300 flex items-center gap-2.5 transition-colors">
+              <Trash2 className="w-4 h-4 flex-shrink-0" /> Borrar cita
+            </button>
+          </>
         )}
       </motion.div>
     </AnimatePresence>,
@@ -162,7 +183,7 @@ export function AppointmentCard({
               {status.label}
             </span>
 
-            {showActions && appointment.status !== AppointmentStatus.CANCELLED && (
+            {showActions && (
               <button
                 ref={menuBtnRef}
                 onClick={openMenu}
@@ -227,6 +248,47 @@ export function AppointmentCard({
 
       {/* Dropdown via Portal — escapa todos los stacking contexts */}
       {dropdown}
+
+      {/* Diálogo de borrado */}
+      <AnimatePresence>
+        {showDeleteDialog && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+            onClick={() => setShowDeleteDialog(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}
+              className="bg-dark-800 border border-dark-600 rounded-xl p-6 max-w-sm w-full mx-4 shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 bg-red-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Trash2 className="w-5 h-5 text-red-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-white">Borrar cita</h3>
+              </div>
+              <p className="text-sm text-dark-300 mb-5">
+                Esta acción es permanente. La cita de <span className="text-white font-medium">{parseClientName(appointment.notes) || appointment.clientId}</span> a las <span className="text-white font-medium">{appointment.startTime}</span> será eliminada definitivamente.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowDeleteDialog(false)}
+                  className="flex-1 px-4 py-2 border border-dark-600 text-dark-300 rounded-lg hover:bg-dark-700 hover:text-white transition-colors text-sm"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={() => { onDelete?.(appointment.id); setShowDeleteDialog(false); }}
+                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
+                >
+                  Sí, borrar
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Diálogo de cancelación */}
       <AnimatePresence>

@@ -13,8 +13,10 @@ interface CalendarDayViewProps {
   onCancel?: (id: string, reason: string) => void;
   onComplete?: (id: string) => void;
   onNoShow?: (id: string) => void;
+  onReopen?: (id: string) => void;
+  onDelete?: (id: string) => void;
   onCreateNew?: () => void;
-  onOpenRecord?: (clientId: string, clientName: string) => void; // ← NUEVO
+  onOpenRecord?: (clientId: string, clientName: string) => void;
 }
 
 /**
@@ -30,8 +32,10 @@ export function CalendarDayView({
   onCancel,
   onComplete,
   onNoShow,
+  onReopen,
+  onDelete,
   onCreateNew,
-  onOpenRecord // ← NUEVO
+  onOpenRecord
 }: CalendarDayViewProps) {
   /**
    * Generar slots de tiempo
@@ -142,6 +146,8 @@ export function CalendarDayView({
                         onClick={() => onAppointmentClick?.(appointment)}
                         onConfirm={onConfirm}
                         onCancel={onCancel}
+                        onReopen={onReopen}
+                        onDelete={onDelete}
                         onComplete={onComplete}
                         onNoShow={onNoShow}
                         onOpenRecord={onOpenRecord} // ← PASAR HANDLER

@@ -63,6 +63,8 @@ export function AppointmentsPage() {
     cancelAppointment,
     completeAppointment,
     markAsNoShow,
+    deleteAppointment,
+    reopenAppointment,
     setSelectedDate,
     setCalendarView,
     setFilters,
@@ -495,6 +497,8 @@ export function AppointmentsPage() {
                   onCancel={cancelAppointment}
                   onComplete={completeAppointment}
                   onNoShow={markAsNoShow}
+                  onReopen={reopenAppointment}
+                  onDelete={async (id) => { await deleteAppointment(id); loadAppointments(); }}
                   onCreateNew={() => setShowForm(true)}
                   onOpenRecord={handleOpenRecord}
                 />

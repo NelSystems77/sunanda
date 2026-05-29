@@ -262,17 +262,16 @@ export class AppointmentUseCases {
     });
   }
 
-  /**
-   * Eliminar cita (soft delete cambiando estado)
-   */
-  async deleteAppointment(id: string, deletedBy: string): Promise<void> {
+  async reopenAppointment(id: string): Promise<void> {
     const appointment = await this.repository.getById(id);
-    if (!appointment) {
-      throw new Error('Cita no encontrada');
-    }
+    if (!appointment) throw new Error('Cita no encontrada');
+    await this.repository.reopen(id);
+  }
 
-    // En lugar de eliminar, cancelamos con razón especial
-    await this.repository.cancel(id, deletedBy, 'Eliminada por administrador');
+  async deleteAppointment(id: string, _deletedBy: string): Promise<void> {
+    const appointment = await this.repository.getById(id);
+    if (!appointment) throw new Error('Cita no encontrada');
+    await this.repository.delete(id);
   }
 
   /**

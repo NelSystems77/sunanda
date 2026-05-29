@@ -61,6 +61,7 @@ interface AppointmentState {
   markAsNoShow: (id: string) => Promise<void>;
   reassignAppointment: (id: string, newEstheticianId: string, reason?: string) => Promise<void>;
   deleteAppointment: (id: string, deletedBy: string) => Promise<void>;
+  reopenAppointment: (id: string) => Promise<void>;
 
   // Actions - Availability
   fetchAvailableSlots: (date: Date, estheticianId: string, duration?: number) => Promise<void>;
@@ -317,15 +318,23 @@ export const useAppointmentStore = create<AppointmentState>()(
         set({ loading: true, error: null });
         try {
           await useCases.deleteAppointment(id, deletedBy);
-          
-          const appointments = get().appointments.filter(apt => apt.id !== id);
-          
+          set({ appointments: get().appointments.filter(apt => apt.id !== id), loading: false });
+        } catch (error) {
+          set({ error: error instanceof Error ? error.message : 'Error al eliminar cita', loading: false });
+          throw error;
+        }
+      },
+
+      reopenAppointment: async (id: string) => {
+        set({ loading: true, error: null });
+        try {
+          await useCases.reopenAppointment(id);
+          const appointments = get().appointments.map(apt =>
+            apt.id === id ? { ...apt, status: 'pending' as any, cancelledAt: undefined, cancelledBy: undefined, cancellationReason: undefined } : apt
+          );
           set({ appointments, loading: false });
         } catch (error) {
-          set({ 
-            error: error instanceof Error ? error.message : 'Error al eliminar cita',
-            loading: false 
-          });
+          set({ error: error instanceof Error ? error.message : 'Error al reabrir cita', loading: false });
           throw error;
         }
       },
