@@ -81,6 +81,7 @@ export const ROUTES = {
   PAYMENTS: '/dashboard/payments',
   REPORTS: '/dashboard/reports',
   USERS: '/dashboard/users',
+  BOOKING_REQUESTS: '/dashboard/booking-requests',
   PROFILE: '/dashboard/profile',
   SETTINGS: '/dashboard/settings',
 } as const;

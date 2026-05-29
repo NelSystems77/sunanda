@@ -17,6 +17,7 @@ import {
   BarChart3,
   Settings,
   UserCog,
+  BellRing,
   LucideIcon,
 } from 'lucide-react';
 
@@ -53,6 +54,11 @@ const navigationItems: NavItem[] = [
     label: 'Agenda',
     href: '/dashboard/appointments',
     icon: Calendar,
+  },
+  {
+    label: 'Solicitudes',
+    href: '/dashboard/booking-requests',
+    icon: BellRing,
   },
   {
     label: 'Servicios',

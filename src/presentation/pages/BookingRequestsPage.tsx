@@ -14,9 +14,10 @@ import { bookingRequestRepository } from '@/core/infrastructure/repositories/Boo
 import { BookingRequestStatus } from '@/core/domain/interfaces/BookingRequest';
 import { useBookingRequestStore } from '@/presentation/context/BookingRequestStore';
 import { BookingRequestCard } from '@/presentation/components/features/BookingRequestCard';
+import { DashboardLayout } from '@/presentation/components/layout/DashboardLayout';
 import { PageHeader } from '@/presentation/components/layout/PageHeader';
 import { Input } from '@/presentation/components/ui/Input';
-import { Tabs } from '@/presentation/components/ui/Tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/presentation/components/ui/Tabs';
 import { Spinner } from '@/presentation/components/ui/Spinner';
 import { EmptyState } from '@/presentation/components/layout/EmptyState';
 import { StatsCard } from '@/presentation/components/features/StatsCard';
@@ -69,19 +70,21 @@ export function BookingRequestsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Spinner size="lg" />
-      </div>
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-screen">
+          <Spinner size="lg" />
+        </div>
+      </DashboardLayout>
     );
   }
 
   return (
+    <DashboardLayout>
     <div className="space-y-6">
       {/* Header */}
       <PageHeader
         title="Solicitudes de Citas"
-        subtitle="Gestiona las solicitudes de los clientes"
-        icon={Calendar}
+        description="Gestiona las solicitudes de los clientes"
       />
 
       {/* Estadísticas */}
@@ -132,14 +135,15 @@ export function BookingRequestsPage() {
             <Filter className="h-5 w-5 text-dark-400" />
             <span className="text-sm text-dark-400 font-medium">Estado</span>
           </div>
-          <Tabs
-            tabs={statusTabs.map(tab => ({
-              id: tab.id,
-              label: `${tab.label}${tab.count > 0 ? ` (${tab.count})` : ''}`,
-            }))}
-            activeTab={statusFilter}
-            onChange={(id) => setStatusFilter(id as typeof statusFilter)}
-          />
+          <Tabs defaultValue={statusFilter} onChange={(id) => setStatusFilter(id as typeof statusFilter)}>
+            <TabsList>
+              {statusTabs.map(tab => (
+                <TabsTrigger key={tab.id} value={tab.id}>
+                  {tab.label}{tab.count > 0 ? ` (${tab.count})` : ''}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
         </div>
       </div>
 
@@ -178,5 +182,6 @@ export function BookingRequestsPage() {
         </div>
       )}
     </div>
+    </DashboardLayout>
   );
 }

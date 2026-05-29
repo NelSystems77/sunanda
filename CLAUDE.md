@@ -561,6 +561,45 @@ El botón `MoreVertical` se muestra para **todos los estados** (incluido `CANCEL
 
 ---
 
+## Flujo de Solicitudes de Citas — BookingRequests (sesión 2026-05-31)
+
+### Flujo completo
+
+```
+Landing /booking (público)
+  → BookingRequestPage.tsx + BookingRequestForm.tsx
+  → Firestore colección bookingRequests (status: PENDING)
+  → /booking-success
+
+Dashboard /dashboard/booking-requests (admin/staff)
+  → BookingRequestsPage.tsx
+  → Lista de solicitudes pendientes
+  → Acciones: Confirmar / Rechazar / WhatsApp directo al cliente
+```
+
+### Dos colecciones separadas
+
+| Colección | Propósito | Quién escribe |
+|---|---|---|
+| `bookingRequests` | Solicitudes públicas — clientes desde la landing | `BookingRequestForm` |
+| `appointments` | Citas confirmadas — agenda del spa | Admin desde el dashboard |
+
+Cuando el admin confirma una `bookingRequest`, **aún no se crea automáticamente un `Appointment`** — hay un TODO en `BookingRequestCard.tsx`. El flujo manual actual: admin ve la solicitud → contacta al cliente por WhatsApp → crea la cita manualmente en `/dashboard/appointments`.
+
+### Bug corregido (sesión 2026-05-31) — página inaccesible
+
+`BookingRequestsPage` era completamente inaccesible por tres problemas simultáneos:
+
+1. **Ruta fuera del dashboard** — estaba en `/admin/booking-requests`, fuera del prefijo `/dashboard/*`. Movida a `/dashboard/booking-requests` y registrada en `ROUTES.BOOKING_REQUESTS`.
+2. **Sin enlace en el sidebar** — ningún ítem del menú apuntaba a la página. Agregado ítem "Solicitudes" con ícono `BellRing` en `Sidebar.tsx`, entre "Agenda" y "Servicios".
+3. **Sin `DashboardLayout`** — la página renderizaba sin header, sidebar ni estructura. Agregado `DashboardLayout` como wrapper en `BookingRequestsPage.tsx`.
+
+### Notificaciones push para nuevas solicitudes
+
+**Pendiente:** No hay Cloud Function que dispare cuando un cliente crea una `bookingRequest`. Los triggers FCM existentes solo cubren `appointments`. Para notificar al staff al recibir una reserva desde la landing, se necesita agregar un trigger `onBookingRequestCreated` en `functions/src/index.ts`.
+
+---
+
 ## PWA — Caché y MIME type error (sesión 2026-05-29)
 
 ### Síntoma
@@ -911,8 +950,8 @@ Detectados con `npx tsc --noEmit` (sesión 2026-05-29). Todos pre-existentes; ni
 - [x] **`DashboardPage.tsx:154`** — formatter de recharts recibe `ValueType | undefined` pero tipado como `number` → `Number(v)` en lugar de anotación explícita `v: number` (sesión 2026-05-30)
 - [x] **`ClientsPage.tsx:42`** — constraint `(...args: unknown[]) => unknown` en `debounce` no acepta funciones con parámetros tipados → cambiado a `any[]` en `shared/utils/index.ts` (sesión 2026-05-30)
 - [ ] **`AppointmentsPage.tsx:112,242-244,274,615,619,777-782,801,825,837,848`** — 13 comparaciones `AppointmentStatus` vs strings minúscula (`'pending'`, `'confirmed'`, `'completed'`) → mismo patrón que los ya corregidos: usar `AppointmentStatus.PENDING/CONFIRMED/COMPLETED`
-- [ ] **`BookingRequestsPage.tsx:136`** — prop `tabs` no existe en `TabsProps` → refactorizar a API compuesta `Tabs + TabsList + TabsTrigger` (mismo patrón que `PaymentsPage.tsx`)
-- [ ] **`BookingRequestsPage.tsx:83`** — prop `subtitle` no existe en `PageHeaderProps` → eliminar la prop o agregarla al tipo `PageHeaderProps`
+- [x] **`BookingRequestsPage.tsx:136`** — prop `tabs` no existe en `TabsProps` → refactorizado a API compuesta `Tabs + TabsList + TabsTrigger` (sesión 2026-05-31)
+- [x] **`BookingRequestsPage.tsx:83`** — prop `subtitle` e `icon` no existen en `PageHeaderProps` → cambiados a `description` (sesión 2026-05-31)
 - [ ] **`Header.tsx:120,316`** — variante `"error"` no existe en Badge → cambiar a `"danger"` (mismo patrón)
 - [ ] **`BookingRequestsPage.tsx:111`** — variante `"error"` no existe en Badge → cambiar a `"danger"`
 

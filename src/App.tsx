@@ -166,9 +166,9 @@ function App() {
             }
           />
 
-          {/* Ruta de Solicitudes de Citas (Admin) */}
+          {/* Ruta de Solicitudes de Citas */}
           <Route
-            path="/admin/booking-requests"
+            path={ROUTES.BOOKING_REQUESTS}
             element={
               <ProtectedRoute>
                 <BookingRequestsPage />
