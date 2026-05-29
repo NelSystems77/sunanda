@@ -3,7 +3,7 @@ import { Clock, Tag, MoreVertical, Edit, Trash, Eye, EyeOff } from 'lucide-react
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-interface ServiceCardProps {
+export interface ServiceCardProps {
   service: Service;
   onEdit?: (service: Service) => void;
   onDelete?: (id: string) => void;
@@ -202,11 +202,6 @@ export function ServiceCard({
           )}
         </div>
 
-        {service.productLines && service.productLines.length > 0 && (
-          <div className="mt-2 text-xs text-dark-400">
-            <strong className="text-dark-300">Línea:</strong> {service.productLines.join(', ')}
-          </div>
-        )}
       </div>
     </motion.div>
   );
