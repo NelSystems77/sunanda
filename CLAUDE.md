@@ -915,7 +915,7 @@ Detectados con `npx tsc --noEmit` (sesión 2026-05-29). Todos pre-existentes; ni
 
 Causa probable: `AppointmentStatus` es un enum o union con valores capitalizados (`PENDING`, `CONFIRMED`, etc.) pero se compara con strings en minúscula.
 
-- [ ] **`AIAgentService.ts:200`** — `AppointmentStatus` vs `'cancelled'` → usar `AppointmentStatus.CANCELLED`
+- [x] **`AIAgentService.ts:200`** — `AppointmentStatus` vs `'cancelled'` → usar `AppointmentStatus.CANCELLED` (sesión 2026-05-30)
 - [ ] **`CalendarMonthView.tsx:74-76`** — `AppointmentStatus` vs `'pending'`, `'confirmed'`, `'completed'` → usar constantes del enum
 - [ ] **`ReminderPanel.tsx:34`** — comparación con tipo incompatible → mismo patrón
 
@@ -930,7 +930,7 @@ Causa probable: `AppointmentStatus` es un enum o union con valores capitalizados
 Limpieza cosmética — no afectan funcionalidad. Agrupar en una sola sesión de limpieza.
 
 - [ ] **`AppointmentRepository.ts:14,21`** — eliminar imports `Query`, `AppointmentWithDetails`
-- [ ] **`AIAgentService.ts:151-153,238`** — eliminar `clientId`, `serviceId`, `preferredDays`, `cancelledAppointmentId`
+- [x] **`AIAgentService.ts:151-153,238`** — parámetros TODO sin usar → prefijo `_` (convención TS para params intencionalmente no usados) (sesión 2026-05-30)
 - [ ] **`MedicalRecordService.ts:10`** — eliminar import `where`
 - [ ] **`AppointmentForm.tsx:59`** — eliminar `user` de la desestructuración
 - [ ] **`BookingRequestCard.tsx:17`** — eliminar import `User`

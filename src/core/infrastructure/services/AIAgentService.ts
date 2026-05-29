@@ -15,6 +15,7 @@
 
 import { Appointment } from '@/core/domain/interfaces/Appointment';
 import { AppointmentRepository } from '../repositories/AppointmentRepository';
+import { AppointmentStatus } from '@/core/domain/enums';
 
 /**
  * Configuración del Agente IA
@@ -148,9 +149,9 @@ export class AIAgentService {
    * (Análisis simple - en futuro podría usar ML)
    */
   async suggestOptimalSchedule(
-    clientId: string,
-    serviceId: string,
-    preferredDays?: number[]
+    _clientId: string,
+    _serviceId: string,
+    _preferredDays?: number[]
   ): Promise<ScheduleSuggestion[]> {
     if (!this.isEnabled() || !AI_AGENT_CONFIG.smartSchedulingEnabled) {
       return [];
@@ -197,7 +198,7 @@ export class AIAgentService {
     }
 
     const cancelledAppointments = appointments.filter(
-      apt => apt.status === 'cancelled'
+      apt => apt.status === AppointmentStatus.CANCELLED
     );
 
     const cancellationRate = (cancelledAppointments.length / totalAppointments) * 100;
@@ -235,7 +236,7 @@ export class AIAgentService {
    * Sugerir reprogramación automática
    */
   async suggestRescheduling(
-    cancelledAppointmentId: string
+    _cancelledAppointmentId: string
   ): Promise<ScheduleSuggestion[]> {
     if (!this.isEnabled()) {
       return [];
