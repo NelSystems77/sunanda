@@ -166,9 +166,9 @@ export function AppointmentCard({
               <button
                 ref={menuBtnRef}
                 onClick={openMenu}
-                className="p-1 hover:bg-dark-600 rounded-full transition-colors"
+                className="p-1 hover:bg-dark-600 rounded-full transition-colors group"
               >
-                <MoreVertical className="w-4 h-4 text-dark-400" />
+                <MoreVertical className="w-4 h-4 text-dark-300 group-hover:text-white transition-colors" />
               </button>
             )}
           </div>

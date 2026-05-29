@@ -817,6 +817,11 @@ Los valores hex de la paleta custom `dark-*` (definida en `tailwind.config.js`):
 
 Para reforzar visibilidad en dark: usar `border-gold-500/20` como borde por defecto (sutil dorado visible) y `hover:border-gold-500/60` en hover. Evitar `border-dark-700` como único diferenciador visual.
 
+**Gotcha íconos y texto sobre fondos oscuros**: `text-dark-400` (#717171) sobre `bg-dark-800` (#141414) da ~3.9:1 de contraste — insuficiente para íconos pequeños (16px). Regla:
+- Íconos secundarios (acciones, decorativos): mínimo `text-dark-300` (#a4a4a4) → contraste ~6.4:1 ✅
+- `text-dark-400` solo es aceptable sobre `bg-dark-600` o más claro
+- En hover de botones con ícono: usar clase `group` en el botón y `group-hover:text-white` en el ícono
+
 ### Layout móvil del dashboard — gotchas conocidos
 
 #### `PageHeader` — botón de acción siempre en la misma fila
