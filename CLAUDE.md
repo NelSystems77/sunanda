@@ -916,7 +916,7 @@ Detectados con `npx tsc --noEmit` (sesión 2026-05-29). Todos pre-existentes; ni
 Causa probable: `AppointmentStatus` es un enum o union con valores capitalizados (`PENDING`, `CONFIRMED`, etc.) pero se compara con strings en minúscula.
 
 - [x] **`AIAgentService.ts:200`** — `AppointmentStatus` vs `'cancelled'` → usar `AppointmentStatus.CANCELLED` (sesión 2026-05-30)
-- [ ] **`CalendarMonthView.tsx:74-76`** — `AppointmentStatus` vs `'pending'`, `'confirmed'`, `'completed'` → usar constantes del enum
+- [x] **`CalendarMonthView.tsx:74-76`** — `AppointmentStatus` vs `'pending'`, `'confirmed'`, `'completed'` → usar `AppointmentStatus.PENDING/CONFIRMED/COMPLETED` (sesión 2026-05-30)
 - [ ] **`ReminderPanel.tsx:34`** — comparación con tipo incompatible → mismo patrón
 
 ### Prioridad media — exports / módulos rotos
@@ -934,7 +934,7 @@ Limpieza cosmética — no afectan funcionalidad. Agrupar en una sola sesión de
 - [ ] **`MedicalRecordService.ts:10`** — eliminar import `where`
 - [ ] **`AppointmentForm.tsx:59`** — eliminar `user` de la desestructuración
 - [ ] **`BookingRequestCard.tsx:17`** — eliminar import `User`
-- [ ] **`CalendarMonthView.tsx:2`** — eliminar import `Calendar`
+- [x] **`CalendarMonthView.tsx:2`** — eliminar import `Calendar` (sesión 2026-05-30)
 - [x] **`ClientCard.tsx:2`** — eliminar import `User` (sesión 2026-05-30)
 - [ ] **`MedicalRecordModal.tsx:7,31,38-39`** — eliminar imports `MEDICAMENTOS_PIEL`, `ACTIVOS_COSMETICOS`, `TRATAMIENTOS_PREVIOS`, `FOTOTIPOS`, `TIPOS_PIEL` y vars `updateSession`, `setEditingSessionId`, `sessionToDelete`, `setSessionToDelete`
 - [ ] **`RecordsPage.tsx:7-8`** — eliminar imports `FileText`, `motion`

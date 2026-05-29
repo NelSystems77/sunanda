@@ -1,5 +1,6 @@
 import { Appointment } from '@/core/domain/interfaces/Appointment';
-import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
+import { AppointmentStatus } from '@/core/domain/enums';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface CalendarMonthViewProps {
@@ -71,9 +72,9 @@ export function CalendarMonthView({
     const dayAppointments = getAppointmentsForDay(date);
     return {
       total: dayAppointments.length,
-      pending: dayAppointments.filter(a => a.status === 'pending').length,
-      confirmed: dayAppointments.filter(a => a.status === 'confirmed').length,
-      completed: dayAppointments.filter(a => a.status === 'completed').length,
+      pending: dayAppointments.filter(a => a.status === AppointmentStatus.PENDING).length,
+      confirmed: dayAppointments.filter(a => a.status === AppointmentStatus.CONFIRMED).length,
+      completed: dayAppointments.filter(a => a.status === AppointmentStatus.COMPLETED).length,
     };
   };
 
