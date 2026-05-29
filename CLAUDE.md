@@ -596,7 +596,7 @@ Cuando el admin confirma una `bookingRequest`, **aún no se crea automáticament
 
 ### Notificaciones push para nuevas solicitudes
 
-**Pendiente:** No hay Cloud Function que dispare cuando un cliente crea una `bookingRequest`. Los triggers FCM existentes solo cubren `appointments`. Para notificar al staff al recibir una reserva desde la landing, se necesita agregar un trigger `onBookingRequestCreated` en `functions/src/index.ts`.
+**Implementado (sesión 2026-06-01):** `onBookingRequestCreated` — trigger Firestore en `bookingRequests/{requestId}` que envía push inmediato al staff cuando un cliente hace una solicitud desde la landing. Cuerpo: `${clientName} · ${serviceName} · ${fecha} ${hora}`. Si `flexibleTime: true`, muestra "(horario flexible)". Enlaza a `/dashboard/booking-requests`. `requireInteraction: true` igual que las citas nuevas. Desplegada en `us-central1`.
 
 ---
 

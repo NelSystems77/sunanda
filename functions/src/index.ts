@@ -48,7 +48,7 @@ async function sendToAdmins(
         notification: {
           icon: '/icons/icon-192.png',
           badge: '/icons/icon-72.png',
-          requireInteraction: data.type === 'new_appointment',
+          requireInteraction: data.type === 'new_appointment' || data.type === 'new_booking_request',
         },
         fcmOptions: {
           link: data.url || '/dashboard/appointments',
@@ -158,6 +158,43 @@ export const onAppointmentCancelled = functions
         type: 'appointment_cancelled',
         appointmentId: change.after.id,
         url: '/dashboard/appointments',
+      }
+    );
+  });
+
+// ─── Trigger: Nueva solicitud de cita (desde landing) ─────────────────────────
+
+export const onBookingRequestCreated = functions
+  .region('us-central1')
+  .firestore.document('bookingRequests/{requestId}')
+  .onCreate(async (snap) => {
+    const data = snap.data();
+    const clientName: string = data.clientName || 'Cliente';
+    const serviceName: string = data.serviceName || 'Servicio';
+
+    let dateTimeStr = '';
+    if (data.requestedDate) {
+      const date = (data.requestedDate as admin.firestore.Timestamp).toDate();
+      const dateStr = date.toLocaleDateString('es-CR', {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short',
+        timeZone: CR_TIMEZONE,
+      });
+      dateTimeStr = data.flexibleTime
+        ? `${dateStr} (horario flexible)`
+        : `${dateStr} ${data.requestedTime || ''}`.trim();
+    }
+
+    await sendToAdmins(
+      {
+        title: '📋 Nueva solicitud de cita',
+        body: `${clientName} · ${serviceName}${dateTimeStr ? ' · ' + dateTimeStr : ''}`,
+      },
+      {
+        type: 'new_booking_request',
+        requestId: snap.id,
+        url: '/dashboard/booking-requests',
       }
     );
   });
