@@ -11,11 +11,10 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { es, enUS } from 'date-fns/locale';
-import { 
-  Calendar, 
-  Clock, 
-  User, 
-  Mail, 
+import {
+  Calendar,
+  Clock,
+  Mail,
   Phone, 
   CheckCircle2, 
   XCircle,
@@ -25,7 +24,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { BookingRequest, BookingRequestStatus } from '@/core/domain/interfaces/BookingRequest';
-import { BookingRequestRepository } from '@/core/infrastructure/repositories/BookingRequestRepository';
+import { bookingRequestRepository } from '@/core/infrastructure/repositories/BookingRequestRepository';
 import { useAuthStore } from '../../context/AuthStore';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
@@ -51,7 +50,7 @@ export function BookingRequestCard({ request, onUpdate }: BookingRequestCardProp
       case BookingRequestStatus.CONFIRMED:
         return <Badge variant="success">Confirmada</Badge>;
       case BookingRequestStatus.REJECTED:
-        return <Badge variant="error">Rechazada</Badge>;
+        return <Badge variant="danger">Rechazada</Badge>;
       case BookingRequestStatus.CANCELLED:
         return <Badge variant="default">Cancelada</Badge>;
       default:
@@ -69,9 +68,9 @@ export function BookingRequestCard({ request, onUpdate }: BookingRequestCardProp
       // TODO: En producción, aquí se debe crear la cita (Appointment)
       // y vincularla con appointmentId
 
-      await BookingRequestRepository.updateStatus(request.id, {
+      await bookingRequestRepository.updateStatus(request.id, {
         status: BookingRequestStatus.CONFIRMED,
-        processedBy: user.uid,
+        processedBy: user.id,
       });
 
       toast.success('Solicitud confirmada. Recuerda contactar al cliente.');
@@ -94,9 +93,9 @@ export function BookingRequestCard({ request, onUpdate }: BookingRequestCardProp
     try {
       setLoading(true);
 
-      await BookingRequestRepository.updateStatus(request.id, {
+      await bookingRequestRepository.updateStatus(request.id, {
         status: BookingRequestStatus.REJECTED,
-        processedBy: user.uid,
+        processedBy: user.id,
         rejectionReason: rejectionReason,
       });
 

@@ -891,3 +891,56 @@ Siempre llama `generateMedicalRecordPDF(record)`:
 ### Navegación por pasos
 
 4 pasos: **Anamnesis** → **Consentimiento** → **Atención** → **Historial**. Los botones "Continuar a X" avanzan automáticamente al guardar. El usuario puede saltar libremente entre pasos en cualquier momento.
+
+---
+
+## Errores TypeScript pre-existentes — Backlog de corrección
+
+Detectados con `npx tsc --noEmit` (sesión 2026-05-29). Todos pre-existentes; ninguno introducido por cambios recientes. Marcar con `[x]` al corregir.
+
+### Prioridad alta — errores funcionales reales
+
+- [x] **`BookingRequestCard.tsx:72,97`** — `BookingRequestRepository.updateStatus` no existe en el tipo → usar instancia singleton `bookingRequestRepository` (sesión 2026-05-29)
+- [x] **`BookingRequestCard.tsx:74,99`** — `User.uid` no existe en el tipo de dominio → cambiado a `user.id` (sesión 2026-05-29)
+- [x] **`BookingRequestCard.tsx:54`** — variante `"error"` no existe en Badge → cambiado a `"danger"` (sesión 2026-05-29)
+- [ ] **`PaymentsPage.tsx:187,203`** — prop `tabs` no existe en `TabsProps` → revisar interfaz actual del componente `Tabs`
+- [ ] **`PaymentsPage.tsx:92`** — variante `"error"` no existe en Badge → usar `"danger"`
+- [ ] **`ServicesPage.tsx:111`** — `Service.productLines` no existe en el tipo de dominio → eliminar referencia o agregar campo al tipo
+- [ ] **`ServicesPage.tsx:113`** — tipo de descuento `"fixed"` no asignable a `"percentage" | "2x1"` → alinear con el tipo real o extender el union
+- [ ] **`ClientCard.tsx:98`** — `client.allergies.length` posiblemente `undefined` → agregar optional chaining `client.allergies?.length`
+- [ ] **`DashboardPage.tsx:154`** — formatter de recharts recibe `ValueType | undefined` pero tipado como `number` → manejar `undefined` en el formatter
+- [ ] **`ClientsPage.tsx:42`** — tipo de parámetro incompatible en `useDebounce` → tipar correctamente el callback o el hook
+
+### Prioridad media — comparaciones de tipo sin overlap (`TS2367`)
+
+Causa probable: `AppointmentStatus` es un enum o union con valores capitalizados (`PENDING`, `CONFIRMED`, etc.) pero se compara con strings en minúscula.
+
+- [ ] **`AIAgentService.ts:200`** — `AppointmentStatus` vs `'cancelled'` → usar `AppointmentStatus.CANCELLED`
+- [ ] **`CalendarMonthView.tsx:74-76`** — `AppointmentStatus` vs `'pending'`, `'confirmed'`, `'completed'` → usar constantes del enum
+- [ ] **`ReminderPanel.tsx:34`** — comparación con tipo incompatible → mismo patrón
+
+### Prioridad media — exports / módulos rotos
+
+- [ ] **`features/index.ts:2`** — `ServiceCardProps` no existe como export de `ServiceCard` → eliminar re-export o corregir nombre
+- [ ] **`main.tsx:1-2`** — `allowSyntheticDefaultImports` requerido para React/ReactDOM → verificar `tsconfig.json` (probablemente ya está en Vite pero no en `tsc` standalone)
+- [ ] **`i18n.config.ts:16-27`** — mismo problema de `allowSyntheticDefaultImports` para los 10 archivos de locales → mismo fix de tsconfig
+
+### Prioridad baja — imports/variables no usadas (`TS6133`)
+
+Limpieza cosmética — no afectan funcionalidad. Agrupar en una sola sesión de limpieza.
+
+- [ ] **`AppointmentRepository.ts:14,21`** — eliminar imports `Query`, `AppointmentWithDetails`
+- [ ] **`AIAgentService.ts:151-153,238`** — eliminar `clientId`, `serviceId`, `preferredDays`, `cancelledAppointmentId`
+- [ ] **`MedicalRecordService.ts:10`** — eliminar import `where`
+- [ ] **`AppointmentForm.tsx:59`** — eliminar `user` de la desestructuración
+- [ ] **`BookingRequestCard.tsx:17`** — eliminar import `User`
+- [ ] **`CalendarMonthView.tsx:2`** — eliminar import `Calendar`
+- [ ] **`ClientCard.tsx:2`** — eliminar import `User`
+- [ ] **`MedicalRecordModal.tsx:7,31,38-39`** — eliminar imports `MEDICAMENTOS_PIEL`, `ACTIVOS_COSMETICOS`, `TRATAMIENTOS_PREVIOS`, `FOTOTIPOS`, `TIPOS_PIEL` y vars `updateSession`, `setEditingSessionId`, `sessionToDelete`, `setSessionToDelete`
+- [ ] **`RecordsPage.tsx:7-8`** — eliminar imports `FileText`, `motion`
+- [ ] **`ClientDetailPage.tsx:39`** — eliminar `hasPermission`
+- [ ] **`ClientsPage.tsx:21,28`** — eliminar `hasPermission`, `deleteClient`
+- [ ] **`PaymentsPage.tsx:30`** — eliminar `payments`
+- [ ] **`UsersPage.tsx:8`** — eliminar `getManageableRoles`
+- [ ] **`service-worker.ts:19-20`** — eliminar `OFFLINE_PAGE`, `OFFLINE_IMAGE`
+- [ ] **`pdfGenerator.ts:2`** — eliminar import `autoTable`
