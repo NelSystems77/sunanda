@@ -903,8 +903,8 @@ Detectados con `npx tsc --noEmit` (sesión 2026-05-29). Todos pre-existentes; ni
 - [x] **`BookingRequestCard.tsx:72,97`** — `BookingRequestRepository.updateStatus` no existe en el tipo → usar instancia singleton `bookingRequestRepository` (sesión 2026-05-29)
 - [x] **`BookingRequestCard.tsx:74,99`** — `User.uid` no existe en el tipo de dominio → cambiado a `user.id` (sesión 2026-05-29)
 - [x] **`BookingRequestCard.tsx:54`** — variante `"error"` no existe en Badge → cambiado a `"danger"` (sesión 2026-05-29)
-- [ ] **`PaymentsPage.tsx:187,203`** — prop `tabs` no existe en `TabsProps` → revisar interfaz actual del componente `Tabs`
-- [ ] **`PaymentsPage.tsx:92`** — variante `"error"` no existe en Badge → usar `"danger"`
+- [x] **`PaymentsPage.tsx:187,203`** — prop `tabs` no existe en `TabsProps` → refactorizado a API compuesta `Tabs + TabsList + TabsTrigger` (sesión 2026-05-30)
+- [x] **`PaymentsPage.tsx:92`** — variante `"error"` no existe en Badge → cambiado a `"danger"` (sesión 2026-05-30)
 - [ ] **`ServicesPage.tsx:111`** — `Service.productLines` no existe en el tipo de dominio → eliminar referencia o agregar campo al tipo
 - [ ] **`ServicesPage.tsx:113`** — tipo de descuento `"fixed"` no asignable a `"percentage" | "2x1"` → alinear con el tipo real o extender el union
 - [ ] **`ClientCard.tsx:98`** — `client.allergies.length` posiblemente `undefined` → agregar optional chaining `client.allergies?.length`
@@ -940,7 +940,7 @@ Limpieza cosmética — no afectan funcionalidad. Agrupar en una sola sesión de
 - [ ] **`RecordsPage.tsx:7-8`** — eliminar imports `FileText`, `motion`
 - [ ] **`ClientDetailPage.tsx:39`** — eliminar `hasPermission`
 - [ ] **`ClientsPage.tsx:21,28`** — eliminar `hasPermission`, `deleteClient`
-- [ ] **`PaymentsPage.tsx:30`** — eliminar `payments`
+- [x] **`PaymentsPage.tsx:30`** — eliminar `payments` (sesión 2026-05-30)
 - [ ] **`UsersPage.tsx:8`** — eliminar `getManageableRoles`
 - [ ] **`service-worker.ts:19-20`** — eliminar `OFFLINE_PAGE`, `OFFLINE_IMAGE`
 - [ ] **`pdfGenerator.ts:2`** — eliminar import `autoTable`

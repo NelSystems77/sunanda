@@ -17,7 +17,7 @@ import { usePaymentStore } from '../context/PaymentStore';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { PageHeader } from '../components/layout/PageHeader';
 import { Input } from '../components/ui/Input';
-import { Tabs } from '../components/ui/Tabs';
+import { Tabs, TabsList, TabsTrigger } from '../components/ui/Tabs';
 import { Badge } from '../components/ui/Badge';
 import { Spinner } from '../components/ui/Spinner';
 import { EmptyState } from '../components/layout/EmptyState';
@@ -27,7 +27,6 @@ import { es } from 'date-fns/locale';
 
 export function PaymentsPage() {
   const {
-    payments,
     setPayments,
     loading,
     setLoading,
@@ -89,7 +88,7 @@ export function PaymentsPage() {
       case PaymentStatus.COMPLETED:
         return <Badge variant="success">Completado</Badge>;
       case PaymentStatus.FAILED:
-        return <Badge variant="error">Fallido</Badge>;
+        return <Badge variant="danger">Fallido</Badge>;
       case PaymentStatus.REFUNDED:
         return <Badge variant="default">Reembolsado</Badge>;
       default:
@@ -183,14 +182,15 @@ export function PaymentsPage() {
             <Filter className="h-5 w-5 text-dark-400" />
             <span className="text-sm text-dark-400 font-medium">Estado</span>
           </div>
-          <Tabs
-            tabs={statusTabs.map(tab => ({
-              id: tab.id,
-              label: `${tab.label}${tab.count !== undefined ? ` (${tab.count})` : ''}`,
-            }))}
-            activeTab={statusFilter}
-            onChange={(id) => setStatusFilter(id as typeof statusFilter)}
-          />
+          <Tabs defaultValue={statusFilter} onChange={(id) => setStatusFilter(id as typeof statusFilter)}>
+            <TabsList>
+              {statusTabs.map(tab => (
+                <TabsTrigger key={tab.id} value={tab.id}>
+                  {tab.label}{tab.count !== undefined ? ` (${tab.count})` : ''}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
         </div>
 
         {/* Filtro por método */}
@@ -199,11 +199,15 @@ export function PaymentsPage() {
             <Filter className="h-5 w-5 text-dark-400" />
             <span className="text-sm text-dark-400 font-medium">Método</span>
           </div>
-          <Tabs
-            tabs={methodTabs}
-            activeTab={methodFilter}
-            onChange={(id) => setMethodFilter(id as typeof methodFilter)}
-          />
+          <Tabs defaultValue={methodFilter} onChange={(id) => setMethodFilter(id as typeof methodFilter)}>
+            <TabsList>
+              {methodTabs.map(tab => (
+                <TabsTrigger key={tab.id} value={tab.id}>
+                  {tab.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
         </div>
       </div>
 
