@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Appointment } from '@/core/domain/interfaces/Appointment';
+import { AppointmentStatus } from '@/core/domain/enums';
 import { Bell, Mail, MessageSquare, Send, Check } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { motion } from 'framer-motion';
@@ -31,7 +32,7 @@ export function ReminderPanel({
     return (
       !apt.reminderSent &&
       aptDate > now &&
-      (apt.status === 'pending' || apt.status === 'confirmed')
+      (apt.status === AppointmentStatus.PENDING || apt.status === AppointmentStatus.CONFIRMED)
     );
   });
 
