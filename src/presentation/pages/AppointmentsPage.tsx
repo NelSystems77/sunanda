@@ -18,6 +18,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AppointmentUseCases } from '../../core/application/use-cases/appointments/AppointmentUseCases';
 import { AppointmentRepository } from '../../core/infrastructure/repositories/AppointmentRepository';
 import { Appointment } from '../../core/domain/interfaces/Appointment';
+import { AppointmentStatus } from '../../core/domain/enums';
 import toast from 'react-hot-toast';
 
 const useCases = new AppointmentUseCases();
@@ -99,17 +100,23 @@ export function AppointmentsPage() {
   const [showReminderSettings, setShowReminderSettings] = useState(false);
   const [paymentAppointmentId, setPaymentAppointmentId] = useState<string | null>(null);
 
-  // Recordatorios próximos (próximos 7 días sin recordatorio enviado)
+  // Recordatorios — citas confirmadas próximos 30 días
   const [upcomingReminders, setUpcomingReminders] = useState<Appointment[]>([]);
   const [sendingReminderId, setSendingReminderId] = useState<string | null>(null);
+  const [reminderModalFilter, setReminderModalFilter] = useState<'pending' | 'all'>('pending');
 
   const loadUpcomingReminders = useCallback(async () => {
     const now = new Date();
-    const in7days = new Date(now);
-    in7days.setDate(in7days.getDate() + 7);
-    const all = await appointmentRepo.getByDateRange(now, in7days);
+    const in30days = new Date(now);
+    in30days.setDate(in30days.getDate() + 30);
+    const all = await appointmentRepo.getByDateRange(now, in30days);
     setUpcomingReminders(
-      all.filter(a => !a.reminderSent && (a.status === 'pending' || a.status === 'confirmed'))
+      all
+        .filter(a => a.status === AppointmentStatus.CONFIRMED)
+        .sort((a, b) => {
+          const dateCompare = new Date(a.date).getTime() - new Date(b.date).getTime();
+          return dateCompare !== 0 ? dateCompare : a.startTime.localeCompare(b.startTime);
+        })
     );
   }, []);
 
@@ -239,9 +246,9 @@ export function AppointmentsPage() {
 
     return {
       total: dayAppointments.length,
-      pending: dayAppointments.filter(a => a.status === 'pending').length,
-      confirmed: dayAppointments.filter(a => a.status === 'confirmed').length,
-      completed: dayAppointments.filter(a => a.status === 'completed').length,
+      pending: dayAppointments.filter(a => a.status === AppointmentStatus.PENDING).length,
+      confirmed: dayAppointments.filter(a => a.status === AppointmentStatus.CONFIRMED).length,
+      completed: dayAppointments.filter(a => a.status === AppointmentStatus.COMPLETED).length,
     };
   };
 
@@ -271,7 +278,12 @@ export function AppointmentsPage() {
     if (filterStatus === 'all') {
       return dayAppointments;
     }
-    return dayAppointments.filter(a => a.status === filterStatus);
+    const statusMap: Record<string, AppointmentStatus> = {
+      pending: AppointmentStatus.PENDING,
+      confirmed: AppointmentStatus.CONFIRMED,
+      completed: AppointmentStatus.COMPLETED,
+    };
+    return dayAppointments.filter(a => a.status === (statusMap[filterStatus] ?? filterStatus));
   };
 
 
@@ -320,9 +332,9 @@ export function AppointmentsPage() {
               >
                 <Bell className="w-4 h-4 mr-2" />
                 Recordatorios
-                {upcomingReminders.length > 0 && (
+                {upcomingReminders.filter(a => !a.reminderSent).length > 0 && (
                   <span className="absolute -top-1 -right-1 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-600 rounded-full">
-                    {upcomingReminders.length}
+                    {upcomingReminders.filter(a => !a.reminderSent).length}
                   </span>
                 )}
               </Button>
@@ -541,133 +553,205 @@ export function AppointmentsPage() {
 
       {/* Modal Recordatorios */}
       <AnimatePresence>
-        {showReminders && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-            onClick={() => setShowReminders(false)}
-          >
+        {showReminders && (() => {
+          const pendingCount = upcomingReminders.filter(a => !a.reminderSent).length;
+          const displayList = reminderModalFilter === 'pending'
+            ? upcomingReminders.filter(a => !a.reminderSent)
+            : upcomingReminders;
+          return (
             <motion.div
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-dark-800 border border-dark-700 rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+              onClick={() => setShowReminders(false)}
             >
-              {/* Header */}
-              <div className="p-6 border-b border-dark-700 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gold-500/20 rounded-full flex items-center justify-center">
-                    <Bell className="w-5 h-5 text-gold-400" />
+              <motion.div
+                initial={{ scale: 0.9, y: 20 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.9, y: 20 }}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-dark-800 border border-dark-700 rounded-lg shadow-xl max-w-2xl w-full max-h-[85vh] overflow-hidden flex flex-col"
+              >
+                {/* Header */}
+                <div className="p-6 border-b border-dark-700 flex items-center justify-between flex-shrink-0">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-gold-500/20 rounded-full flex items-center justify-center">
+                      <Bell className="w-5 h-5 text-gold-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-white">Recordatorios de Citas</h3>
+                      <p className="text-sm text-dark-400 mt-0.5">
+                        {upcomingReminders.length === 0
+                          ? 'No hay citas confirmadas en los próximos 30 días'
+                          : `${pendingCount} pendiente${pendingCount !== 1 ? 's' : ''} · ${upcomingReminders.length} confirmada${upcomingReminders.length !== 1 ? 's' : ''} en 30 días`}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-white">Recordatorios Pendientes</h3>
-                    <p className="text-sm text-dark-400 mt-0.5">
-                      {upcomingReminders.length === 0
-                        ? 'Todas las citas tienen recordatorio enviado'
-                        : `${upcomingReminders.length} cita${upcomingReminders.length !== 1 ? 's' : ''} sin recordatorio — próximos 7 días`}
-                    </p>
-                  </div>
+                  <button
+                    onClick={() => setShowReminders(false)}
+                    className="p-2 hover:bg-dark-700 rounded-lg transition-colors"
+                  >
+                    <X className="w-5 h-5 text-dark-400" />
+                  </button>
                 </div>
-                <button
-                  onClick={() => setShowReminders(false)}
-                  className="p-2 hover:bg-dark-700 rounded-lg transition-colors"
-                >
-                  <X className="w-5 h-5 text-dark-400" />
-                </button>
-              </div>
 
-              {/* Lista Recordatorios */}
-              <div className="p-6 overflow-y-auto max-h-[60vh]">
-                {upcomingReminders.length === 0 ? (
-                  <div className="text-center py-12">
-                    <Bell className="w-16 h-16 text-dark-600 mx-auto mb-4" />
-                    <p className="text-dark-400">No hay recordatorios pendientes</p>
-                    <p className="text-xs text-dark-500 mt-2">
-                      Todas las citas de los próximos 7 días tienen recordatorio enviado
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {upcomingReminders.map((appointment) => {
-                      const { name, phone } = parseClientFromNotes(appointment.notes);
-                      const isSending = sendingReminderId === appointment.id;
-                      return (
-                        <div
-                          key={appointment.id}
-                          className="bg-dark-900 border border-dark-700 rounded-lg p-4 hover:border-gold-500/30 transition-colors"
-                        >
-                          <div className="flex items-start justify-between gap-4">
-                            {/* Info Cita */}
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-3 mb-2">
-                                <Clock className="w-4 h-4 text-gold-400 flex-shrink-0" />
-                                <span className="font-semibold text-white">
-                                  {new Date(appointment.date).toLocaleDateString('es-ES', {
-                                    weekday: 'short',
-                                    day: 'numeric',
-                                    month: 'short'
-                                  })} · {appointment.startTime}
-                                </span>
-                                <span className={`px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0 ${
-                                  appointment.status === 'confirmed'
-                                    ? 'bg-green-500/20 text-green-300'
-                                    : 'bg-gold-500/20 text-gold-300'
-                                }`}>
-                                  {appointment.status === 'confirmed' ? 'Confirmada' : 'Pendiente'}
-                                </span>
-                              </div>
-                              <div className="text-sm text-dark-300 space-y-1 ml-7">
-                                <div className="flex items-center gap-2">
-                                  <User className="w-3 h-3 flex-shrink-0" />
-                                  <span className="font-medium text-white truncate">{name}</span>
-                                </div>
-                                {phone && (
-                                  <div className="flex items-center gap-2 text-dark-400">
-                                    <Phone className="w-3 h-3 flex-shrink-0" />
-                                    <span>{phone}</span>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-
-                            {/* Botón WhatsApp */}
-                            <Button
-                              variant="primary"
-                              size="sm"
-                              onClick={() => handleSendWhatsAppReminder(appointment)}
-                              disabled={isSending || !phone}
-                              className="flex-shrink-0 bg-green-600 hover:bg-green-700 border-green-600"
-                              title={!phone ? 'Sin teléfono en notas' : 'Enviar recordatorio por WhatsApp'}
-                            >
-                              {isSending ? (
-                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                              ) : (
-                                <MessageCircle className="w-4 h-4 mr-1" />
-                              )}
-                              {isSending ? '' : 'WhatsApp'}
-                            </Button>
-                          </div>
-                        </div>
-                      );
-                    })}
+                {/* Filter toggle */}
+                {upcomingReminders.length > 0 && (
+                  <div className="px-6 pt-4 pb-2 flex-shrink-0">
+                    <div className="flex items-center bg-dark-900 rounded-lg p-1 w-fit">
+                      <button
+                        onClick={() => setReminderModalFilter('pending')}
+                        className={`px-4 py-1.5 text-sm font-medium rounded transition-colors ${
+                          reminderModalFilter === 'pending'
+                            ? 'bg-gold-500 text-dark-900'
+                            : 'text-dark-300 hover:text-white'
+                        }`}
+                      >
+                        Sin recordatorio
+                        {pendingCount > 0 && (
+                          <span className={`ml-1.5 px-1.5 py-0.5 rounded-full text-xs ${
+                            reminderModalFilter === 'pending'
+                              ? 'bg-dark-900/40 text-dark-900'
+                              : 'bg-red-500/20 text-red-400'
+                          }`}>
+                            {pendingCount}
+                          </span>
+                        )}
+                      </button>
+                      <button
+                        onClick={() => setReminderModalFilter('all')}
+                        className={`px-4 py-1.5 text-sm font-medium rounded transition-colors ${
+                          reminderModalFilter === 'all'
+                            ? 'bg-gold-500 text-dark-900'
+                            : 'text-dark-300 hover:text-white'
+                        }`}
+                      >
+                        Todas las confirmadas
+                        <span className={`ml-1.5 px-1.5 py-0.5 rounded-full text-xs ${
+                          reminderModalFilter === 'all'
+                            ? 'bg-dark-900/40 text-dark-900'
+                            : 'bg-dark-600 text-dark-300'
+                        }`}>
+                          {upcomingReminders.length}
+                        </span>
+                      </button>
+                    </div>
                   </div>
                 )}
-              </div>
 
-              {/* Footer con envío masivo */}
-              {upcomingReminders.length > 1 && (
-                <div className="p-4 border-t border-dark-700 bg-dark-900/50">
+                {/* Lista Recordatorios */}
+                <div className="p-6 overflow-y-auto flex-1">
+                  {displayList.length === 0 ? (
+                    <div className="text-center py-12">
+                      <CheckCircle className="w-16 h-16 text-green-500/40 mx-auto mb-4" />
+                      <p className="text-dark-300 font-medium">
+                        {reminderModalFilter === 'pending'
+                          ? '¡Todo al día!'
+                          : 'No hay citas confirmadas'}
+                      </p>
+                      <p className="text-xs text-dark-500 mt-2">
+                        {reminderModalFilter === 'pending'
+                          ? 'Todas las citas confirmadas ya tienen recordatorio enviado'
+                          : 'No hay citas confirmadas en los próximos 30 días'}
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {displayList.map((appointment) => {
+                        const { name, phone } = parseClientFromNotes(appointment.notes);
+                        const isSending = sendingReminderId === appointment.id;
+                        const sentDate = appointment.reminderSentAt
+                          ? new Date(appointment.reminderSentAt).toLocaleDateString('es-ES', {
+                              day: 'numeric', month: 'short'
+                            })
+                          : null;
+                        return (
+                          <div
+                            key={appointment.id}
+                            className={`bg-dark-900 border rounded-lg p-4 transition-colors ${
+                              appointment.reminderSent
+                                ? 'border-green-500/20 hover:border-green-500/40'
+                                : 'border-dark-700 hover:border-gold-500/30'
+                            }`}
+                          >
+                            <div className="flex items-start justify-between gap-4">
+                              {/* Info Cita */}
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 flex-wrap mb-2">
+                                  <Clock className="w-4 h-4 text-gold-400 flex-shrink-0" />
+                                  <span className="font-semibold text-white">
+                                    {new Date(appointment.date).toLocaleDateString('es-ES', {
+                                      weekday: 'short',
+                                      day: 'numeric',
+                                      month: 'short'
+                                    })} · {appointment.startTime}
+                                  </span>
+                                  {appointment.reminderSent ? (
+                                    <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-green-500/15 text-green-400 flex items-center gap-1 flex-shrink-0">
+                                      <CheckCircle className="w-3 h-3" />
+                                      Enviado{sentDate ? ` · ${sentDate}` : ''}
+                                    </span>
+                                  ) : (
+                                    <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-gold-500/15 text-gold-400 flex-shrink-0">
+                                      Pendiente
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="text-sm text-dark-300 space-y-1 ml-6">
+                                  <div className="flex items-center gap-2">
+                                    <User className="w-3 h-3 flex-shrink-0" />
+                                    <span className="font-medium text-white truncate">{name}</span>
+                                  </div>
+                                  {phone && (
+                                    <div className="flex items-center gap-2 text-dark-400">
+                                      <Phone className="w-3 h-3 flex-shrink-0" />
+                                      <span>{phone}</span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* Botón WhatsApp */}
+                              <Button
+                                variant="primary"
+                                size="sm"
+                                onClick={() => handleSendWhatsAppReminder(appointment)}
+                                disabled={isSending || !phone}
+                                className={`flex-shrink-0 ${
+                                  appointment.reminderSent
+                                    ? 'bg-green-700 hover:bg-green-600 border-green-700'
+                                    : 'bg-green-600 hover:bg-green-700 border-green-600'
+                                }`}
+                                title={!phone ? 'Sin teléfono en notas' : appointment.reminderSent ? 'Re-enviar recordatorio' : 'Enviar recordatorio por WhatsApp'}
+                              >
+                                {isSending ? (
+                                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                ) : (
+                                  <MessageCircle className="w-4 h-4 mr-1" />
+                                )}
+                                {isSending ? '' : appointment.reminderSent ? 'Re-enviar' : 'WhatsApp'}
+                              </Button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                {/* Footer */}
+                <div className="p-4 border-t border-dark-700 bg-dark-900/50 flex-shrink-0">
                   <p className="text-xs text-dark-400 text-center">
-                    Los recordatorios por WhatsApp se abren uno a uno para que puedas personalizarlos antes de enviar.
+                    {reminderModalFilter === 'all' && upcomingReminders.length > 0
+                      ? 'Podés re-enviar recordatorios a cualquier cita confirmada en cualquier momento.'
+                      : 'Los recordatorios abren WhatsApp con el mensaje pre-llenado para que puedas personalizarlo.'}
                   </p>
                 </div>
-              )}
+              </motion.div>
             </motion.div>
-          </motion.div>
-        )}
+          );
+        })()}
       </AnimatePresence>
 
       {/* Appointment Form Modal */}
@@ -774,12 +858,12 @@ export function AppointmentsPage() {
                               </span>
                               <span className={`
                                 px-2 py-0.5 rounded-full text-xs font-medium
-                                ${appointment.status === 'pending' ? 'bg-gold-500/20 text-gold-300' :
-                                  appointment.status === 'confirmed' ? 'bg-green-500/20 text-green-300' :
+                                ${appointment.status === AppointmentStatus.PENDING ? 'bg-gold-500/20 text-gold-300' :
+                                  appointment.status === AppointmentStatus.CONFIRMED ? 'bg-green-500/20 text-green-300' :
                                   'bg-purple-500/20 text-purple-300'}
                               `}>
-                                {appointment.status === 'pending' ? 'Pendiente' :
-                                 appointment.status === 'confirmed' ? 'Confirmada' :
+                                {appointment.status === AppointmentStatus.PENDING ? 'Pendiente' :
+                                 appointment.status === AppointmentStatus.CONFIRMED ? 'Confirmada' :
                                  'Completada'}
                               </span>
                             </div>
@@ -798,7 +882,7 @@ export function AppointmentsPage() {
 
                           {/* Acciones */}
                           <div className="flex flex-col gap-2">
-                            {appointment.status === 'pending' && (
+                            {appointment.status === AppointmentStatus.PENDING && (
                               <>
                                 <Button
                                   variant="primary"
@@ -822,7 +906,7 @@ export function AppointmentsPage() {
                                 </Button>
                               </>
                             )}
-                            {appointment.status === 'confirmed' && (
+                            {appointment.status === AppointmentStatus.CONFIRMED && (
                               <Button
                                 variant="primary"
                                 size="sm"
@@ -834,7 +918,7 @@ export function AppointmentsPage() {
                                 Iniciar Atención
                               </Button>
                             )}
-                            {appointment.status === 'completed' && (
+                            {appointment.status === AppointmentStatus.COMPLETED && (
                               <Button
                                 variant="primary"
                                 size="sm"
@@ -845,7 +929,7 @@ export function AppointmentsPage() {
                                 Cobrar
                               </Button>
                             )}
-                            {(appointment.status === 'pending' || appointment.status === 'confirmed') && (
+                            {(appointment.status === AppointmentStatus.PENDING || appointment.status === AppointmentStatus.CONFIRMED) && (
                               <Button
                                 variant="outline"
                                 size="sm"
