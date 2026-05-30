@@ -58,6 +58,19 @@ export function BookingRequestCard({ request, onUpdate }: BookingRequestCardProp
     }
   };
 
+  const openConfirmationWhatsApp = () => {
+    const clean = request.clientPhone.replace(/\D/g, '');
+    const full = clean.startsWith('506') ? clean : `506${clean}`;
+    const dateStr = format(request.requestedDate, "EEEE d 'de' MMMM 'de' yyyy", { locale: es });
+    const message =
+      `Estimado/a ${request.clientName},\n\n` +
+      `Reciba un cordial saludo de parte del equipo de SUNANDA. Nos complace confirmar su asistencia para su próxima cita:\n` +
+      `📅 Fecha: ${dateStr.charAt(0).toUpperCase() + dateStr.slice(1)}\n` +
+      `⏰ Hora: ${request.requestedTime}\n\n` +
+      `Agradecemos su preferencia y le esperamos puntualmente. ¡Feliz día!`;
+    window.open(`https://wa.me/${full}?text=${encodeURIComponent(message)}`, '_blank');
+  };
+
   // Confirmar solicitud
   const handleConfirm = async () => {
     if (!user) return;
@@ -73,8 +86,9 @@ export function BookingRequestCard({ request, onUpdate }: BookingRequestCardProp
         processedBy: user.id,
       });
 
-      toast.success('Solicitud confirmada. Recuerda contactar al cliente.');
+      toast.success('Solicitud confirmada. Enviando mensaje al cliente…');
       onUpdate();
+      openConfirmationWhatsApp();
     } catch (error) {
       console.error('Error confirming request:', error);
       toast.error('Error al confirmar la solicitud');
