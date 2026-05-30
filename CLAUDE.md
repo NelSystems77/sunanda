@@ -588,7 +588,25 @@ Dashboard /dashboard/booking-requests (admin/staff)
 | `bookingRequests` | Solicitudes públicas — clientes desde la landing | `BookingRequestForm` |
 | `appointments` | Citas confirmadas — agenda del spa | Admin desde el dashboard |
 
-Cuando el admin confirma una `bookingRequest`, **aún no se crea automáticamente un `Appointment`** — hay un TODO en `BookingRequestCard.tsx`. El flujo manual actual: admin ve la solicitud → contacta al cliente por WhatsApp → crea la cita manualmente en `/dashboard/appointments`.
+Cuando el admin confirma una `bookingRequest`, **aún no se crea automáticamente un `Appointment`** — hay un TODO en `BookingRequestCard.tsx`. El flujo manual actual: admin ve la solicitud → confirma → WhatsApp se abre con mensaje prellenado → crea la cita manualmente en `/dashboard/appointments`.
+
+### Mensaje de confirmación automático por WhatsApp (sesión 2026-06-04)
+
+Al hacer clic en **Confirmar** en `BookingRequestCard.tsx`, tras actualizar el estado en Firestore se abre automáticamente WhatsApp Web con este mensaje prellenado:
+
+```
+Estimado/a [clientName],
+
+Reciba un cordial saludo de parte del equipo de SUNANDA. Nos complace confirmar su asistencia para su próxima cita:
+📅 Fecha: [día de semana d de mes de año]
+⏰ Hora: [requestedTime]
+
+Agradecemos su preferencia y le esperamos puntualmente. ¡Feliz día!
+```
+
+- La fecha se formatea en español con `date-fns` (`EEEE d 'de' MMMM 'de' yyyy`, locale `es`), primera letra en mayúscula.
+- El teléfono se limpia de caracteres no numéricos y se antepone `506` si no lo tiene.
+- El admin solo debe presionar Enviar en WhatsApp Web — el mensaje ya está escrito.
 
 ### Bug corregido (sesión 2026-05-31) — página inaccesible
 
