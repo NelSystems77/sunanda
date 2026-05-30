@@ -234,12 +234,16 @@ VITE_FIREBASE_VAPID_KEY=<VAPID key desde Firebase Console > Cloud Messaging > We
 | `src/core/infrastructure/repositories/AppointmentRepository.ts` | `markReminderSent(id)` — actualiza `reminderSent: true` en Firestore |
 | `src/core/application/use-cases/appointments/AppointmentUseCases.ts` | `markReminderSent(id)` — proxy al repositorio |
 
-### Flujo de recordatorio manual WhatsApp
+### Flujo de recordatorio manual WhatsApp (actualizado sesión 2026-06-01)
 
-1. Al cargar `AppointmentsPage`, se consultan citas de los **próximos 7 días** con `reminderSent: false` y estado `pending` o `confirmed`
-2. El badge del botón "Recordatorios" muestra el conteo real
-3. Al hacer clic en "WhatsApp" en el modal, se abre `wa.me/506XXXXXXXX` con mensaje personalizado
-4. Luego se llama `markReminderSent()` — la cita desaparece de la lista
+1. Al cargar `AppointmentsPage`, se consultan **todas las citas CONFIRMED de los próximos 30 días** (sin filtrar por `reminderSent`)
+2. El badge rojo del botón "Recordatorios" muestra solo el conteo de citas **sin** recordatorio enviado
+3. El modal tiene un **toggle de filtro**: "Sin recordatorio (X)" / "Todas las confirmadas (Y)"
+   - Por defecto muestra solo las pendientes de recordatorio
+   - "Todas las confirmadas" permite re-enviar a cualquier cita
+4. Citas que ya tuvieron recordatorio muestran un badge verde "Enviado · día mes" y botón "Re-enviar"
+5. Al hacer clic en WhatsApp, se abre `wa.me/506XXXXXXXX` con mensaje personalizado
+6. Se llama `markReminderSent()` — la cita **permanece en la lista** con badge "Enviado" actualizado
 
 ### Parseo de datos del cliente desde `appointment.notes`
 
@@ -967,7 +971,7 @@ Detectados con `npx tsc --noEmit` (sesión 2026-05-29). Todos pre-existentes; ni
 - [x] **`ClientCard.tsx:98`** — `client.allergies.length` posiblemente `undefined` → `(client.allergies?.length ?? 0) > 0` (sesión 2026-05-30)
 - [x] **`DashboardPage.tsx:154`** — formatter de recharts recibe `ValueType | undefined` pero tipado como `number` → `Number(v)` en lugar de anotación explícita `v: number` (sesión 2026-05-30)
 - [x] **`ClientsPage.tsx:42`** — constraint `(...args: unknown[]) => unknown` en `debounce` no acepta funciones con parámetros tipados → cambiado a `any[]` en `shared/utils/index.ts` (sesión 2026-05-30)
-- [ ] **`AppointmentsPage.tsx:112,242-244,274,615,619,777-782,801,825,837,848`** — 13 comparaciones `AppointmentStatus` vs strings minúscula (`'pending'`, `'confirmed'`, `'completed'`) → mismo patrón que los ya corregidos: usar `AppointmentStatus.PENDING/CONFIRMED/COMPLETED`
+- [x] **`AppointmentsPage.tsx:112,242-244,274,615,619,777-782,801,825,837,848`** — 13 comparaciones `AppointmentStatus` vs strings minúscula → corregidas al refactorizar panel de recordatorios (sesión 2026-06-01)
 - [x] **`BookingRequestsPage.tsx:136`** — prop `tabs` no existe en `TabsProps` → refactorizado a API compuesta `Tabs + TabsList + TabsTrigger` (sesión 2026-05-31)
 - [x] **`BookingRequestsPage.tsx:83`** — prop `subtitle` e `icon` no existen en `PageHeaderProps` → cambiados a `description` (sesión 2026-05-31)
 - [x] **`Header.tsx:120,316`** — variante `"error"` no existe en Badge → cambiado a `"danger"` (sesión 2026-06-01)
