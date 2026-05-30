@@ -35,7 +35,7 @@ export function PromosBanner() {
             </p>
             <div className="hidden sm:flex items-center gap-1 text-dark-900/70 text-xs flex-shrink-0">
               <Clock className="w-3.5 h-3.5" />
-              <span>Mayo 2026</span>
+              <span>Junio 2026</span>
             </div>
             <button
               onClick={dismiss}

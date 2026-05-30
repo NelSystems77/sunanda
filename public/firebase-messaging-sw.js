@@ -6,7 +6,7 @@ firebase.initializeApp({
   apiKey: 'AIzaSyByDKBD81nHKlZOXcsQm1WyjYWT5h5o9nI',
   authDomain: 'sunanda-spa.firebaseapp.com',
   projectId: 'sunanda-spa',
-  storageBucket: 'sunanda-spa.firebasestorage.app',
+  storageBucket: 'sunanda-spa.appspot.com',
   messagingSenderId: '450503810380',
   appId: '1:450503810380:web:17accb195e004c85ca83e9'
 });
