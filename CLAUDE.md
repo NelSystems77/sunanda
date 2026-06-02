@@ -1175,3 +1175,35 @@ Limpieza cosmética — no afectan funcionalidad. Agrupar en una sola sesión de
 - [x] **`UsersPage.tsx:8`** — eliminado `getManageableRoles` (sesión 2026-05-30)
 - [x] **`service-worker.ts:19-20`** — eliminadas constantes `OFFLINE_PAGE`, `OFFLINE_IMAGE` (sesión 2026-05-30)
 - [x] **`pdfGenerator.ts:2`** — eliminado import `autoTable` (sesión 2026-05-30)
+
+---
+
+## Dashboard — DashboardService (sesión 2026-06-06)
+
+Archivo: `src/core/infrastructure/services/DashboardService.ts`
+
+### Arquitectura
+
+Carga 4 colecciones completas en paralelo al montar (`Promise.all`): `clients`, `appointments`, `payments`, `services`. Todos los cálculos son **client-side** — no hay aggregations en Firestore. Es aceptable para el volumen actual del spa.
+
+### Bugs corregidos (sesión 2026-06-06)
+
+| Stat | Antes | Después |
+|---|---|---|
+| **Ocupación %** | `/ 32` → siempre < 25% | `/ 8` — 8 slots de 90 min (09:00–21:00) |
+| **Citas hoy / semana / mes** | Contaba canceladas | Excluye `CANCELLED` |
+| **Semanas en `countAppointmentsThisWeek`** | Sin límite superior → contaba semanas futuras | Acotado a `start → start+7` |
+| **Confirmación %** | Solo `CONFIRMED` | `CONFIRMED + COMPLETED + IN_PROGRESS` vs total no-canceladas |
+| **Servicios populares** | Solo `COMPLETED` → vacío si el mes recién empieza | Incluye `CONFIRMED + IN_PROGRESS + COMPLETED` |
+| **Próximas citas** | Desde mañana → hoy invisible | Desde hoy (`today`) + 3 días |
+| **Gráfico citas/semana** | Contaba canceladas | Excluye `CANCELLED` |
+
+### Enums de estado — dónde viven
+
+**`AppointmentStatus`** — `src/core/domain/enums/index.ts`:
+`PENDING · CONFIRMED · IN_PROGRESS · COMPLETED · CANCELLED · NO_SHOW`
+
+**`PaymentStatus`** — `src/core/domain/interfaces/Payment.ts` ← el activo, usado en todo el proyecto:
+`PENDING · PROCESSING · COMPLETED · FAILED · REFUNDED · CANCELLED`
+
+> ⚠️ Existe un `PaymentStatus` duplicado en `enums/index.ts` con valores distintos (`PAID`, `PARTIAL`) que **no se usa en ningún archivo** — es código muerto pendiente de eliminar.
