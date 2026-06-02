@@ -8,7 +8,7 @@ import { AppointmentRepository } from '../repositories/AppointmentRepository';
 export const SPA_SCHEDULE = {
   openTime: '09:00',
   closeTime: '21:00',
-  slotDuration: 30, // minutos
+  slotDuration: 90, // minutos
   minAdvanceHours: 1, // Advertencia si es menos de 1 hora (pero no bloquea)
   daysOpen: [0, 1, 2, 3, 4, 5, 6] // Lunes a Domingo
 };

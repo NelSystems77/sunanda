@@ -836,9 +836,47 @@ La duración por defecto es **90 minutos** (duración real de los tratamientos).
 
 ### Lógica de slots
 
-- `SPA_SCHEDULE` (en `AvailabilityService.ts`): horario 09:00–21:00, paso entre slots 30 min
+- `SPA_SCHEDULE` (en `AvailabilityService.ts`): horario 09:00–21:00, paso entre slots **90 min** (sesión 2026-06-04). Slots ofrecidos: 09:00, 10:30, 12:00, 13:30, 15:00, 16:30, 18:00, 19:30.
 - `displaySlots` (useMemo): decide qué lista mostrar en `TimeSlotSelector`
 - El botón "Crear Cita" permanece deshabilitado hasta que se seleccione un slot
+
+### Gotcha: botones de slot sin `type="button"` (sesión 2026-06-04)
+
+Los `<motion.button>` en `TimeSlotSelector.tsx` deben tener **`type="button"`** explícito. Sin él, el comportamiento HTML por defecto es `type="submit"`, lo que hace que al hacer clic en un horario se dispare el submit del formulario antes de que todos los campos estén listos → toast "Por favor completa todos los campos requeridos" aunque el formulario esté lleno.
+
+### Gotcha: `endTime` vacío cuando se abre el formulario con `initialTime` (sesión 2026-06-04)
+
+Cuando el usuario hace clic en un slot del calendario para crear una cita, `AppointmentsPage` pasa `initialTime` al `AppointmentForm`. El `startTime` se inicializa con ese valor en `defaultValues`, pero el `endTime` quedaba como `''` (vacío) porque `handleSlotSelect` nunca se llama si el usuario no re-selecciona el slot. La validación Zod fallaba con el campo `endTime` vacío.
+
+**Fix:** calcular el `endTime` inicial en `defaultValues` cuando se recibe `initialTime`:
+
+```typescript
+function calculateEndTime(startTime: string, durationMinutes: number): string {
+  const [h, m] = startTime.split(':').map(Number);
+  const totalMinutes = h * 60 + m + durationMinutes;
+  return `${String(Math.floor(totalMinutes / 60)).padStart(2, '0')}:${String(totalMinutes % 60).padStart(2, '0')}`;
+}
+
+// En defaultValues:
+endTime: initialTime ? calculateEndTime(initialTime, 90) : '',
+```
+
+### Gotcha: `isCurrentTime` en `CalendarDayView` con slots de 90 min (sesión 2026-06-04)
+
+La lógica original usaba `Math.floor(now.getMinutes() / 30) * 30 === slotMinutes`. Con slots de 90 min esto falla: a las 11:20 el slot activo es 10:30, pero `Math.floor(20/30)*30 = 0` → busca "11:00" que no existe.
+
+**Fix:** verificar si la hora actual cae **dentro** del rango del slot:
+
+```typescript
+const isCurrentTime = (time: string): boolean => {
+  if (now.toDateString() !== selectedDate.toDateString()) return false;
+  const slotStart = slotH * 60 + slotM;
+  const nowMinutes = now.getHours() * 60 + now.getMinutes();
+  return nowMinutes >= slotStart && nowMinutes < slotStart + SPA_SCHEDULE.slotDuration;
+};
+```
+
+**Regla:** `isCurrentTime` y `generateTimeSlots` en `CalendarDayView` siempre deben usar `SPA_SCHEDULE.slotDuration` — nunca hardcodear `30`.
 
 ---
 

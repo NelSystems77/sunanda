@@ -26,6 +26,14 @@ function toLocalDateStr(date: Date): string {
   return `${y}-${m}-${d}`;
 }
 
+function calculateEndTime(startTime: string, durationMinutes: number): string {
+  const [h, m] = startTime.split(':').map(Number);
+  const totalMinutes = h * 60 + m + durationMinutes;
+  const endH = Math.floor(totalMinutes / 60);
+  const endM = totalMinutes % 60;
+  return `${String(endH).padStart(2, '0')}:${String(endM).padStart(2, '0')}`;
+}
+
 function generateAllTimeSlots(serviceDuration: number): TimeSlot[] {
   const slots: TimeSlot[] = [];
   const [openH, openM] = SPA_SCHEDULE.openTime.split(':').map(Number);
@@ -88,7 +96,7 @@ export function AppointmentForm({
       serviceId: '',
       date: selectedDate,
       startTime: initialTime || '',
-      endTime: '',
+      endTime: initialTime ? calculateEndTime(initialTime, 90) : '',
       notes: '',
       internalNotes: ''
     }

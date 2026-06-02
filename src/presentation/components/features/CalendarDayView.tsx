@@ -46,10 +46,8 @@ export function CalendarDayView({
 
     while (currentTime <= SPA_SCHEDULE.closeTime) {
       slots.push(currentTime);
-      
-      // Agregar 30 minutos
       const [hours, minutes] = currentTime.split(':').map(Number);
-      const totalMinutes = hours * 60 + minutes + 30;
+      const totalMinutes = hours * 60 + minutes + SPA_SCHEDULE.slotDuration;
       const newHours = Math.floor(totalMinutes / 60);
       const newMinutes = totalMinutes % 60;
       currentTime = `${String(newHours).padStart(2, '0')}:${String(newMinutes).padStart(2, '0')}`;
@@ -72,13 +70,11 @@ export function CalendarDayView({
    */
   const isCurrentTime = (time: string): boolean => {
     const now = new Date();
-    const [hours, minutes] = time.split(':').map(Number);
-    
-    return (
-      now.getHours() === hours &&
-      Math.floor(now.getMinutes() / 30) * 30 === minutes &&
-      now.toDateString() === selectedDate.toDateString()
-    );
+    if (now.toDateString() !== selectedDate.toDateString()) return false;
+    const [slotH, slotM] = time.split(':').map(Number);
+    const slotStart = slotH * 60 + slotM;
+    const nowMinutes = now.getHours() * 60 + now.getMinutes();
+    return nowMinutes >= slotStart && nowMinutes < slotStart + SPA_SCHEDULE.slotDuration;
   };
 
   return (
