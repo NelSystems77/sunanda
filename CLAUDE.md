@@ -1069,6 +1069,48 @@ Siempre llama `generateMedicalRecordPDF(record)`:
 
 ---
 
+## Clientes y Expedientes — Flujo completo (sesión 2026-06-06)
+
+### Auto-creación de expediente al crear cliente
+
+`ClientsPage.tsx` → `handleCreateClient()`: tras `createClient()` exitoso, se llama `medicalRecordService.create(newClient.id, fullName)` en background (`.catch(() => {})`) sin bloquear el flujo ni mostrar toast adicional.
+
+```typescript
+const newClient = await createClient(data);
+// Expediente en background — no bloquea ni muestra toast extra
+medicalRecordService.create(newClient.id, fullName).catch(() => {});
+```
+
+**Consecuencia:** todo cliente nuevo tiene expediente creado automáticamente en Firestore (`medicalRecords/{clientId}`) con `sesiones: []`. El `MedicalRecordModal` ya no necesita crear el expediente al abrirse por primera vez para clientes nuevos.
+
+### ClientDetailPage — Acciones Rápidas (actualizado sesión 2026-06-06)
+
+Los 3 botones de "Acciones Rápidas" ahora son funcionales:
+
+| Botón | Acción |
+|---|---|
+| **Nueva Cita** | `navigate('/dashboard/appointments')` |
+| **Ver Expedientes** | `navigate('/dashboard/records')` |
+| **Abrir Expediente** (primary) | Abre `MedicalRecordModal` para ese cliente directamente |
+
+**Fix incluido:** breadcrumb `href: '/clients'` y `navigate('/clients')` al eliminar cliente → corregido a `/dashboard/clients`.
+
+### deleteRecord — eliminar expediente completo
+
+`MedicalRecordService.deleteRecord(clientId)` usa `deleteDoc` de Firestore para borrar el documento completo.  
+`useMedicalRecords` expone `deleteRecord(clientId)` con toast de éxito y actualización de lista en estado local.
+
+**Nota:** las imágenes en Firebase Storage (`expedientes/{clientId}/...`) **no** se eliminan automáticamente — solo se borra el documento en Firestore. Si se quiere limpiar Storage habría que iterar los paths y llamar `deleteObject` manualmente.
+
+### RecordsPage — eliminar expediente (sesión 2026-06-06)
+
+Cada fila de la tabla tiene un ícono `Trash2` (botón independiente, usa `e.stopPropagation()` para no activar el click de la fila). Al hacer clic abre un `Modal` de confirmación que:
+- Muestra el nombre del cliente
+- Advierte que la acción no se puede deshacer y que Storage no se limpia
+- Botones: Cancelar / Eliminar (con loading state)
+
+---
+
 ## Errores TypeScript pre-existentes — Backlog de corrección
 
 Detectados con `npx tsc --noEmit` (sesión 2026-05-29). Todos pre-existentes; ninguno introducido por cambios recientes. Marcar con `[x]` al corregir.
