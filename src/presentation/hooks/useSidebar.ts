@@ -16,8 +16,8 @@ export const useSidebar = (): SidebarState => {
   const location = useLocation();
 
   const [isOpen, setIsOpen] = useState(!isMobile);
-  // En desktop el hamburger alterna entre expandido (w-64) y rail (w-16)
-  const [desktopCollapsed, setDesktopCollapsed] = useState(false);
+  // Desktop arranca en rail (colapsado); hamburger lo expande
+  const [desktopCollapsed, setDesktopCollapsed] = useState(true);
 
   const isOverlay = isMobile;
   // Colapsado en tablet (siempre) o en desktop cuando el usuario lo eligió
@@ -31,9 +31,14 @@ export const useSidebar = (): SidebarState => {
     }
   }, [isDesktop]);
 
+  // En desktop vuelve a rail; en mobile cierra el overlay
   const closeSidebar = useCallback(() => {
-    setIsOpen(false);
-  }, []);
+    if (isDesktop) {
+      setDesktopCollapsed(true);
+    } else {
+      setIsOpen(false);
+    }
+  }, [isDesktop]);
 
   const openSidebar = useCallback(() => {
     setIsOpen(true);

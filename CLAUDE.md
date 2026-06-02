@@ -1012,7 +1012,11 @@ El `aside` del sidebar en móvil tiene `top-16` (header) y **`h-[calc(100vh-8rem
 | Tablet (768–1279px) | Rail siempre visible — solo íconos (`w-16`) | — |
 | Desktop (≥ 1280px) | Expandido con labels (`w-64`) por defecto | **Alterna entre `w-64` y rail `w-16`** |
 
+**Estado por defecto en desktop: rail (`desktopCollapsed = true`).** El hamburger lo expande; al hacer clic en cualquier ítem del menú vuelve automáticamente al rail. Mismo comportamiento que el overlay mobile (cerrar tras navegar).
+
 **Gotcha:** en desktop, `isCollapsed = isTablet || (isDesktop && desktopCollapsed)`. No usar `isCollapsed = isTablet` solamente — en esa versión el hamburger del header en desktop no tenía efecto sobre el ancho del sidebar (solo movía `ml-64` → `ml-0` en el main, dejando el sidebar superpuesto encima del contenido).
+
+**`closeSidebar`** es polimórfico: en desktop pone `desktopCollapsed = true` (vuelve a rail); en mobile pone `isOpen = false` (cierra overlay). Esto permite pasar `closeSidebar` como `onNavigate` tanto en mobile como en desktop sin lógica extra en `DashboardLayout`.
 
 **Márgenes del main content:**
 - Desktop expandido: `ml-64`

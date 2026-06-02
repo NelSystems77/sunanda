@@ -125,7 +125,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             isOpen={isOpen}
             isCollapsed={isCollapsed}
             userRole={user?.role}
-            onNavigate={isOverlay ? closeSidebar : undefined}
+            onNavigate={(isOverlay || isDesktop) ? closeSidebar : undefined}
           />
         </aside>
 
