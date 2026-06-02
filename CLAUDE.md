@@ -858,6 +858,44 @@ Los selectores de esteticista en el dashboard usan IDs fijos (`esthetician-1`, `
 
 ---
 
+## Gotcha: UTC vs hora local en date pickers (sesión 2026-06-04)
+
+### Síntoma
+
+El date picker del formulario de citas (`AppointmentForm.tsx`) bloqueaba seleccionar "hoy" con el tooltip del navegador: *"El valor debe ser DD/MM/YYYY o posterior"*, apuntando al día siguiente.
+
+### Causa raíz
+
+```typescript
+// ❌ Incorrecto — .toISOString() devuelve UTC, no hora local
+min={new Date().toISOString().split('T')[0]}
+value={selectedDate.toISOString().split('T')[0]}
+```
+
+Costa Rica es **UTC-6**. Después de las **18:00 hora CR**, `new Date().toISOString()` ya devuelve la fecha del día siguiente en UTC (ej. 18:00 CR = 00:00 UTC del día+1). El atributo `min` quedaba en mañana, impidiendo seleccionar hoy.
+
+### Fix aplicado (`AppointmentForm.tsx`)
+
+```typescript
+// ✅ Correcto — usar getFullYear/Month/Date que operan en hora local
+function toLocalDateStr(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+// Uso:
+min={toLocalDateStr(new Date())}
+value={toLocalDateStr(selectedDate)}
+```
+
+### Regla
+
+**Nunca usar `.toISOString().split('T')[0]` para calcular fechas locales.** Usar siempre `getFullYear()`, `getMonth()`, `getDate()` que respetan la zona horaria del dispositivo. Esto aplica a cualquier `<input type="date">` en el proyecto.
+
+---
+
 ## Convenciones de código
 
 - Sin comentarios innecesarios — solo cuando el WHY no es obvio
