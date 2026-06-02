@@ -19,6 +19,13 @@ interface AppointmentFormProps {
   initialTime?: string;
 }
 
+function toLocalDateStr(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
 function generateAllTimeSlots(serviceDuration: number): TimeSlot[] {
   const slots: TimeSlot[] = [];
   const [openH, openM] = SPA_SCHEDULE.openTime.split(':').map(Number);
@@ -386,13 +393,13 @@ export function AppointmentForm({
             </label>
             <input
               type="date"
-              value={selectedDate.toISOString().split('T')[0]}
+              value={toLocalDateStr(selectedDate)}
               onChange={(e) => {
                 const newDate = new Date(e.target.value + 'T12:00:00');
                 setSelectedDate(newDate);
                 setValue('date', newDate);
               }}
-              min={new Date().toISOString().split('T')[0]}
+              min={toLocalDateStr(new Date())}
               className="w-full px-4 py-2 bg-dark-900 border border-dark-700 text-white rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-transparent [color-scheme:dark]"
             />
             {errors.date && (
