@@ -1206,4 +1206,58 @@ Carga 4 colecciones completas en paralelo al montar (`Promise.all`): `clients`, 
 **`PaymentStatus`** — `src/core/domain/interfaces/Payment.ts` ← el activo, usado en todo el proyecto:
 `PENDING · PROCESSING · COMPLETED · FAILED · REFUNDED · CANCELLED`
 
-> ⚠️ Existe un `PaymentStatus` duplicado en `enums/index.ts` con valores distintos (`PAID`, `PARTIAL`) que **no se usa en ningún archivo** — es código muerto pendiente de eliminar.
+> `PaymentStatus` duplicado en `enums/index.ts` (valores `PAID`, `PARTIAL`) fue eliminado en sesión 2026-06-06 — era código muerto que nunca coincidiría con datos en Firestore.
+
+---
+
+## Sistema de Pagos (sesión 2026-06-06)
+
+### Flujo principal
+
+```
+Cita COMPLETED + botón "Cobrar" (AppointmentsPage)
+  → PaymentForm (modal)
+  → paymentRepository.create() → status PENDING
+  → paymentRepository.updateStatus() → status COMPLETED
+  → aparece en PaymentsPage y en DashboardService stats
+```
+
+### Cómo los pagos se reflejan en el dashboard
+
+`DashboardService.getStats()` carga todos los pagos y calcula client-side:
+
+| Stat del dashboard | Fuente |
+|---|---|
+| **Ingresos del Mes** (`revenueCRC`) | Pagos `COMPLETED` con `createdAt >= 1° del mes`, suma `amountCRC` |
+| **Tendencia ingresos** | Diferencia revenue este mes vs mes anterior |
+| **Gráfico Ingresos por mes** | Revenue `COMPLETED` agrupado por mes (últimos 6 meses) |
+| **Alerta pagos pendientes** | Pagos `PENDING`, ordenados por días sin cobrar |
+| **Clientes VIP** | Top clientes por `amountCRC` acumulado en pagos `COMPLETED` |
+
+Pagos `REFUNDED` quedan **automáticamente excluidos** del revenue: cuando se reembolsa un pago su status cambia a `REFUNDED`, y los filtros solo cuentan `COMPLETED`.
+
+### PaymentForm — restricciones de diseño
+
+- **Solo muestra citas `COMPLETED`** — flujo intencional: primero se atiende y completa la cita, luego se cobra. Botón "Cobrar" solo aparece en estado `COMPLETED` en `AppointmentsPage`.
+- **Solo SINPE Móvil activo** — Tarjeta y Efectivo aparecen en la UI como "Próximo" (disabled). No están implementados. Si se agrega un nuevo método de pago, actualizar `PaymentForm.handleSubmit()` y el selector de método.
+- **Moneda hardcoded a CRC** — el spa opera en colones. El campo `amountUSD` se guarda desde `service.priceUSD` pero no se usa en cálculos del dashboard.
+
+### Validación de duplicados — sin idempotencia fuerte
+
+El filtro de "citas sin pago" en `PaymentForm.loadOptions()` es:
+```typescript
+const paidAptIds = new Set(allPayments.map(p => p.appointmentId));
+const unpaid = allApts.filter(a =>
+  a.status === AppointmentStatus.COMPLETED && !paidAptIds.has(a.id)
+);
+```
+Si la cita ya tiene un pago registrado, desaparece del selector. Si alguien registra pago mientras otro admin también lo hace simultáneamente, pueden crearse duplicados. Aceptable para el volumen actual del spa (staff pequeño).
+
+### Bugs corregidos (sesión 2026-06-06)
+
+| Archivo | Bug | Fix |
+|---|---|---|
+| `PaymentsPage.tsx` | Spinner de carga renderizado fuera de `DashboardLayout` (sin sidebar/header) | Spinner ahora dentro del layout |
+| `PaymentsPage.tsx` | `PaymentStatus.CANCELLED` sin badge ni tab de filtro | Badge "Cancelado" y tab agregados |
+| `PaymentsPage.tsx` | Monto USD sin formatear: `$${amountUSD}` mostraba número crudo | `toLocaleString('en-US')`, oculto si `amountUSD === 0` |
+| `PaymentForm.tsx` | Comparación muerta `(a.status as string) === 'completed'` (minúscula nunca coincide con enum uppercase) | Eliminada, filtro simplificado |
