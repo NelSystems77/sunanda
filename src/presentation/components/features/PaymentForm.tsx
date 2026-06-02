@@ -97,12 +97,9 @@ export function PaymentForm({ appointmentId: preselectedId, onSuccess, onCancel 
 
       const paidAptIds = new Set(allPayments.map(p => p.appointmentId));
 
-      const unpaid = allApts.filter(a => {
-        const isCompleted =
-          a.status === AppointmentStatus.COMPLETED ||
-          (a.status as string) === 'completed';
-        return isCompleted && !paidAptIds.has(a.id);
-      });
+      const unpaid = allApts.filter(a =>
+        a.status === AppointmentStatus.COMPLETED && !paidAptIds.has(a.id)
+      );
 
       const built: AppointmentOption[] = unpaid.map(a => {
         const service = allServices.find(s => s.id === a.serviceId);

@@ -54,17 +54,6 @@ export enum PaymentMethod {
 }
 
 /**
- * Estados de pago
- */
-export enum PaymentStatus {
-  PENDING = 'PENDING',
-  PAID = 'PAID',
-  PARTIAL = 'PARTIAL',
-  REFUNDED = 'REFUNDED',
-  CANCELLED = 'CANCELLED',
-}
-
-/**
  * Tipos de productos en inventario
  */
 export enum ProductType {

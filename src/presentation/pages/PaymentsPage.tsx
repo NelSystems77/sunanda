@@ -67,6 +67,7 @@ export function PaymentsPage() {
     { id: PaymentStatus.COMPLETED, label: 'Completados', count: stats.completed },
     { id: PaymentStatus.FAILED, label: 'Fallidos', count: stats.failed },
     { id: PaymentStatus.REFUNDED, label: 'Reembolsados', count: stats.refunded },
+    { id: PaymentStatus.CANCELLED, label: 'Cancelados', count: undefined },
   ];
 
   // Tabs de método
@@ -91,6 +92,8 @@ export function PaymentsPage() {
         return <Badge variant="danger">Fallido</Badge>;
       case PaymentStatus.REFUNDED:
         return <Badge variant="default">Reembolsado</Badge>;
+      case PaymentStatus.CANCELLED:
+        return <Badge variant="default">Cancelado</Badge>;
       default:
         return null;
     }
@@ -108,17 +111,14 @@ export function PaymentsPage() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Spinner size="lg" />
-      </div>
-    );
-  }
-
   return (
     <DashboardLayout>
-    <div className="space-y-6">
+    {loading ? (
+      <div className="flex items-center justify-center h-[60vh]">
+        <Spinner size="lg" />
+      </div>
+    ) : null}
+    <div className={`space-y-6${loading ? ' hidden' : ''}`}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <PageHeader
@@ -267,11 +267,13 @@ export function PaymentsPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <div className="font-semibold text-white">
-                        ₡{payment.amountCRC.toLocaleString()}
+                        ₡{payment.amountCRC.toLocaleString('es-CR')}
                       </div>
-                      <div className="text-xs text-dark-400">
-                        ${payment.amountUSD}
-                      </div>
+                      {payment.amountUSD > 0 && (
+                        <div className="text-xs text-dark-400">
+                          ${payment.amountUSD.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                        </div>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {getStatusBadge(payment.status)}
