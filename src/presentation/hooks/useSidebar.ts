@@ -2,15 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { useMobileDetect } from './useMobileDetect';
 import { useLocation } from 'react-router-dom';
 
-/**
- * Hook para gestionar estado del sidebar según dispositivo
- * 
- * Comportamiento:
- * - Mobile: Sidebar overlay, cerrado por defecto, auto-cierra al navegar
- * - Tablet: Sidebar rail (colapsado), siempre visible
- * - Desktop: Sidebar completo, siempre visible
- */
-
 interface SidebarState {
   isOpen: boolean;
   isCollapsed: boolean;
@@ -23,25 +14,27 @@ interface SidebarState {
 export const useSidebar = (): SidebarState => {
   const { isMobile, isTablet, isDesktop } = useMobileDetect();
   const location = useLocation();
-  
-  // Estado del sidebar
+
   const [isOpen, setIsOpen] = useState(!isMobile);
+  // En desktop el hamburger alterna entre expandido (w-64) y rail (w-16)
+  const [desktopCollapsed, setDesktopCollapsed] = useState(false);
 
-  // Determinar modo según dispositivo
-  const isOverlay = isMobile; // Solo overlay en mobile
-  const isCollapsed = isTablet; // Rail colapsado en tablet
+  const isOverlay = isMobile;
+  // Colapsado en tablet (siempre) o en desktop cuando el usuario lo eligió
+  const isCollapsed = isTablet || (isDesktop && desktopCollapsed);
 
-  // Toggle sidebar
   const toggleSidebar = useCallback(() => {
-    setIsOpen(prev => !prev);
-  }, []);
+    if (isDesktop) {
+      setDesktopCollapsed(prev => !prev);
+    } else {
+      setIsOpen(prev => !prev);
+    }
+  }, [isDesktop]);
 
-  // Cerrar sidebar
   const closeSidebar = useCallback(() => {
     setIsOpen(false);
   }, []);
 
-  // Abrir sidebar
   const openSidebar = useCallback(() => {
     setIsOpen(true);
   }, []);
@@ -55,14 +48,9 @@ export const useSidebar = (): SidebarState => {
 
   // Ajustar estado al cambiar dispositivo
   useEffect(() => {
-    if (isDesktop) {
-      // Desktop: siempre abierto
-      setIsOpen(true);
-    } else if (isTablet) {
-      // Tablet: siempre visible (rail)
+    if (isDesktop || isTablet) {
       setIsOpen(true);
     } else if (isMobile) {
-      // Mobile: cerrado por defecto
       setIsOpen(false);
     }
   }, [isMobile, isTablet, isDesktop]);

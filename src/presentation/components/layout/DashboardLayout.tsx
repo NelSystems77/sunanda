@@ -145,10 +145,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             responsiveClasses.contentPadding(isMobile),
             
             // Margin left según estado del sidebar
-            // Desktop: sidebar completo (256px) o rail (64px)
-            isDesktop && isOpen && !isCollapsed && 'ml-64',
-            isDesktop && (!isOpen || isCollapsed) && 'ml-0',
-            
+            // Desktop: expandido (256px) o rail (64px) — siempre visible
+            isDesktop && !isCollapsed && 'ml-64',
+            isDesktop && isCollapsed && 'ml-16',
+
             // Tablet: sidebar rail siempre visible (64px)
             isTablet && 'ml-16',
             

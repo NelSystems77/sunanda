@@ -1004,6 +1004,22 @@ Para reforzar visibilidad en dark: usar `border-gold-500/20` como borde por defe
 
 El `aside` del sidebar en móvil tiene `top-16` (header) y **`h-[calc(100vh-8rem)]`** (no `h-full`). Si se usa `h-full`, el sidebar sobrepasa el viewport (`top-16 + 100vh`) y el botón "Cerrar Sesión" (al fondo del `flex col`) queda tapado por el `MobileBottomNav` (`fixed bottom-0 h-16 z-50`). La fórmula es: `100vh − 4rem (header) − 4rem (bottom nav) = calc(100vh-8rem)`.
 
+#### `useSidebar` — comportamiento por dispositivo (sesión 2026-06-05)
+
+| Dispositivo | Modo | Hamburger |
+|---|---|---|
+| Mobile (< 768px) | Overlay — se abre/cierra sobre el contenido | Abre/cierra el drawer |
+| Tablet (768–1279px) | Rail siempre visible — solo íconos (`w-16`) | — |
+| Desktop (≥ 1280px) | Expandido con labels (`w-64`) por defecto | **Alterna entre `w-64` y rail `w-16`** |
+
+**Gotcha:** en desktop, `isCollapsed = isTablet || (isDesktop && desktopCollapsed)`. No usar `isCollapsed = isTablet` solamente — en esa versión el hamburger del header en desktop no tenía efecto sobre el ancho del sidebar (solo movía `ml-64` → `ml-0` en el main, dejando el sidebar superpuesto encima del contenido).
+
+**Márgenes del main content:**
+- Desktop expandido: `ml-64`
+- Desktop colapsado (rail): `ml-16` — **nunca `ml-0`** en desktop, el sidebar siempre ocupa espacio
+- Tablet: `ml-16` (rail fijo)
+- Mobile: `ml-0` (overlay, no ocupa espacio)
+
 ---
 
 ## Expediente Médico — MedicalRecordModal
