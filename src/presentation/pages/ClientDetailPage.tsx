@@ -449,6 +449,7 @@ export function ClientDetailPage() {
         <MedicalRecordModal
           clientId={client.id}
           clientName={fullName}
+          clientGender={client.gender}
           onClose={() => setIsMedicalRecordOpen(false)}
         />
       )}

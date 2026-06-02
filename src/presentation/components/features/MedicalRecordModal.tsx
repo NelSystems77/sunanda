@@ -5,6 +5,7 @@ import { useMedicalRecords } from '../../hooks/useMedicalRecords';
 import { useAuth } from '../../hooks/useAuth';
 import { useMobileDetect } from '../../hooks/useMobileDetect';
 import { MedicalRecord, Anamnesis, Consentimiento, SessionRecord, CONDICIONES_PIEL, ENFERMEDADES_COMUNES } from '@/core/domain/interfaces/MedicalRecord';
+import { Gender } from '@/core/domain/enums';
 import { generateMedicalRecordPDF, generateSessionPDF, generateConsentPDF } from '@/shared/utils/pdfGenerator';
 import { X, Save, FileText, Printer, Upload, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
 import SignatureCanvas from 'react-signature-canvas';
@@ -14,6 +15,7 @@ import { cn } from '@/shared/utils';
 interface MedicalRecordModalProps {
   clientId: string;
   clientName: string;
+  clientGender?: Gender;
   onClose: () => void;
 }
 
@@ -25,7 +27,9 @@ const CONDICIONES_PIEL_FLAT = [
   ...(CONDICIONES_PIEL.CORPORALES || []),
 ];
 
-export function MedicalRecordModal({ clientId, clientName, onClose }: MedicalRecordModalProps) {
+export function MedicalRecordModal({ clientId, clientName, clientGender, onClose }: MedicalRecordModalProps) {
+  const isMale = clientGender === Gender.MALE;
+
   const { user } = useAuth();
   const { isMobile } = useMobileDetect();
   const { getByClientId, create, saveAnamnesis, saveConsentimiento, addSession, deleteSession, uploadImage, uploadSignature } = useMedicalRecords();
@@ -601,21 +605,23 @@ export function MedicalRecordModal({ clientId, clientName, onClose }: MedicalRec
                   </div>
                 </CollapsibleSection>
 
-                <CollapsibleSection id="embarazo" title="Embarazo y Cirugías">
-                  <div>
-                    <label className="block text-sm font-medium text-white mb-2">
-                      ¿Embarazo o Lactancia?
-                    </label>
-                    <select
-                      value={anamnesis.embarazoLactancia}
-                      onChange={(e) => setAnamnesis({ ...anamnesis, embarazoLactancia: e.target.value as 'No' | 'Embarazo' | 'Lactancia' })}
-                      className="w-full px-4 py-3 bg-dark-900 border border-dark-700 text-white rounded-lg text-base"
-                    >
-                      <option value="No">No</option>
-                      <option value="Embarazo">Embarazo</option>
-                      <option value="Lactancia">Lactancia</option>
-                    </select>
-                  </div>
+                <CollapsibleSection id="embarazo" title={isMale ? 'Cirugías Recientes' : 'Embarazo y Cirugías'}>
+                  {!isMale && (
+                    <div>
+                      <label className="block text-sm font-medium text-white mb-2">
+                        ¿Embarazo o Lactancia?
+                      </label>
+                      <select
+                        value={anamnesis.embarazoLactancia}
+                        onChange={(e) => setAnamnesis({ ...anamnesis, embarazoLactancia: e.target.value as 'No' | 'Embarazo' | 'Lactancia' })}
+                        className="w-full px-4 py-3 bg-dark-900 border border-dark-700 text-white rounded-lg text-base"
+                      >
+                        <option value="No">No</option>
+                        <option value="Embarazo">Embarazo</option>
+                        <option value="Lactancia">Lactancia</option>
+                      </select>
+                    </div>
+                  )}
 
                   <div>
                     <label className="block text-sm font-medium text-white mb-2">
@@ -872,22 +878,24 @@ export function MedicalRecordModal({ clientId, clientName, onClose }: MedicalRec
                 <div className="grid grid-cols-2 gap-6">
                   <div className="bg-dark-800 border border-dark-700 rounded-lg p-5 space-y-4">
                     <h4 className="font-semibold text-white text-sm uppercase tracking-wide">
-                      Embarazo y Cirugías
+                      {isMale ? 'Cirugías Recientes' : 'Embarazo y Cirugías'}
                     </h4>
-                    <div>
-                      <label className="block text-sm font-medium text-white mb-1">
-                        ¿Embarazo o Lactancia?
-                      </label>
-                      <select
-                        value={anamnesis.embarazoLactancia}
-                        onChange={(e) => setAnamnesis({ ...anamnesis, embarazoLactancia: e.target.value as 'No' | 'Embarazo' | 'Lactancia' })}
-                        className="w-full px-3 py-2 bg-dark-900 border border-dark-700 text-white rounded-lg"
-                      >
-                        <option value="No">No</option>
-                        <option value="Embarazo">Embarazo</option>
-                        <option value="Lactancia">Lactancia</option>
-                      </select>
-                    </div>
+                    {!isMale && (
+                      <div>
+                        <label className="block text-sm font-medium text-white mb-1">
+                          ¿Embarazo o Lactancia?
+                        </label>
+                        <select
+                          value={anamnesis.embarazoLactancia}
+                          onChange={(e) => setAnamnesis({ ...anamnesis, embarazoLactancia: e.target.value as 'No' | 'Embarazo' | 'Lactancia' })}
+                          className="w-full px-3 py-2 bg-dark-900 border border-dark-700 text-white rounded-lg"
+                        >
+                          <option value="No">No</option>
+                          <option value="Embarazo">Embarazo</option>
+                          <option value="Lactancia">Lactancia</option>
+                        </select>
+                      </div>
+                    )}
                     <div>
                       <label className="block text-sm font-medium text-white mb-1">
                         Cirugías Recientes

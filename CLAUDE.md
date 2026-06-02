@@ -1067,6 +1067,38 @@ Siempre llama `generateMedicalRecordPDF(record)`:
 
 4 pasos: **Anamnesis** → **Consentimiento** → **Atención** → **Historial**. Los botones "Continuar a X" avanzan automáticamente al guardar. El usuario puede saltar libremente entre pasos en cualquier momento.
 
+### Anamnesis — preguntas condicionales por género (sesión 2026-06-07)
+
+`MedicalRecordModal` acepta el prop opcional `clientGender?: Gender`. Cuando el valor es `Gender.MALE`, los campos clínicamente irrelevantes para hombres se ocultan:
+
+| Campo oculto | Condición |
+|---|---|
+| ¿Embarazo o Lactancia? (`embarazoLactancia`) | `clientGender === Gender.MALE` |
+
+El título de la sección también cambia: "Embarazo y Cirugías" → "Cirugías Recientes" para hombres.
+
+**Implementación:**
+
+```tsx
+const isMale = clientGender === Gender.MALE;
+
+// En el formulario:
+{!isMale && (
+  <div>
+    <label>¿Embarazo o Lactancia?</label>
+    <select value={anamnesis.embarazoLactancia} ...>...</select>
+  </div>
+)}
+```
+
+**Comportamiento por defecto:** cuando `clientGender` es `undefined` (páginas donde el género no está disponible fácilmente — `AppointmentsPage`, `RecordsPage`), `isMale = false` y el campo sigue visible. Es el comportamiento clínicamente seguro: mejor preguntar de más que omitir.
+
+**Quién pasa el género:**
+- `ClientDetailPage` → pasa `clientGender={client.gender}` (tiene el objeto cliente completo)
+- `AppointmentsPage` y `RecordsPage` → no pasan género (campo visible para todos)
+
+**Para agregar más campos condicionales en el futuro**, usar el mismo patrón `{!isMale && (...)}` o crear variantes `{isMale && (...)}` para campos exclusivos de hombres. Los candidatos obvios: ciclo menstrual, anticonceptivos.
+
 ---
 
 ## Clientes y Expedientes — Flujo completo (sesión 2026-06-06)
