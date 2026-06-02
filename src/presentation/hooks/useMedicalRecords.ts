@@ -177,6 +177,27 @@ export const useMedicalRecords = () => {
   };
 
   /**
+   * Eliminar expediente completo
+   */
+  const deleteRecord = async (clientId: string): Promise<boolean> => {
+    setLoading(true);
+    setError(null);
+    try {
+      await medicalRecordService.deleteRecord(clientId);
+      setRecords(prev => prev.filter(r => r.clientId !== clientId));
+      toast.success('Expediente eliminado correctamente');
+      return true;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Error al eliminar expediente';
+      setError(message);
+      toast.error(message);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /**
    * Subir imagen
    */
   const uploadImage = async (
@@ -225,6 +246,7 @@ export const useMedicalRecords = () => {
     addSession,
     updateSession,
     deleteSession,
+    deleteRecord,
     uploadImage,
     uploadSignature,
   };

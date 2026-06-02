@@ -4,14 +4,20 @@ import { PageHeader } from '../components/layout/PageHeader';
 import { CardGrid, StatCard, ResponsiveTable } from '../components/ui/responsive';
 import { useMedicalRecords } from '../hooks/useMedicalRecords';
 import { MedicalRecordModal } from '../components/features/MedicalRecordModal';
-import { Search, Calendar, User, CheckCircle, FolderOpen } from 'lucide-react';
+import { Modal, ModalFooter } from '../components/ui/Modal';
+import { Button } from '../components/ui/Button';
+import { Alert } from '../components/ui/Alert';
+import { MedicalRecord } from '@/core/domain/interfaces/MedicalRecord';
+import { Search, Calendar, User, CheckCircle, FolderOpen, Trash2, AlertCircle } from 'lucide-react';
 
 export function RecordsPage() {
-  const { records, loading } = useMedicalRecords();
+  const { records, loading, deleteRecord } = useMedicalRecords();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
   const [selectedClientName, setSelectedClientName] = useState<string>('');
   const [showModal, setShowModal] = useState(false);
+  const [recordToDelete, setRecordToDelete] = useState<MedicalRecord | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const filteredRecords = records.filter(record =>
     record.clientName.toLowerCase().includes(searchTerm.toLowerCase())
@@ -21,6 +27,17 @@ export function RecordsPage() {
     setSelectedClientId(clientId);
     setSelectedClientName(clientName);
     setShowModal(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!recordToDelete) return;
+    setIsDeleting(true);
+    try {
+      await deleteRecord(recordToDelete.clientId);
+      setRecordToDelete(null);
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   const stats = {
@@ -152,13 +169,27 @@ export function RecordsPage() {
                   </span>
                 ),
                 mobileLabel: 'Actualizado'
+              },
+              {
+                header: '',
+                accessor: (record) => (
+                  <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); setRecordToDelete(record); }}
+                    className="p-2 rounded-lg text-dark-300 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                    title="Eliminar expediente"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                ),
+                mobileLabel: ''
               }
             ]}
             keyExtractor={(record) => record.id}
             onRowClick={(record) => handleOpenRecord(record.clientId, record.clientName)}
             emptyMessage={
-              searchTerm 
-                ? 'No se encontraron expedientes con ese criterio' 
+              searchTerm
+                ? 'No se encontraron expedientes con ese criterio'
                 : 'No hay expedientes registrados'
             }
           />
@@ -177,6 +208,43 @@ export function RecordsPage() {
           }}
         />
       )}
+
+      {/* Diálogo de confirmación — eliminar expediente */}
+      <Modal
+        isOpen={!!recordToDelete}
+        onClose={() => !isDeleting && setRecordToDelete(null)}
+        title="Eliminar Expediente"
+        description={`¿Eliminar el expediente de ${recordToDelete?.clientName}?`}
+        size="sm"
+      >
+        <Alert variant="error">
+          <AlertCircle className="w-5 h-5 flex-shrink-0" />
+          <div>
+            <p className="font-medium">Esta acción no se puede deshacer</p>
+            <p className="text-sm mt-1">
+              Se eliminará el expediente completo incluyendo anamnesis, consentimiento e historial de sesiones.
+              Las imágenes en Storage no se eliminan automáticamente.
+            </p>
+          </div>
+        </Alert>
+
+        <ModalFooter className="mt-6">
+          <Button
+            variant="ghost"
+            onClick={() => setRecordToDelete(null)}
+            disabled={isDeleting}
+          >
+            Cancelar
+          </Button>
+          <Button
+            variant="danger"
+            onClick={handleDeleteConfirm}
+            isLoading={isDeleting}
+          >
+            Eliminar
+          </Button>
+        </ModalFooter>
+      </Modal>
     </DashboardLayout>
   );
 }

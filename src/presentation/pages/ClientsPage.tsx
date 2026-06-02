@@ -14,6 +14,7 @@ import { ClientForm } from '../components/features/ClientForm';
 import { useClientStore } from '../context/ClientStore';
 import { Client } from '@/core/domain/interfaces/Client';
 import { debounce } from '@/shared/utils';
+import { medicalRecordService } from '@/core/infrastructure/services/MedicalRecordService';
 
 export function ClientsPage() {
   const navigate = useNavigate();
@@ -53,7 +54,10 @@ export function ClientsPage() {
   const handleCreateClient = async (data: any) => {
     try {
       setIsSubmitting(true);
-      await createClient(data);
+      const newClient = await createClient(data);
+      // Crear expediente automáticamente (silencioso, sin bloquear el flujo)
+      const fullName = `${newClient.firstName} ${newClient.lastName}`;
+      medicalRecordService.create(newClient.id, fullName).catch(() => {});
       toast.success('Cliente creado correctamente');
       setIsCreateModalOpen(false);
     } catch (error) {

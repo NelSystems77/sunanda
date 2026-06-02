@@ -23,6 +23,7 @@ import { Spinner } from '../components/ui/Spinner';
 import { Modal, ModalFooter } from '../components/ui/Modal';
 import { Alert } from '../components/ui/Alert';
 import { ClientForm } from '../components/features/ClientForm';
+import { MedicalRecordModal } from '../components/features/MedicalRecordModal';
 import { useClientStore } from '../context/ClientStore';
 import { formatDate, formatPhoneNumber, calculateAge } from '@/shared/utils';
 
@@ -45,6 +46,7 @@ export function ClientDetailPage() {
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isMedicalRecordOpen, setIsMedicalRecordOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const canManage = true;
@@ -77,7 +79,7 @@ export function ClientDetailPage() {
       setIsSubmitting(true);
       await deleteClient(id);
       toast.success('Cliente eliminado correctamente');
-      navigate('/clients');
+      navigate('/dashboard/clients');
     } catch (error) {
       toast.error('Error al eliminar cliente');
     } finally {
@@ -105,7 +107,7 @@ export function ClientDetailPage() {
           title={fullName}
           description="Información completa del cliente"
           breadcrumbs={[
-            { label: 'Clientes', href: '/clients' },
+            { label: 'Clientes', href: '/dashboard/clients' },
             { label: fullName },
           ]}
           actions={
@@ -361,14 +363,27 @@ export function ClientDetailPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  <Button variant="outline" fullWidth>
+                  <Button
+                    variant="outline"
+                    fullWidth
+                    onClick={() => navigate('/dashboard/appointments')}
+                  >
                     Nueva Cita
                   </Button>
-                  <Button variant="outline" fullWidth>
-                    Ver Historial
+                  <Button
+                    variant="outline"
+                    fullWidth
+                    onClick={() => navigate('/dashboard/records')}
+                  >
+                    Ver Expedientes
                   </Button>
-                  <Button variant="outline" fullWidth>
-                    Nuevo Expediente
+                  <Button
+                    variant="primary"
+                    fullWidth
+                    leftIcon={<FileText className="w-4 h-4" />}
+                    onClick={() => setIsMedicalRecordOpen(true)}
+                  >
+                    Abrir Expediente
                   </Button>
                 </div>
               </CardContent>
@@ -428,6 +443,15 @@ export function ClientDetailPage() {
           </ModalFooter>
         </Modal>
       </div>
+
+      {/* Modal Expediente */}
+      {isMedicalRecordOpen && client && (
+        <MedicalRecordModal
+          clientId={client.id}
+          clientName={fullName}
+          onClose={() => setIsMedicalRecordOpen(false)}
+        />
+      )}
     </DashboardLayout>
   );
 }

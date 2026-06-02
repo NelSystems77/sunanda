@@ -6,6 +6,7 @@ import {
   getDocs,
   setDoc,
   updateDoc,
+  deleteDoc,
   query,
   orderBy,
   serverTimestamp,
@@ -206,6 +207,18 @@ export class MedicalRecordService {
       });
     } catch (error) {
       console.error('Error deleting session:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Eliminar expediente completo
+   */
+  async deleteRecord(clientId: string): Promise<void> {
+    try {
+      await deleteDoc(doc(db, 'medicalRecords', clientId));
+    } catch (error) {
+      console.error('Error deleting medical record:', error);
       throw error;
     }
   }
