@@ -15,6 +15,21 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { MedicalRecord, Anamnesis, Consentimiento, SessionRecord } from '@/core/domain/interfaces/MedicalRecord';
 import imageCompression from 'browser-image-compression';
 
+// Firestore no acepta undefined — elimina recursivamente, preserva Date y arrays
+function stripUndefined<T>(value: T): T {
+  if (value === null || value === undefined) return value;
+  if (value instanceof Date) return value;
+  if (Array.isArray(value)) return value.map(stripUndefined) as unknown as T;
+  if (typeof value === 'object') {
+    const result: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+      if (v !== undefined) result[k] = stripUndefined(v);
+    }
+    return result as T;
+  }
+  return value;
+}
+
 export class MedicalRecordService {
   private recordsCollection = collection(db, 'medicalRecords');
 
@@ -113,7 +128,7 @@ export class MedicalRecordService {
   async saveAnamnesis(clientId: string, anamnesis: Anamnesis): Promise<void> {
     try {
       await updateDoc(doc(db, 'medicalRecords', clientId), {
-        anamnesis,
+        anamnesis: stripUndefined(anamnesis),
         updatedAt: serverTimestamp(),
       });
     } catch (error) {
@@ -128,10 +143,7 @@ export class MedicalRecordService {
   async saveConsentimiento(clientId: string, consentimiento: Consentimiento): Promise<void> {
     try {
       await updateDoc(doc(db, 'medicalRecords', clientId), {
-        consentimiento: {
-          ...consentimiento,
-          fecha: serverTimestamp(),
-        },
+        consentimiento: stripUndefined({ ...consentimiento, fecha: serverTimestamp() }),
         updatedAt: serverTimestamp(),
       });
     } catch (error) {
@@ -148,17 +160,17 @@ export class MedicalRecordService {
       const record = await this.getByClientId(clientId);
       if (!record) throw new Error('Expediente no encontrado');
 
-      const newSession: SessionRecord = {
+      const newSession: SessionRecord = stripUndefined({
         ...session,
         id: `session_${Date.now()}`,
         createdAt: new Date(),
         updatedAt: new Date(),
-      };
+      } as SessionRecord);
 
       const sesiones = [...(record.sesiones || []), newSession];
 
       await updateDoc(doc(db, 'medicalRecords', clientId), {
-        sesiones,
+        sesiones: stripUndefined(sesiones),
         updatedAt: serverTimestamp(),
       });
     } catch (error) {
@@ -175,14 +187,14 @@ export class MedicalRecordService {
       const record = await this.getByClientId(clientId);
       if (!record) throw new Error('Expediente no encontrado');
 
-      const sesiones = record.sesiones.map(s => 
-        s.id === sessionId 
-          ? { ...s, ...updates, updatedAt: new Date() }
+      const sesiones = record.sesiones.map(s =>
+        s.id === sessionId
+          ? stripUndefined({ ...s, ...updates, updatedAt: new Date() } as SessionRecord)
           : s
       );
 
       await updateDoc(doc(db, 'medicalRecords', clientId), {
-        sesiones,
+        sesiones: stripUndefined(sesiones),
         updatedAt: serverTimestamp(),
       });
     } catch (error) {
