@@ -118,7 +118,7 @@ export const SignatureTreatment = () => {
                   ))}
                 </div>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  <strong className="text-gray-900 dark:text-white">500+</strong> clientas satisfechas
+                  <strong className="text-gray-900 dark:text-white">5</strong> clientes satisfechos
                 </p>
               </div>
             </div>

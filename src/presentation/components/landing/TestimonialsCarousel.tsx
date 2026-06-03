@@ -72,7 +72,7 @@ export function TestimonialsCarousel() {
           <p className="text-gold-400 text-sm font-semibold tracking-widest uppercase mb-3">Testimonios</p>
           <h2 className="text-4xl font-bold text-white mb-4">Lo Que Dicen Nuestras Clientas</h2>
           <p className="text-dark-400 max-w-2xl mx-auto">
-            Más de 1,000 clientas satisfechas confían en SUNANDA para su cuidado personal
+            Nuestros primeros 5 clientes satisfechos ya confían en SUNANDA para su cuidado personal
           </p>
         </div>
 

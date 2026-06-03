@@ -15,12 +15,12 @@ export const AboutProfessional = () => {
     {
       icon: Heart,
       title: 'Experiencia',
-      value: '10+ años en estética'
+      value: '10+ años'
     },
     {
       icon: Users,
-      title: 'Clientas Atendidas',
-      value: '500+ satisfechas'
+      title: 'Clientes Atendidos',
+      value: '5 satisfechos'
     }
   ];
 
