@@ -664,7 +664,7 @@ Agradecemos su preferencia y le esperamos puntualmente. ¡Feliz día!
 
 ---
 
-## PWA — Caché y MIME type error (sesión 2026-05-29)
+## PWA — Caché y MIME type error / pantalla en blanco al refrescar
 
 ### Síntoma
 
@@ -673,21 +673,34 @@ Failed to load module script: Expected a JavaScript-or-Wasm module script
 but the server responded with a MIME type of "text/html".
 ```
 
-Ocurre **ocasionalmente al refrescar**, especialmente justo después de un deploy nuevo.
+O simplemente: **pantalla en blanco al refrescar, y al refrescar una segunda vez funciona.**
 
-### Causa raíz
+Ocurre ocasionalmente, especialmente justo después de un deploy nuevo.
+
+### Causa raíz — dos problemas combinados
+
+**Problema 1 (fix 2026-05-29):** El browser tenía `index.html` viejo cacheado (sin `no-cache`). Ese HTML pedía chunks obsoletos (`main-ABC.js`) que ya no existían → Firebase devolvía `index.html` con `Content-Type: text/html` → MIME error.
+
+**Problema 2 (fix 2026-06-07):** Configuración contradictoria en `vite.config.ts`:
+
+```
+registerType: 'prompt'   ← supone que el usuario acepta la actualización
+skipWaiting: true        ← el SW nuevo se activa INMEDIATAMENTE (ignora el prompt)
+clientsClaim: true       ← el SW nuevo toma control de todas las tabs abiertas
+```
 
 Flujo del problema:
-1. Se hace deploy → Vite genera chunks con nuevos hashes (`main-XYZ.js`). El build anterior (`main-ABC.js`) ya no existe en Firebase Hosting.
-2. El browser tiene el `index.html` **viejo** en caché (o el SW lo sirvió stale). Ese HTML referencia `main-ABC.js`.
-3. El browser pide `main-ABC.js` → Firebase no lo encuentra → aplica el rewrite `**` → devuelve `index.html` con `Content-Type: text/html`.
-4. El browser esperaba `application/javascript` → 💥 MIME type error.
+1. Nuevo deploy → SW nuevo instala → `skipWaiting` lo activa → `clientsClaim` reclama la tab actual
+2. El SW nuevo tiene el precache de los chunks nuevos (`main-XYZ.js`)
+3. La página ya cargó con el HTML del SW anterior que referencia chunks viejos (`main-ABC.js`)
+4. El SW nuevo no tiene `main-ABC.js` → lo pide al servidor → Firebase devuelve `index.html` → MIME error → **pantalla en blanco**
+5. Segundo refresh: SW nuevo sirve HTML nuevo con chunks nuevos → funciona
 
-Es **ocasional** porque solo afecta a usuarios que tienen el `index.html` viejo cacheado, en la ventana entre deploy y actualización del SW/browser.
+Lo que faltaba: cuando el SW nuevo toma control (`clientsClaim`), **nadie recargaba la página**.
 
-### Fix aplicado (2026-05-29)
+### Fixes aplicados
 
-**`firebase.json` — `no-cache` para `index.html`, `immutable` para assets hasheados:**
+**Fix 1 — `firebase.json` (2026-05-29) — `no-cache` para `index.html`, `immutable` para assets hasheados:**
 
 ```json
 { "source": "/index.html",
@@ -697,11 +710,28 @@ Es **ocasional** porque solo afecta a usuarios que tienen el `index.html` viejo 
   "headers": [{ "key": "Cache-Control", "value": "max-age=31536000, immutable" }] }
 ```
 
-**`vite.config.ts` — eliminado el `runtimeCaching` duplicado para `*.js/*.css`:**
+**Fix 2 — `vite.config.ts` (2026-06-07) — cambiar `registerType: 'autoUpdate'`:**
 
-Workbox precaching ya gestiona los chunks de Vite con revisión de contenido hash. El `runtimeCaching` con `StaleWhileRevalidate` para `*.js` era redundante y podía entrar en conflicto, sirviendo versiones stale de chunks obsoletos.
+```typescript
+VitePWA({
+  registerType: 'autoUpdate', // antes: 'prompt' — contradecía skipWaiting:true
+  // ...
+  workbox: {
+    skipWaiting: true,
+    clientsClaim: true,
+    // ...
+  }
+})
+```
 
-### Regla de oro para SPAs con Vite
+Con `autoUpdate`, `vite-plugin-pwa` escucha el evento `controllerchange` y llama `window.location.reload()` automáticamente cuando el nuevo SW toma control. La página recarga con el HTML nuevo → chunks correctos → sin pantalla en blanco.
+
+**Fix 3 — `vite.config.ts` (2026-06-07) — eliminado el `runtimeCaching` duplicado para `*.js/*.css` y la sección `screenshots` del manifest:**
+
+- El runtime cache para `*.js` era redundante con el precaching de Workbox y podía servir versiones stale
+- `screenshots` referenciaba imágenes inexistentes en `public/screenshots/` → 404 en consola
+
+### Regla de oro para SPAs con Vite + PWA
 
 | Recurso | Cache-Control | Razón |
 |---|---|---|
@@ -709,9 +739,9 @@ Workbox precaching ya gestiona los chunks de Vite con revisión de contenido has
 | `*.js`, `*.css` con hash | `max-age=31536000, immutable` | El hash cambia con el contenido → nombre nuevo = archivo nuevo |
 | Imágenes/fuentes con hash | `max-age=31536000, immutable` | Mismo principio |
 
-### También eliminado: `runtimeCaching` para `.js/.css` en workbox
-
-Los chunks de Vite ya tienen hash en el nombre (`main-[hash].js`). Workbox precaching los gestiona correctamente vía revisión. El runtime cache para `*.js` creaba una segunda capa de gestión que podía devolver versiones viejas de chunks que ya no existen en el servidor.
+**`registerType` en `vite-plugin-pwa`:**
+- `'autoUpdate'` → SW actualiza y recarga la página automáticamente. Usar cuando `skipWaiting: true` + `clientsClaim: true`.
+- `'prompt'` → SW espera en estado "waiting" hasta que el usuario acepte. Usar solo si **no** se tiene `skipWaiting: true` en workbox. Combinarlo con `skipWaiting: true` es un bug: el SW se activa solo pero la página nunca recarga.
 
 ---
 
