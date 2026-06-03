@@ -5,6 +5,7 @@ import { Gender } from '../enums';
  */
 export interface Client {
   id: string;
+  cedula?: string; // Número de cédula (=== id cuando se crea vía consolidación)
   firstName: string;
   lastName: string;
   email: string;
@@ -42,6 +43,7 @@ export interface Client {
  * DTO para crear cliente
  */
 export interface CreateClientDTO {
+  cedula?: string; // Si se provee, se usa como document ID en Firestore
   firstName: string;
   lastName: string;
   email: string;

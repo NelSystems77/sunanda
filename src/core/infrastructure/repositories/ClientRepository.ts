@@ -38,11 +38,12 @@ export class ClientRepository {
    * Crear cliente
    */
   async create(data: CreateClientDTO): Promise<Client> {
-    const id = generateId();
+    const id = data.cedula || generateId();
     const now = new Date();
 
     const client: Client = {
       id,
+      cedula: data.cedula,
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
@@ -63,12 +64,15 @@ export class ClientRepository {
       notes: data.notes,
     };
 
-    await setDoc(doc(this.collectionRef, id), {
+    const docData: any = {
       ...client,
       dateOfBirth: Timestamp.fromDate(client.dateOfBirth),
       createdAt: Timestamp.fromDate(client.createdAt),
       updatedAt: Timestamp.fromDate(client.updatedAt),
-    });
+    };
+    if (!data.cedula) delete docData.cedula; // no guardar undefined
+
+    await setDoc(doc(this.collectionRef, id), docData);
 
     return client;
   }
@@ -303,6 +307,7 @@ export class ClientRepository {
   private mapDocToClient(id: string, data: any): Client {
     return {
       id,
+      cedula: data.cedula,
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,

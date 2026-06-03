@@ -9,6 +9,7 @@ import { Client } from '@/core/domain/interfaces/Client';
 import { Gender } from '@/core/domain/enums';
 
 const clientSchema = z.object({
+  cedula: z.string().min(5, 'Cédula inválida').optional().or(z.literal('')),
   firstName: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
   lastName: z.string().min(2, 'El apellido debe tener al menos 2 caracteres'),
   email: z.string().email('Correo electrónico inválido'),
@@ -44,6 +45,7 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading }: ClientForm
     defaultValues: client
       ? {
           ...client,
+          cedula: client.cedula || client.id,
           dateOfBirth: client.dateOfBirth.toISOString().split('T')[0],
           allergies: client.allergies?.join(', '),
           medications: client.medications?.join(', '),
@@ -55,8 +57,9 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading }: ClientForm
   });
 
   const handleFormSubmit = async (data: ClientFormData) => {
-    const formattedData = {
+    const formattedData: any = {
       ...data,
+      cedula: data.cedula?.trim() || undefined,
       dateOfBirth: new Date(data.dateOfBirth),
       allergies: data.allergies ? data.allergies.split(',').map((a) => a.trim()) : [],
       medications: data.medications ? data.medications.split(',').map((m) => m.trim()) : [],
@@ -88,6 +91,17 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading }: ClientForm
           Información Personal
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Input
+            {...register('cedula')}
+            label="Número de Cédula"
+            placeholder="1-2345-6789"
+            error={errors.cedula?.message}
+            disabled={isLoading || !!client}
+            fullWidth
+            className="md:col-span-2"
+            hint={client ? 'La cédula no se puede cambiar' : 'Se usará como identificador único del cliente'}
+          />
+
           <Input
             {...register('firstName')}
             label="Nombre"

@@ -30,6 +30,7 @@ import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { Modal } from '../ui/Modal';
 import { Textarea } from '../ui/Textarea';
+import { ConfirmBookingModal } from './ConfirmBookingModal';
 
 interface BookingRequestCardProps {
   request: BookingRequest;
@@ -39,6 +40,7 @@ interface BookingRequestCardProps {
 export function BookingRequestCard({ request, onUpdate }: BookingRequestCardProps) {
   const { user } = useAuthStore();
   const [showRejectModal, setShowRejectModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -58,43 +60,9 @@ export function BookingRequestCard({ request, onUpdate }: BookingRequestCardProp
     }
   };
 
-  const openConfirmationWhatsApp = () => {
-    const clean = request.clientPhone.replace(/\D/g, '');
-    const full = clean.startsWith('506') ? clean : `506${clean}`;
-    const dateStr = format(request.requestedDate, "EEEE d 'de' MMMM 'de' yyyy", { locale: es });
-    const message =
-      `Estimado/a ${request.clientName},\n\n` +
-      `Reciba un cordial saludo de parte del equipo de SUNANDA. Nos complace confirmar su asistencia para su próxima cita:\n` +
-      `📅 Fecha: ${dateStr.charAt(0).toUpperCase() + dateStr.slice(1)}\n` +
-      `⏰ Hora: ${request.requestedTime}\n\n` +
-      `Agradecemos su preferencia y le esperamos puntualmente. ¡Feliz día!`;
-    window.open(`https://wa.me/${full}?text=${encodeURIComponent(message)}`, '_blank');
-  };
-
-  // Confirmar solicitud
-  const handleConfirm = async () => {
-    if (!user) return;
-
-    try {
-      setLoading(true);
-
-      // TODO: En producción, aquí se debe crear la cita (Appointment)
-      // y vincularla con appointmentId
-
-      await bookingRequestRepository.updateStatus(request.id, {
-        status: BookingRequestStatus.CONFIRMED,
-        processedBy: user.id,
-      });
-
-      toast.success('Solicitud confirmada. Enviando mensaje al cliente…');
-      onUpdate();
-      openConfirmationWhatsApp();
-    } catch (error) {
-      console.error('Error confirming request:', error);
-      toast.error('Error al confirmar la solicitud');
-    } finally {
-      setLoading(false);
-    }
+  // Confirmar solicitud — abre el modal que pide cédula y hace todo el proceso
+  const handleConfirm = () => {
+    setShowConfirmModal(true);
   };
 
   // Rechazar solicitud
@@ -308,6 +276,20 @@ export function BookingRequestCard({ request, onUpdate }: BookingRequestCardProp
           </div>
         )}
       </div>
+
+      {/* Modal de confirmación con cédula */}
+      {user && (
+        <ConfirmBookingModal
+          isOpen={showConfirmModal}
+          request={request}
+          userId={user.id}
+          onClose={() => setShowConfirmModal(false)}
+          onConfirmed={() => {
+            setShowConfirmModal(false);
+            onUpdate();
+          }}
+        />
+      )}
 
       {/* Modal de rechazo */}
       <Modal

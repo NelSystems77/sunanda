@@ -7,6 +7,7 @@ import { TimeSlotSelector } from './TimeSlotSelector';
 import { TimeSlot, SPA_SCHEDULE } from '../../../core/infrastructure/services/AvailabilityService';
 import { useAppointments } from '../../hooks/useAppointments';
 import { useServices } from '../../hooks/useServices';
+import { ensureClientExists } from '@/core/application/services/ClientConsolidationService';
 import { X, Calendar, User, Scissors, Clock, FileText, Phone } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { motion } from 'framer-motion';
@@ -165,6 +166,10 @@ export function AppointmentForm({
       const id = await createAppointment(appointmentData);
 
       if (id) {
+        // Consolidar cliente: crear si es nuevo, sumar visita si ya existe
+        if (data.clientId) {
+          ensureClientExists(data.clientId, clientName, clientPhone).catch(() => {});
+        }
         onSuccess?.();
         onClose();
       } else {
