@@ -1293,3 +1293,86 @@ Si la cita ya tiene un pago registrado, desaparece del selector. Si alguien regi
 | `PaymentsPage.tsx` | `PaymentStatus.CANCELLED` sin badge ni tab de filtro | Badge "Cancelado" y tab agregados |
 | `PaymentsPage.tsx` | Monto USD sin formatear: `$${amountUSD}` mostraba número crudo | `toLocaleString('en-US')`, oculto si `amountUSD === 0` |
 | `PaymentForm.tsx` | Comparación muerta `(a.status as string) === 'completed'` (minúscula nunca coincide con enum uppercase) | Eliminada, filtro simplificado |
+
+---
+
+## Consolidación de Clientes por Cédula (sesión 2026-06-07)
+
+### Modelo de identidad
+
+El **número de cédula** es el identificador único de un cliente en todo el sistema:
+
+| Colección | Document ID | Vínculo |
+|---|---|---|
+| `clients` | cédula (cuando se crea vía consolidación) | = `Appointment.clientId` |
+| `medicalRecords` | cédula | = `Appointment.clientId` |
+| `appointments` | auto-generated | `.clientId` = cédula |
+
+**Backward compatibility:** `ClientRepository.create()` acepta `cedula` opcional en el DTO. Si no se provee, usa `generateId()` (clientes creados antes de esta sesión conservan su UUID).
+
+### ClientConsolidationService
+
+`src/core/application/services/ClientConsolidationService.ts`
+
+Función central: `ensureClientExists(cedula, fullName, phoneNumber, email?, gender?)`.
+
+**Lógica:**
+- Llama `clientRepository.getById(cedula)` — busca por ID directo (O(1), sin query)
+- **Cédula nueva** → `clientRepository.create({ cedula, ... })` + `medicalRecordService.create(cedula, fullName)` → expediente vacío listo para atención
+- **Cédula existente** → `clientRepository.incrementVisits(cedula)` → actualiza `totalVisits` y `lastVisit`
+- Retorna `{ client, clientCreated, recordCreated }`
+
+**Notas de implementación:**
+- `firstName` / `lastName` se derivan del `fullName` dividiéndolo por espacios. Si el cliente ya existe con datos completos, no se sobreescriben.
+- `dateOfBirth` se inicializa como placeholder `2000-01-01` — el admin completa el expediente después.
+- Si `medicalRecordService.create()` falla (el expediente ya existe), el error se atrapa silenciosamente para no bloquear el flujo.
+
+### Puntos de disparo
+
+**1. `AppointmentForm.tsx` — creación manual de cita**
+```typescript
+const id = await createAppointment(appointmentData);
+if (id) {
+  ensureClientExists(data.clientId, clientName, clientPhone).catch(() => {});
+  onSuccess?.();
+}
+```
+Se dispara en background al crear cualquier cita desde el dashboard.
+
+**2. `ConfirmBookingModal.tsx` — confirmación de BookingRequest**
+
+Modal nuevo en `src/presentation/components/features/ConfirmBookingModal.tsx`.
+
+Flujo al confirmar una solicitud:
+1. Admin ingresa la cédula del cliente
+2. `ensureClientExists(cedula, name, phone, email)` — consolida cliente y expediente
+3. `appointmentRepository.create(...)` — crea la cita en Firestore automáticamente (ya no es manual)
+4. `bookingRequestRepository.updateStatus(CONFIRMED, appointmentId)` — vincula la solicitud con la cita
+5. Abre WhatsApp con mensaje de confirmación prellenado
+
+`BookingRequestCard` ya no tiene el TODO de "crear cita manualmente" — se hace todo en el modal.
+
+### ClientForm — campo cédula
+
+`ClientForm.tsx` tiene ahora un campo **Número de Cédula** al inicio del formulario:
+- **Al crear:** opcional, pero si se ingresa se usa como document ID → cliente queda vinculado al sistema de citas
+- **Al editar:** campo deshabilitado (la cédula no cambia)
+- Prop `hint` explica al admin su propósito
+
+### Datos iniciales del cliente auto-creado
+
+Cuando `ensureClientExists` crea un cliente nuevo, los datos mínimos son:
+
+| Campo | Valor |
+|---|---|
+| `id` | cédula (document ID) |
+| `cedula` | cédula |
+| `firstName` | primera palabra del nombre completo |
+| `lastName` | resto del nombre (o "Sin apellido") |
+| `phoneNumber` | teléfono del formulario de cita/booking |
+| `email` | email del booking (o `''` si cita manual) |
+| `dateOfBirth` | `2000-01-01` (placeholder — completar en expediente) |
+| `gender` | `FEMALE` (default — actualizar en perfil) |
+| `totalVisits` | `1` (se incrementa en visitas siguientes) |
+
+El admin puede completar los datos faltantes en `/dashboard/clients/{cedula}`.
