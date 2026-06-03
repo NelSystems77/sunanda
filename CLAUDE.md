@@ -72,7 +72,7 @@ src/presentation/components/landing/
 
 1. `PromosBanner` — banner superior
 2. `HeroLanding`
-3. `SocialProof` — cifras y certificaciones
+3. `SocialProof` — cifras y certificaciones (**ver regla de stats abajo**)
 4. `BrandPartnership` — alianza Germaine de Capuccini
 5. **`FeaturedServices`** — 2 promos apertura ultra-premium (Limpieza Facial, Hidrolipoclasia) + divisor dorado + 3 tarjetas super premium Germaine de Capuccini
 6. `SignatureTreatment` — Timexpert Lift_IN
@@ -85,6 +85,30 @@ src/presentation/components/landing/
 13. `TestimonialsCarousel`
 14. `BookingCTA`
 15. `About`, `ExperienceGallery`, `BlogPreview`, `FAQSection`, `NewsletterSignup`, `Contact`
+
+### Stats de social proof — regla de sincronización
+
+Los valores actuales (sesión 2026-06-07) reflejan el estado real de apertura:
+
+| Stat | Valor actual | Fuente de verdad |
+|---|---|---|
+| Satisfacción | 100% | Manual |
+| Clientes | 5 | Dashboard → Firestore `clients` |
+| Calificación | 5⭐ | Manual |
+| Tratamientos | 21+ | Catálogo en Firestore `services` |
+| Años de exp. | 10+ | Trayectoria de Lic. Grettel — no cambia |
+
+**Regla:** cuando el conteo real de clientes en Firestore supere 5, actualizar los valores de "Clientes" y "Satisfacción" en los 7 archivos que los contienen:
+
+1. `HeroLanding.tsx`
+2. `SocialProof.tsx`
+3. `About.tsx`
+4. `ExperienceGallery.tsx`
+5. `AboutProfessional.tsx`
+6. `SignatureTreatment.tsx`
+7. `TestimonialsCarousel.tsx`
+
+Los datos reales de clientes están en Firestore colección `clients` — consultable desde el dashboard en `/dashboard/clients`. **No usar cifras aspiracionales**: solo subir el número cuando sea real.
 
 ---
 
