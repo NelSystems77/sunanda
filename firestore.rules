@@ -73,7 +73,7 @@ service cloud.firestore {
     match /bookingRequests/{requestId} {
       allow read: if isAuthenticated() && isActive();
       allow create: if true; // Público
-      allow update, delete: if isAdmin() && isActive();
+      allow update, delete: if isAuthenticated() && isActive();
     }
     
     // ============================================
