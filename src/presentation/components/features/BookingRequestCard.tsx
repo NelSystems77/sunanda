@@ -15,12 +15,13 @@ import {
   Calendar,
   Clock,
   Mail,
-  Phone, 
-  CheckCircle2, 
+  Phone,
+  CheckCircle2,
   XCircle,
   MessageSquare,
   Globe,
-  Sparkles
+  Sparkles,
+  Trash2
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { BookingRequest, BookingRequestStatus } from '@/core/domain/interfaces/BookingRequest';
@@ -43,6 +44,7 @@ export function BookingRequestCard({ request, onUpdate }: BookingRequestCardProp
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   // Badge de estado
   const getStatusBadge = () => {
@@ -92,6 +94,21 @@ export function BookingRequestCard({ request, onUpdate }: BookingRequestCardProp
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      setLoading(true);
+      await bookingRequestRepository.delete(request.id);
+      toast.success('Solicitud eliminada');
+      setShowDeleteDialog(false);
+      onUpdate();
+    } catch (error) {
+      console.error('Error deleting request:', error);
+      toast.error('Error al eliminar la solicitud');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const dateLocale = request.clientLanguage === 'es' ? es : enUS;
 
   return (
@@ -112,15 +129,24 @@ export function BookingRequestCard({ request, onUpdate }: BookingRequestCardProp
             </div>
           </div>
 
-          {/* Fecha de creación */}
-          <div className="text-right">
-            <div className="text-xs text-dark-400">Recibida</div>
-            <div className="text-sm text-dark-300">
-              {format(request.createdAt, 'dd MMM yyyy', { locale: dateLocale })}
+          {/* Fecha de creación + botón eliminar */}
+          <div className="flex items-start gap-3">
+            <div className="text-right">
+              <div className="text-xs text-dark-400">Recibida</div>
+              <div className="text-sm text-dark-300">
+                {format(request.createdAt, 'dd MMM yyyy', { locale: dateLocale })}
+              </div>
+              <div className="text-xs text-dark-400">
+                {format(request.createdAt, 'HH:mm')}
+              </div>
             </div>
-            <div className="text-xs text-dark-400">
-              {format(request.createdAt, 'HH:mm')}
-            </div>
+            <button
+              onClick={() => setShowDeleteDialog(true)}
+              className="p-1.5 rounded-lg text-dark-400 hover:text-red-400 hover:bg-red-500/10 transition-colors flex-shrink-0"
+              title="Eliminar solicitud"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
           </div>
         </div>
 
@@ -289,6 +315,46 @@ export function BookingRequestCard({ request, onUpdate }: BookingRequestCardProp
             onUpdate();
           }}
         />
+      )}
+
+      {/* Diálogo de eliminación */}
+      {showDeleteDialog && (
+        <div
+          className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+          onClick={() => setShowDeleteDialog(false)}
+        >
+          <div
+            className="bg-dark-800 border border-dark-600 rounded-xl p-6 max-w-sm w-full mx-4 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 bg-red-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+                <Trash2 className="w-5 h-5 text-red-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-white">Eliminar solicitud</h3>
+            </div>
+            <p className="text-sm text-dark-300 mb-5">
+              Esta acción es permanente. La solicitud de{' '}
+              <span className="text-white font-medium">{request.clientName}</span> será eliminada definitivamente.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowDeleteDialog(false)}
+                disabled={loading}
+                className="flex-1 px-4 py-2 border border-dark-600 text-dark-300 rounded-lg hover:bg-dark-700 hover:text-white transition-colors text-sm"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={loading}
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium disabled:opacity-50"
+              >
+                {loading ? 'Eliminando...' : 'Sí, eliminar'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Modal de rechazo */}
