@@ -7,7 +7,7 @@ import { useMobileDetect } from '../../hooks/useMobileDetect';
 import { MedicalRecord, Anamnesis, Consentimiento, SessionRecord, CONDICIONES_PIEL, ENFERMEDADES_COMUNES } from '@/core/domain/interfaces/MedicalRecord';
 import { Gender } from '@/core/domain/enums';
 import { generateMedicalRecordPDF, generateSessionPDF, generateConsentPDF } from '@/shared/utils/pdfGenerator';
-import { X, Save, FileText, Printer, Upload, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
+import { X, Save, FileText, Printer, Upload, Trash2, ChevronDown, ChevronUp, Pencil, Check } from 'lucide-react';
 import SignatureCanvas from 'react-signature-canvas';
 import toast from 'react-hot-toast';
 import { cn } from '@/shared/utils';
@@ -32,14 +32,17 @@ export function MedicalRecordModal({ clientId, clientName, clientGender, onClose
 
   const { user } = useAuth();
   const { isMobile } = useMobileDetect();
-  const { getByClientId, create, saveAnamnesis, saveConsentimiento, addSession, deleteSession, uploadImage, uploadSignature } = useMedicalRecords();
+  const { getByClientId, create, saveAnamnesis, saveConsentimiento, addSession, updateSession, updateClientName, deleteSession, uploadImage, uploadSignature } = useMedicalRecords();
   
   const [record, setRecord] = useState<MedicalRecord | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>('anamnesis');
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
-  const [editingSessionId] = useState<string | null>(null);
+  const [editingSessionId, setEditingSessionId] = useState<string | null>(null);
+  const [sessionToDelete, setSessionToDelete] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState(false);
+  const [nameInput, setNameInput] = useState(clientName);
   
   // ← NUEVO: Estados para acordeón mobile
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
@@ -203,6 +206,29 @@ export function MedicalRecordModal({ clientId, clientName, clientGender, onClose
     }
   };
 
+  const resetSessionForm = () => {
+    setSession({
+      fecha: new Date(),
+      motivoConsulta: '',
+      preocupacionesPrincipales: [],
+      expectativas: '',
+      tipoPiel: '',
+      fototipo: '',
+      condicionActual: [],
+      observacionesClinicas: '',
+      medidas: {},
+      tratamientoRealizado: '',
+      productosUsados: [],
+      recomendaciones: '',
+      fotosAntes: [],
+      fotosDespues: [],
+      costo: 0,
+      metodoPago: 'Efectivo',
+      createdBy: user?.email || '',
+    });
+    setEditingSessionId(null);
+  };
+
   const handleSaveSession = async () => {
     if (!session.motivoConsulta || !session.tratamientoRealizado) {
       toast.error('Complete los campos obligatorios');
@@ -211,34 +237,44 @@ export function MedicalRecordModal({ clientId, clientName, clientGender, onClose
 
     setSaving(true);
     try {
-      const success = await addSession(clientId, session as Omit<SessionRecord, 'id' | 'createdAt' | 'updatedAt'>);
+      let success: boolean;
+      if (editingSessionId) {
+        success = await updateSession(clientId, editingSessionId, session as Partial<SessionRecord>);
+      } else {
+        success = await addSession(clientId, session as Omit<SessionRecord, 'id' | 'createdAt' | 'updatedAt'>);
+      }
       if (success) {
         await loadRecord();
         setActiveTab('historial');
-        setSession({
-          fecha: new Date(),
-          motivoConsulta: '',
-          preocupacionesPrincipales: [],
-          expectativas: '',
-          tipoPiel: '',
-          fototipo: '',
-          condicionActual: [],
-          observacionesClinicas: '',
-          medidas: {},
-          tratamientoRealizado: '',
-          productosUsados: [],
-          recomendaciones: '',
-          fotosAntes: [],
-          fotosDespues: [],
-          costo: 0,
-          metodoPago: 'Efectivo',
-          createdBy: user?.email || '',
-        });
-        toast.success('Sesión guardada correctamente');
+        resetSessionForm();
       }
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleEditSession = (s: SessionRecord) => {
+    setEditingSessionId(s.id);
+    setSession({
+      fecha: s.fecha,
+      motivoConsulta: s.motivoConsulta,
+      preocupacionesPrincipales: s.preocupacionesPrincipales,
+      expectativas: s.expectativas,
+      tipoPiel: s.tipoPiel,
+      fototipo: s.fototipo,
+      condicionActual: s.condicionActual,
+      observacionesClinicas: s.observacionesClinicas,
+      medidas: s.medidas,
+      tratamientoRealizado: s.tratamientoRealizado,
+      productosUsados: s.productosUsados,
+      recomendaciones: s.recomendaciones,
+      fotosAntes: s.fotosAntes,
+      fotosDespues: s.fotosDespues,
+      costo: s.costo,
+      metodoPago: s.metodoPago,
+      createdBy: s.createdBy,
+    });
+    setActiveTab('atencion');
   };
 
   const handleUploadPhoto = async (e: React.ChangeEvent<HTMLInputElement>, type: 'antes' | 'despues') => {
@@ -297,13 +333,24 @@ export function MedicalRecordModal({ clientId, clientName, clientGender, onClose
     setSugerenciasDiag([]);
   };
 
-  const handleDeleteSession = async (sessionId: string) => {
-    if (!confirm('¿Está seguro de eliminar esta sesión?')) return;
-    
-    const success = await deleteSession(clientId, sessionId);
+  const handleDeleteSession = async () => {
+    if (!sessionToDelete) return;
+    const success = await deleteSession(clientId, sessionToDelete);
     if (success) {
+      setSessionToDelete(null);
       await loadRecord();
     }
+  };
+
+  const handleSaveClientName = async () => {
+    const trimmed = nameInput.trim();
+    if (!trimmed || trimmed === record?.clientName) {
+      setEditingName(false);
+      return;
+    }
+    const ok = await updateClientName(clientId, trimmed);
+    if (ok && record) setRecord({ ...record, clientName: trimmed });
+    setEditingName(false);
   };
 
   // ← NUEVO: Componente de sección colapsable para mobile
@@ -441,7 +488,27 @@ export function MedicalRecordModal({ clientId, clientName, clientGender, onClose
           <aside className="w-52 flex-shrink-0 bg-dark-800 border-r border-dark-700 flex flex-col">
             <div className="p-5 pb-4 border-b border-dark-700">
               <p className="text-xs text-dark-500 uppercase tracking-wide mb-1">Expediente</p>
-              <h2 className="font-bold text-white text-base leading-snug">{clientName}</h2>
+              {editingName ? (
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <input
+                    autoFocus
+                    value={nameInput}
+                    onChange={(e) => setNameInput(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') handleSaveClientName(); if (e.key === 'Escape') { setEditingName(false); setNameInput(record?.clientName || clientName); } }}
+                    className="flex-1 min-w-0 px-2 py-1 text-sm bg-dark-900 border border-gold-500/50 text-white rounded-lg focus:outline-none"
+                  />
+                  <button onClick={handleSaveClientName} className="p-1.5 text-gold-400 hover:text-gold-300 bg-gold-500/10 rounded-lg">
+                    <Check className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1.5 group">
+                  <h2 className="font-bold text-white text-base leading-snug flex-1 min-w-0 truncate">{record?.clientName || clientName}</h2>
+                  <button onClick={() => { setNameInput(record?.clientName || clientName); setEditingName(true); }} className="p-1 text-dark-600 hover:text-dark-300 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Pencil className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              )}
               <p className="text-dark-500 text-xs mt-0.5">ID: {clientId}</p>
             </div>
             <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
@@ -1256,12 +1323,22 @@ export function MedicalRecordModal({ clientId, clientName, clientGender, onClose
         {/* ATENCIÓN */}
         {activeTab === 'atencion' && (
           <div className="space-y-4">
-            <h3 className={cn(
-              'font-bold text-white',
-              isMobile ? 'text-lg' : 'text-2xl'
-            )}>
-              Registro de Atención
-            </h3>
+            <div className="flex items-center justify-between gap-3">
+              <h3 className={cn(
+                'font-bold text-white',
+                isMobile ? 'text-lg' : 'text-2xl'
+              )}>
+                {editingSessionId ? 'Editar Sesión' : 'Registro de Atención'}
+              </h3>
+              {editingSessionId && (
+                <button
+                  onClick={() => { resetSessionForm(); }}
+                  className="text-xs text-dark-400 hover:text-white border border-dark-700 hover:border-dark-500 px-3 py-1.5 rounded-lg transition-colors flex-shrink-0"
+                >
+                  Cancelar edición
+                </button>
+              )}
+            </div>
 
             <div className={cn(
               'bg-dark-800 border border-dark-700 rounded-lg space-y-4',
@@ -1464,17 +1541,17 @@ export function MedicalRecordModal({ clientId, clientName, clientGender, onClose
               </div>
             </div>
 
-            <Button 
-              variant="primary" 
-              onClick={handleSaveSession} 
-              isLoading={saving} 
+            <Button
+              variant="primary"
+              onClick={handleSaveSession}
+              isLoading={saving}
               className={cn(
                 'w-full',
                 isMobile && 'h-12 text-base'
               )}
             >
               <Save className="w-4 h-4 mr-2" />
-              Guardar y Finalizar Atención
+              {editingSessionId ? 'Guardar Cambios' : 'Guardar y Finalizar Atención'}
             </Button>
           </div>
         )}
@@ -1508,18 +1585,29 @@ export function MedicalRecordModal({ clientId, clientName, clientGender, onClose
                       </p>
                     </div>
                     <div className="flex gap-2">
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
+                      <Button
+                        variant="outline"
+                        size="sm"
                         onClick={() => generateSessionPDF(record, s)}
+                        title="Descargar PDF"
                       >
                         <Printer className="w-4 h-4" />
                       </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={() => handleDeleteSession(s.id)}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEditSession(s)}
+                        className="text-gold-400 hover:text-gold-300 hover:bg-gold-500/10"
+                        title="Editar sesión"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setSessionToDelete(s.id)}
                         className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                        title="Eliminar sesión"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -1546,6 +1634,21 @@ export function MedicalRecordModal({ clientId, clientName, clientGender, onClose
         )}
         </div>
       </div>
+
+      {/* Confirmación eliminar sesión */}
+      {sessionToDelete && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setSessionToDelete(null)} />
+          <div className="relative bg-dark-800 border border-dark-700 rounded-xl p-6 w-full max-w-sm shadow-2xl space-y-4">
+            <h3 className="font-bold text-white text-lg">Eliminar Sesión</h3>
+            <p className="text-dark-300 text-sm">¿Estás seguro de que deseas eliminar esta sesión? Esta acción no se puede deshacer.</p>
+            <div className="flex gap-3 justify-end">
+              <Button variant="ghost" onClick={() => setSessionToDelete(null)}>Cancelar</Button>
+              <Button variant="danger" onClick={handleDeleteSession}>Eliminar</Button>
+            </div>
+          </div>
+        </div>
+      )}
     </Modal>
   );
 }

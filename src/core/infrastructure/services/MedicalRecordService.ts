@@ -212,6 +212,21 @@ export class MedicalRecordService {
   }
 
   /**
+   * Actualizar nombre del cliente en el expediente
+   */
+  async updateClientName(clientId: string, newName: string): Promise<void> {
+    try {
+      await updateDoc(doc(db, 'medicalRecords', clientId), {
+        clientName: newName,
+        updatedAt: serverTimestamp(),
+      });
+    } catch (error) {
+      console.error('Error updating client name:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Eliminar expediente completo
    */
   async deleteRecord(clientId: string): Promise<void> {

@@ -177,6 +177,24 @@ export const useMedicalRecords = () => {
   };
 
   /**
+   * Actualizar nombre del cliente en el expediente
+   */
+  const updateClientName = async (clientId: string, newName: string): Promise<boolean> => {
+    try {
+      await medicalRecordService.updateClientName(clientId, newName);
+      setRecords(prev => prev.map(r =>
+        r.clientId === clientId ? { ...r, clientName: newName } : r
+      ));
+      toast.success('Nombre actualizado');
+      return true;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Error al actualizar nombre';
+      toast.error(message);
+      return false;
+    }
+  };
+
+  /**
    * Eliminar expediente completo
    */
   const deleteRecord = async (clientId: string): Promise<boolean> => {
@@ -246,6 +264,7 @@ export const useMedicalRecords = () => {
     addSession,
     updateSession,
     deleteSession,
+    updateClientName,
     deleteRecord,
     uploadImage,
     uploadSignature,
