@@ -2,10 +2,10 @@ import { Award, Star, Users, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const STATS = [
-  { icon: Users, value: '1,200+', label: 'Clientas satisfechas' },
-  { icon: Star, value: '4.9', label: 'Calificación promedio' },
-  { icon: Calendar, value: '8+', label: 'Años de experiencia' },
-  { icon: Award, value: '15+', label: 'Tratamientos especializados' },
+  { icon: Users, value: '5', label: 'Clientes satisfechos' },
+  { icon: Star, value: '5⭐', label: 'Calificación' },
+  { icon: Calendar, value: '10+', label: 'Años de experiencia' },
+  { icon: Award, value: '21+', label: 'Tratamientos especializados' },
 ];
 
 const BADGES = [

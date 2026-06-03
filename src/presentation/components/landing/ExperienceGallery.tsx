@@ -4,13 +4,13 @@ export const ExperienceGallery = () => {
   const stats = [
     {
       icon: Star,
-      value: '95%',
+      value: '100%',
       label: 'Satisfacción'
     },
     {
       icon: Users,
-      value: '500+',
-      label: 'Clientas Felices'
+      value: '5',
+      label: 'Clientes Felices'
     },
     {
       icon: Award,

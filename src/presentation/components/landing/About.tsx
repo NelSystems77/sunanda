@@ -35,8 +35,8 @@ export const About = () => {
   ];
 
   const stats = [
-    { value: '95%', label: 'Satisfacción' },
-    { value: '500+', label: 'Clientas Felices' },
+    { value: '100%', label: 'Satisfacción' },
+    { value: '5', label: 'Clientes Felices' },
     { value: '5⭐', label: 'Calificación' },
     { value: '10+', label: 'Años de Experiencia' }
   ];

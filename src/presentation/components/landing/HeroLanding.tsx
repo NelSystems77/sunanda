@@ -85,8 +85,8 @@ export const HeroLanding = () => {
             data-aos-delay="400"
           >
             {[
-              { value: '95%', label: 'Satisfacción' },
-              { value: '500+', label: 'Clientas Felices' },
+              { value: '100%', label: 'Satisfacción' },
+              { value: '5', label: 'Clientes Felices' },
               { value: '5⭐', label: 'Calificación' }
             ].map((stat, idx) => (
               <div key={idx} className="text-center">
