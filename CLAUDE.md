@@ -1129,6 +1129,32 @@ Siempre llama `generateMedicalRecordPDF(record)`:
 
 4 pasos: **Anamnesis** → **Consentimiento** → **Atención** → **Historial**. Los botones "Continuar a X" avanzan automáticamente al guardar. El usuario puede saltar libremente entre pasos en cualquier momento.
 
+### Gotcha: campos undefined en writes a Firestore (sesión 2026-06-08)
+
+**Síntoma:** `Function updateDoc() called with invalid data. Unsupported field value: undefined`
+
+**Causa raíz:** los campos opcionales de las interfaces TypeScript (`fechaUltimoTratamiento?: Date` en `Anamnesis`, `medidas?: Medidas` y `proximaSesion?: Date` en `SessionRecord`, `firmaUrl?: string` y `representante?: string` en `Consentimiento`) no se inicializan en el estado del modal, por lo que se propagan como `undefined` al hacer `updateDoc`. Firestore rechaza `undefined` — acepta `null` pero no `undefined`.
+
+**Fix aplicado en `MedicalRecordService.ts`:** función `stripUndefined<T>(value: T): T` que recorre el objeto recursivamente eliminando claves con valor `undefined`, preservando objetos `Date` y arrays. Se aplica antes de cada write:
+
+```typescript
+// saveAnamnesis
+anamnesis: stripUndefined(anamnesis)
+
+// saveConsentimiento
+consentimiento: stripUndefined({ ...consentimiento, fecha: serverTimestamp() })
+
+// addSession — al construir la nueva sesión y al escribir el array
+const newSession = stripUndefined({ ...session, id, createdAt, updatedAt } as SessionRecord)
+sesiones: stripUndefined(sesiones)
+
+// updateSession — al mergear updates y al escribir el array
+stripUndefined({ ...s, ...updates, updatedAt } as SessionRecord)
+sesiones: stripUndefined(sesiones)
+```
+
+**Regla:** siempre que un objeto TypeScript tenga campos opcionales (`?`) y se vaya a escribir a Firestore, aplicar `stripUndefined()` antes de pasarlo. Los tipos opcionales en TypeScript se inicializan como `undefined`, no como `null`.
+
 ### Anamnesis — preguntas condicionales por género (sesión 2026-06-07)
 
 `MedicalRecordModal` acepta el prop opcional `clientGender?: Gender`. Cuando el valor es `Gender.MALE`, los campos clínicamente irrelevantes para hombres se ocultan:
