@@ -80,7 +80,7 @@ export default defineConfig({
       ],
     }),
     VitePWA({
-      registerType: 'prompt',
+      registerType: 'autoUpdate',
       injectRegister: 'auto',
       includeAssets: ['icons/*.png', 'robots.txt', 'favicon.ico'],
       
@@ -148,22 +148,6 @@ export default defineConfig({
           }
         ],
         
-        screenshots: [
-          {
-            src: '/screenshots/dashboard.png',
-            sizes: '1280x720',
-            type: 'image/png',
-            form_factor: 'wide',
-            label: 'Dashboard Principal'
-          },
-          {
-            src: '/screenshots/mobile.png',
-            sizes: '750x1334',
-            type: 'image/png',
-            form_factor: 'narrow',
-            label: 'Vista Móvil'
-          }
-        ]
       },
       
       workbox: {
