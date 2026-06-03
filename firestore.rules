@@ -56,7 +56,7 @@ service cloud.firestore {
       allow read: if isAuthenticated() && isActive();
       allow create: if isAuthenticated() && isActive();
       allow update: if isAuthenticated() && isActive();
-      allow delete: if isAdmin() && isActive();
+      allow delete: if isAuthenticated() && isActive();
     }
     
     // ============================================
