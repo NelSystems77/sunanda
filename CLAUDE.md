@@ -1195,6 +1195,39 @@ Cada fila de la tabla tiene un ícono `Trash2` (botón independiente, usa `e.sto
 - Advierte que la acción no se puede deshacer y que Storage no se limpia
 - Botones: Cancelar / Eliminar (con loading state)
 
+### Edición de expedientes — funciones disponibles (sesión 2026-06-08)
+
+#### Editar sesiones existentes (tab Historial)
+
+Cada sesión en el historial tiene tres botones: PDF · **Editar (lápiz dorado)** · Eliminar.
+
+Al hacer clic en Editar:
+1. Se pre-carga el estado `session` con todos los campos de esa sesión
+2. Se activa `editingSessionId` con el ID de la sesión
+3. Se cambia automáticamente a la tab "Atención"
+
+En la tab Atención con `editingSessionId` activo:
+- El título cambia a "Editar Sesión"
+- Aparece botón "Cancelar edición" que limpia el formulario y resetea `editingSessionId`
+- El botón guardar dice "Guardar Cambios" y llama `updateSession()` en lugar de `addSession()`
+
+`resetSessionForm()` centraliza el vaciado del formulario y el reset de `editingSessionId`.
+
+#### Editar nombre del cliente en el expediente
+
+En el sidebar del modal (desktop), al pasar el cursor sobre el nombre aparece un ícono lápiz (visible solo en hover, `opacity-0 group-hover:opacity-100`). Al hacer clic:
+- El nombre se convierte en un `<input>` con autofocus
+- Enter o clic en el check (✓) guarda via `updateClientName(clientId, newName)`
+- Escape cancela sin guardar
+- Campo vacío o sin cambios también cancela silenciosamente
+
+`MedicalRecordService.updateClientName(clientId, newName)` actualiza `clientName` y `updatedAt` en Firestore.
+`useMedicalRecords.updateClientName()` actualiza también el estado local `records` para reflejar el cambio sin recargar.
+
+#### Confirmación de borrado de sesión
+
+Reemplazado `confirm()` nativo por un mini-modal oscuro renderizado con `position: fixed + z-[9999]` (sin Portal, ya que el `Modal` padre no crea conflicto de stacking context aquí). Estado: `sessionToDelete: string | null`. El modal aparece sobre el expediente y ofrece Cancelar / Eliminar.
+
 ---
 
 ## Errores TypeScript pre-existentes — Backlog de corrección
