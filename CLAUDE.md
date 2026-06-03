@@ -602,7 +602,7 @@ Landing /booking (público)
 Dashboard /dashboard/booking-requests (admin/staff)
   → BookingRequestsPage.tsx
   → Lista de solicitudes pendientes
-  → Acciones: Confirmar / Rechazar / WhatsApp directo al cliente
+  → Acciones: Confirmar / Rechazar / Eliminar / WhatsApp directo al cliente
 ```
 
 ### Dos colecciones separadas
@@ -612,7 +612,7 @@ Dashboard /dashboard/booking-requests (admin/staff)
 | `bookingRequests` | Solicitudes públicas — clientes desde la landing | `BookingRequestForm` |
 | `appointments` | Citas confirmadas — agenda del spa | Admin desde el dashboard |
 
-Cuando el admin confirma una `bookingRequest`, **aún no se crea automáticamente un `Appointment`** — hay un TODO en `BookingRequestCard.tsx`. El flujo manual actual: admin ve la solicitud → confirma → WhatsApp se abre con mensaje prellenado → crea la cita manualmente en `/dashboard/appointments`.
+Cuando el admin confirma una `bookingRequest`, se crea automáticamente un `Appointment` vía `ConfirmBookingModal` (ver sección de consolidación de clientes).
 
 ### Mensaje de confirmación automático por WhatsApp (sesión 2026-06-04)
 
@@ -661,6 +661,14 @@ Agradecemos su preferencia y le esperamos puntualmente. ¡Feliz día!
 |---|---|
 | `DashboardLayout.tsx` | Carga solicitudes al montar, pasa `stats.pending` al Header |
 | `Sidebar.tsx` | Lee store y aplica badge al ítem "Solicitudes" |
+
+### Permisos de eliminación — appointments y bookingRequests (sesión 2026-06-08)
+
+**`appointments`** — `allow delete` cambiado de `isAdmin()` a `isAuthenticated() && isActive()`. Todos los roles (SUPER_ADMIN, ADMIN, ESTETICISTA, RECEPCIONISTA) pueden borrar citas. La UI (`AppointmentCard`) ya pasaba `onDelete` sin restricción de rol — el bloqueo era solo en Firestore.
+
+**`bookingRequests`** — `allow update, delete` cambiado de `isAdmin()` a `isAuthenticated() && isActive()`. Todos los roles pueden confirmar, rechazar y eliminar solicitudes.
+
+**Botón de eliminar en `BookingRequestCard`** — ícono `Trash2` en el header de cada tarjeta, visible para todos los estados (PENDING, CONFIRMED, REJECTED, CANCELLED). Abre diálogo de confirmación con nombre del cliente. Llama `bookingRequestRepository.delete()` y refresca con `onUpdate()`.
 
 ---
 
